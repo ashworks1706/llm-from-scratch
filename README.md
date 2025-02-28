@@ -93,10 +93,5 @@ flowchart TB
 | Embedding Dimension | 512          |
 | Temperature (τ)     | 0.07         |
 
-## 🎥 Demo Screenshot
-![Coming Soon](docs/demo_preview.gif)
-
-## 🤝 Contributing
-PRs welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ---

@@ -1,0 +1,15 @@
+huggingface_hub
+dotenv
+datasets
+matplotlib
+numpy
+pandas
+seaborn
+nltk
+scikit-learn
+wordcloud
+plotly
+textstat
+datasets
+huggingface-hub
+python-dotenv

@@ -3,6 +3,7 @@
 A BERT-ResNet fusion model with built-in explainability through attention visualization. Processes text-image pairs while exposing decision-making mechanisms via heatmaps and token highlighting.
 
 ## 🚀 Features
+
 - **Dual Encoder Architecture**: BERT (text) + ResNet (image) with cross-attention fusion
 - **Explainability Layer**: Real-time visualization of:
   - Image regions influencing decisions (OpenCV heatmaps)
@@ -12,6 +13,7 @@ A BERT-ResNet fusion model with built-in explainability through attention visual
 - **Production Ready**: ONNX export & FastAPI deployment
 
 ## 📦 Installation
+
 ```
 git clone https://github.com/ashworks1706/multimodal-llm
 cd multimodal-llm
@@ -19,22 +21,27 @@ pip install -r requirements.txt
 ```
 
 ## 🛠️ Usage
+
 1. **Data Preparation** (COCO dataset):
+
 ```
 python data/preprocess_coco.py --images_dir /data/images/images --annotations /data/images/annotations
 ```
 
 2. **Training**:
+
 ```
 python training/train.py --batch_size 64 --lr 1e-5 --use_amp
 ```
 
 3. **Interactive Demo**:
+
 ```
 python demo/app.py
 ```
 
 ## 🧠 Project Structure
+
 ```
 ├── models/              # Encoders & fusion layers
 ├── data/                # COCO processing scripts
@@ -86,12 +93,17 @@ flowchart TB
 *Dual encoder system with cross-attention fusion and visualization hooks*
 
 ## 🏋️ Training Details
+
 | Hyperparameter      | Value        |
-|---------------------|--------------|
+| ------------------- | ------------ |
 | Batch Size          | 64-128       |
 | Learning Rate       | 1e-5 to 1e-4 |
 | Embedding Dimension | 512          |
-| Temperature (τ)     | 0.07         |
-
+| Temperature (τ)    | 0.07         |
 
 ---
+
+### TODO
+
+* Image data fusion
+* Multi modality pipeline addition

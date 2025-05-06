@@ -44,11 +44,10 @@ python demo/app.py
 
 ```
 ├── models/              # Encoders & fusion layers
-├── data/                # COCO processing scripts
+├── data/                # Processing scripts
 ├── training/            # Contrastive loss implementation
 ├── explainability/      # Attention visualization tools
 ├── demo/                # Gradio interface
-└── docs/                # Architecture diagrams & blog post
 ```
 
 ## 📐 Model Architecture

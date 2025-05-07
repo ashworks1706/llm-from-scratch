@@ -14,34 +14,6 @@ A BERT-ResNet fusion model with built-in explainability through attention visual
 - **CLIP-style Training**: Contrastive loss for alignment learning
 - **Production Ready**: ONNX export & FastAPI deployment
 
-## 📦 Installation
-
-```
-git clone https://github.com/ashworks1706/multimodal-llm
-cd multimodal-llm
-pip install -r requirements.txt
-```
-
-## 🛠️ Usage
-
-1. **Data Preparation** (COCO dataset):
-
-```
-python data/preprocess_coco.py --images_dir /data/images/images --annotations /data/images/annotations
-```
-
-2. **Training**:
-
-```
-python training/train.py --batch_size 64 --lr 1e-5 --use_amp
-```
-
-3. **Interactive Demo**:
-
-```
-python demo/app.py
-```
-
 ## 🧠 Project Structure
 
 ```
@@ -125,45 +97,38 @@ flowchart TB
   F3["Documentation"] --> F
 ```
 
-*Dual encoder system with cross-attention fusion and visualization hooks*
-
-## 🏋️ Training Details
-
-| Hyperparameter      | Value        |
-| ------------------- | ------------ |
-| Batch Size          | 64-128       |
-| Learning Rate       | 1e-5 to 1e-4 |
-| Embedding Dimension | 512          |
-| Temperature (τ)    | 0.07         |
-
----
-
-### TODO
+## 📝 TODO
 
 * [X] Decide the project structure and data to use
 * [X] Setup repository, project and environment
-* [ ] Phase 1
 
-  * [X] Perform data analysis on textual data
-  * [ ] Layout the key foundational points of modern transformer model and their difference from older models, provide examples
-  * [ ] Perform different techniques in the architecture with test data
-  * [ ] Train the model
-  * [ ] Evaluate the model and explain why's of everything
-  * [ ] Research and perform better techniques on the model while documenting
-  * [ ] visualize the model attention via custom UI libraries
-  * [ ] Finsh off with text model and save best to models
-* [ ] Phase 2
+#### Phase 1: Text-based LLM
 
-  * [ ] Introduction to multimodal, visualize model
-  * [ ] Perform data analysis on image-text pair data
-  * [ ] Layout the key foundational points of modern transformer model and their difference from older models, provide examples
-  * [ ] Perform different techniques in the architecture with test data
-  * [ ] Train the model
-  * [ ] Evaluate the model and explain why's of everything
-  * [ ] Research and perform better techniques on the model while documenting
-  * [ ] visualize the model attention via custom UI libraries
-  * [ ] Finsh off with text model and save best to models
-* [ ] Final edits, errors and notes
+* [X] Perform data analysis on textual data
+* [ ] Evolution of Large Language Models
+* [ ] Introduction to Modern Transformers
+* [ ] Experiment with different architectural techniques
+* [ ] Training the model
+* [ ] Evaluating the model and explaining decision patterns
+* [ ] Optimization techniques
+* [ ] Model attention pattern visualization
+* [ ] Export best model to production format
+
+#### Phase 2: Multimodal LLM
+
+* [ ] Introduction to multimodal learning and model visualization
+* [ ] Understanding multimodal data and its importance
+* [ ] Foundational patterns with Multimodal LLMs
+* [ ] Experiment with different architectural techniques
+* [ ] Training the multimodal model
+* [ ] Evaluating the multimodal model
+* [ ] Advanced techniques for multimodal fusion
+* [ ] Multimodal attention pattern visualization
+* [ ] Export best model to production format
+
+#### Phase 3: Finalization
+
+* [ ] Final edits, error analysis, and future work documentation
 * [ ] DONE!
 
 ## 💎 Collaborators

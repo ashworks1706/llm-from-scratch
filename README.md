@@ -2,6 +2,8 @@
 
 A BERT-ResNet fusion model with built-in explainability through attention visualization. Processes text-image pairs while exposing decision-making mechanisms via heatmaps and token highlighting.
 
+**Begin [HERE](https://github.com/ashworks1706/ExplainableAI/blob/main/tutorial.ipynb)!**
+
 ## 🚀 Features
 
 - **Dual Encoder Architecture**: BERT (text) + ResNet (image) with cross-attention fusion

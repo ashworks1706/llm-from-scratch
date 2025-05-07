@@ -106,5 +106,28 @@ flowchart TB
 
 ### TODO
 
-* Image data fusion
-* Multi modality pipeline addition
+* [ ] Decide the project structure and data to use
+* [ ] Setup repository, project and environment
+* [ ] Phase 1
+
+  * [ ] Perform data analysis on textual data
+  * [ ] Layout the key foundational points of modern transformer model and their difference from older models, provide examples
+  * [ ] Perform different techniques in the architecture with test data
+  * [ ] Train the model
+  * [ ] Evaluate the model and explain why's of everything
+  * [ ] Research and perform better techniques on the model while documenting
+  * [ ] visualize the model attention via custom UI libraries
+  * [ ] Finsh off with text model and save best to models
+* [ ] Phase 2
+
+  * [ ] Introduction to multimodal, visualize model
+  * [ ] Perform data analysis on image-text pair data
+  * [ ] Layout the key foundational points of modern transformer model and their difference from older models, provide examples
+  * [ ] Perform different techniques in the architecture with test data
+  * [ ] Train the model
+  * [ ] Evaluate the model and explain why's of everything
+  * [ ] Research and perform better techniques on the model while documenting
+  * [ ] visualize the model attention via custom UI libraries
+  * [ ] Finsh off with text model and save best to models
+* [ ] Final edits, errors and notes
+* [ ] DONE!

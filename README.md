@@ -54,41 +54,73 @@ python demo/app.py
 
 ## 📐 Model Architecture
 
+### Text Modal LLM
 ```mermaid
 flowchart TB
-    %% Main Flow with Integrated Blocks
-    A[Data Collection & Preprocessing] --> B[Modality-Specific Encoders]
-    B --> C[Multi-Modal Fusion Mechanism]
-    C --> D[Training Pipeline]
-    D --> E[Evaluation & Fine-Tuning]
-    E --> F[Deployment & Documentation]
+  %% Main Flow
+  A[Data Collection & Preprocessing] --> B[Text Encoder]
+  B --> C[Training Pipeline]
+  C --> D[Evaluation & Fine-Tuning]
+  D --> E[Deployment & Documentation]
 
-    %% Data Collection Blocks
-    A1["Text Data"] --> A
-    A2["Image Data"] --> A
+  %% Data Collection Blocks
+  A1["Text Corpus"] --> A
+  A2["Tokenization"] --> A
 
-    %% Encoder Blocks
-    B1["Text Encoder (BERT)"] --> B
-    B2["Image Encoder (ResNet)"] --> B
+  %% Encoder Blocks
+  B1["BERT Architecture"] --> B
+  B2["Attention Mechanisms"] --> B
 
-    %% Fusion Mechanism Blocks
-    C1["Concatenation"] --> C
-    C2["Cross-Attention"] --> C
+  %% Training Pipeline Blocks
+  C1["Masked Language Modeling"] --> C
+  C2["Hyperparameter Tuning"] --> C
 
-    %% Training Pipeline Blocks
-    D1["Contrastive Loss"] --> D
-    D2["Hyperparameter Tuning"] --> D
+  %% Evaluation Blocks
+  D1["Quantitative Metrics"] --> D
+  D2["Qualitative Analysis"] --> D
 
-    %% Evaluation Blocks
-    E1["Quantitative Metrics"] --> E
-    E2["Qualitative Analysis"] --> E
+  %% Deployment Blocks
+  E1["Model Export (ONNX)"] --> E
+  E2["API Development (FastAPI)"] --> E
+  E3["Documentation"] --> E
+```
 
-    %% Deployment Blocks
-    F1["Model Export (ONNX)"] --> F
-    F2["API Development (FastAPI)"] --> F
-    F3["Documentation"] --> F
+*Single encoder system with self-attention mechanisms and explainability features*
 
+### Multimodal LLM
+```mermaid
+flowchart TB
+  %% Main Flow with Integrated Blocks
+  A[Data Collection & Preprocessing] --> B[Modality-Specific Encoders]
+  B --> C[Multi-Modal Fusion Mechanism]
+  C --> D[Training Pipeline]
+  D --> E[Evaluation & Fine-Tuning]
+  E --> F[Deployment & Documentation]
 
+  %% Data Collection Blocks
+  A1["Text Data"] --> A
+  A2["Image Data"] --> A
+
+  %% Encoder Blocks
+  B1["Text Encoder (BERT)"] --> B
+  B2["Image Encoder (ResNet)"] --> B
+
+  %% Fusion Mechanism Blocks
+  C1["Concatenation"] --> C
+  C2["Cross-Attention"] --> C
+
+  %% Training Pipeline Blocks
+  D1["Contrastive Loss"] --> D
+  D2["Hyperparameter Tuning"] --> D
+
+  %% Evaluation Blocks
+  E1["Quantitative Metrics"] --> E
+  E2["Qualitative Analysis"] --> E
+
+  %% Deployment Blocks
+  F1["Model Export (ONNX)"] --> F
+  F2["API Development (FastAPI)"] --> F
+  F3["Documentation"] --> F
 ```
 
 *Dual encoder system with cross-attention fusion and visualization hooks*

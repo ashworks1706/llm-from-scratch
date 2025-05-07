@@ -55,6 +55,7 @@ python demo/app.py
 ## 📐 Model Architecture
 
 ### Text Modal LLM
+
 ```mermaid
 flowchart TB
   %% Main Flow
@@ -88,6 +89,7 @@ flowchart TB
 *Single encoder system with self-attention mechanisms and explainability features*
 
 ### Multimodal LLM
+
 ```mermaid
 flowchart TB
   %% Main Flow with Integrated Blocks
@@ -138,11 +140,11 @@ flowchart TB
 
 ### TODO
 
-* [ ] Decide the project structure and data to use
-* [ ] Setup repository, project and environment
+* [X] Decide the project structure and data to use
+* [X] Setup repository, project and environment
 * [ ] Phase 1
 
-  * [ ] Perform data analysis on textual data
+  * [X] Perform data analysis on textual data
   * [ ] Layout the key foundational points of modern transformer model and their difference from older models, provide examples
   * [ ] Perform different techniques in the architecture with test data
   * [ ] Train the model
@@ -163,7 +165,6 @@ flowchart TB
   * [ ] Finsh off with text model and save best to models
 * [ ] Final edits, errors and notes
 * [ ] DONE!
-
 
 ## 💎 Collaborators
 

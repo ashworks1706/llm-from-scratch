@@ -131,3 +131,8 @@ flowchart TB
   * [ ] Finsh off with text model and save best to models
 * [ ] Final edits, errors and notes
 * [ ] DONE!
+
+
+## 💎 Collaborators
+
+Feel free to reach out on [discord](https://discord.gg/u6Gv4Rvr)!

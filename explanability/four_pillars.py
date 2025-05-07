@@ -36,13 +36,14 @@ try:
     nltk.data.find('tokenizers/punkt_tab')
 except LookupError:
     nltk.download('punkt', quiet=True)  
-def visualize(dataset, sample_size=1000):
+def visualize(dataset, sample_size=1000, pillars=None):
     """
     Visualize the four pillars of explainability for text data.
     
     Args:
         dataset: A Hugging Face dataset object
         sample_size: Number of examples to sample for visualization (default: 1000)
+        pillars: List of pillars to visualize (1, 2, 3, 4) or None for all pillars
     
     Returns:
         None, displays visualizations
@@ -63,17 +64,24 @@ def visualize(dataset, sample_size=1000):
     # Setting up the figure layout
     plt.figure(figsize=(20, 20))
     
-    # Call each pillar function
-    pillar1_data_distribution(texts)
-    pillar2_semantic_patterns(texts)
-    pillar3_linguistic_features(texts)
-    pillar4_token_relationships(texts)
+    # Default to all pillars if none specified
+    if pillars is None:
+        pillars = [1, 2, 3, 4]
+    
+    # Call each selected pillar function
+    if 1 in pillars:
+        pillar1_data_distribution(texts)
+    if 2 in pillars:
+        pillar2_semantic_patterns(texts)
+    if 3 in pillars:
+        pillar3_linguistic_features(texts)
+    if 4 in pillars:
+        pillar4_token_relationships(texts)
     
     plt.tight_layout()
     plt.show()
     
     print("Analysis complete!")
-
 def pillar1_data_distribution(texts):
     """Visualize data distribution: text length, vocabulary distribution"""
     print("\n📊 PILLAR 1: DATA DISTRIBUTION")
@@ -110,7 +118,6 @@ def pillar1_data_distribution(texts):
     plt.xticks(rotation=45, ha='right')
     plt.xlabel('Words')
     plt.ylabel('Frequency')
-    
     # 4. Word Cloud
     plt.subplot(2, 2, 4)
     wordcloud = WordCloud(width=800, height=400, background_color='white', 
@@ -127,6 +134,7 @@ def pillar1_data_distribution(texts):
     print(f"Average text length: {np.mean(text_lengths):.2f} words")
     print(f"Median text length: {np.median(text_lengths):.2f} words")
     print(f"Vocabulary size: {len(set(all_words))} unique words")
+     
 
 def pillar2_semantic_patterns(texts):
     """Visualize semantic patterns: topics, embeddings, clusters"""

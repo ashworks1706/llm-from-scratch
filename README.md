@@ -106,6 +106,8 @@ flowchart TB
 
 * [X] Perform data analysis on textual data
 * [ ] Evolution of Large Language Models
+  * [ ] implement code snippets
+  * [ ] add context reference notes on each paragraph
 * [ ] Introduction to Modern Transformers
 * [ ] Experiment with different architectural techniques
 * [ ] Training the model

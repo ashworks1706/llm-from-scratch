@@ -13,3 +13,4 @@ textstat
 datasets
 huggingface-hub
 python-dotenv
+torch

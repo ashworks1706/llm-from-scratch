@@ -105,10 +105,10 @@ flowchart TB
 #### Phase 1: Text-based LLM
 
 * [X] Perform data analysis on textual data
-* [ ] Evolution of Large Language Models
-  * [ ] implement code snippets
-  * [ ] add context reference notes on each paragraph
-* [ ] Introduction to Modern Transformers
+* [X] Evolution of Large Language Models
+  * [X] implement code snippets
+  * [X] add context reference notes on each paragraph
+* [X] Introduction to Modern Transformers
 * [ ] Experiment with different architectural techniques
 * [ ] Training the model
 * [ ] Evaluating the model and explaining decision patterns

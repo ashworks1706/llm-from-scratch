@@ -110,9 +110,9 @@ flowchart TB
   * [X] add context reference notes on each paragraph
 * [X] Introduction to Modern Transformers
 * [ ] Experiment with different architectural techniques
-* [ ] Training the model
-* [ ] Evaluating the model and explaining decision patterns
-* [ ] Optimization techniques
+* [X] Training the model
+* [X] Evaluating the model and explaining decision patterns
+* [X] Optimization techniques
 * [ ] Model attention pattern visualization
 * [ ] Export best model to production format
 

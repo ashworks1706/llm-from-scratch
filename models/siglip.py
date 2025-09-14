@@ -105,6 +105,13 @@ class SiglipAttention(nn.Module):
         
         attn_output = torch.matmul(attn_weights, value_states)
         
+        if attn_output.size() != (batch_size, self.num_heads, seq_len, self.head_dim):
+            raise ValueError(f"attn_output should be of size {(batch_size, self.num_heads, seq_len, self.head_dim)} but is {attn_output.size()}")
+        
+        attn_output = attn_output.transpose(1,2).contiguous() # this is done so that reshaping isnt much of a computation overhead
+        # when you change shape or transpose theres no change in memory of the tensor, pytorch just changes the stride of the tensor
+        attn_output = attn_output.reshape(batch_size, seq_len, self.embed_dim)
+        
 
 
 class SiglipMLP(nn.Module):

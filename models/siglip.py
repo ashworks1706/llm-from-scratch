@@ -74,7 +74,7 @@ class SiglipMLP(nn.Module):
 
 
 # batch norm is size sensitive so its necessary to have big batch size for good training
-
+# in attention mechanism, the model doesn't learn one word during one pass but all the loss gradients for the position and label in parallel in one pass, which is why its so powerful
 class SiglipEncoderLayer(nn.Module):
     def __init__(self, config: SiglipVisionConfig):
         super().__init__()

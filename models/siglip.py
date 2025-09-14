@@ -64,7 +64,7 @@ class SiglipAttention(nn.Module):
         self.embed_dim = config.hidden_size
         self.num_heads = config.num_attention_heads
         self.head_dim = self.embed_dim // self.num_heads
-        self.scale = self.head_dim**-0.5
+        self.scale = self.head_dim**-0.5 # this is basically square root of the model
         self.dropout = config.attention_dropout
         
         self.k_proj = nn.Linear(self.embed_dim, self.embed_dim)
@@ -90,6 +90,20 @@ class SiglipAttention(nn.Module):
         
         attn_weights = (torch.matmul(query_states, key_states.transpose(2,3)) * self.scale)
         
+        #  we add mask layer to avoid the model to look at future values before predicting them
+        
+        # it also tells us how intense is the relationship between which sentence
+        
+        if attn_weights.size() != (batch_size, self.num_heads, seq_len, seq_len):
+            return ValueError(f"Attention Weights should be of size {(batch_size, self.num_heads, seq_len, seq_len)} but is " f"{attn_weights.size()}")
+        
+        # applying softmax row wise
+        # It is applied to all slices along dim, and will re-scale them so that the elements lie in the range [0, 1] and sum to 1
+        attn_weights = nn.functional.softmax(attn_weights, dim=1, dtype=torch.float32).to(query_states.dtype)
+        # apply dorpout only during training
+        attn_weights = nn.functional.dropout(attn_weights, p=self.dropout, training=self.training)
+        
+        attn_output = torch.matmul(attn_weights, value_states)
         
 
 

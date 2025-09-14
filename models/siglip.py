@@ -86,6 +86,10 @@ class SiglipAttention(nn.Module):
         
         # each matrix has 8 elements -> heads, each element has 4 tokens, each token has 128 dimensions
         
+        # attention = Q* K^T/sqrt(d_k). attnweights : batchsize, numheads, numpatches, numpatches
+        
+        attn_weights = (torch.matmul(query_states, key_states.transpose(2,3)) * self.scale)
+        
         
 
 

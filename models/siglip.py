@@ -112,6 +112,10 @@ class SiglipAttention(nn.Module):
         # when you change shape or transpose theres no change in memory of the tensor, pytorch just changes the stride of the tensor
         attn_output = attn_output.reshape(batch_size, seq_len, self.embed_dim)
         
+        attn_output = self.out_proj(attn_output)
+        
+        return attn_output, attn_weights
+        
 
 
 class SiglipMLP(nn.Module):

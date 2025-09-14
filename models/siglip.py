@@ -19,7 +19,7 @@ class SiglipVisionConfig:
 
 class SiglipVisionEmbeddings(nn.Module):
     def __init__(self, config: SiglipVisionConfig):
-        super().__init__()
+        super().__init__() 
         self.config = config
         self.embed_dim = config.hidden_size
         self.image_size = config.image_size
@@ -54,6 +54,24 @@ class SiglipVisionEmbeddings(nn.Module):
         
         return embeddings 
 
+class SiglipAttention(nn.Module):
+    
+    # this is MHA from Attention is all you need paper.
+    
+    def __init__(self,config):
+        super().__init__()
+        self.config = config
+        self.embed_dim = config.hidden_size
+        self.num_heads = config.num_attention_heads
+        self.head_dim = self.embed_dim // self.num_heads
+        self.scale = self.head_dim**-0.5
+        self.dropout = config.attention_dropout
+        
+        self.k_proj = nn.Linear(self.embed_dim, self.embed_dim)
+        self.v_proj = nn.Linear(self.embed_dim, self.embed_dim)
+        self.q_proj = nn.Linear(self.embed_dim, self.embed_dim)
+        self.out_proj = nn.Linear(self.embed_dim, self.embed_dim)
+
 
 class SiglipMLP(nn.Module):
     def __init__(self,config):
@@ -72,6 +90,7 @@ class SiglipMLP(nn.Module):
         hidden_states = self.fc2(hidden_states)
         return hidden_states
 
+# difference between VLM and LLM is that in VLM we want to contexualize the visuals and patches in such a way that they capture information about all other patches while in LLMs we want patches to catch informations about its token and previous tokens
 
 # batch norm is size sensitive so its necessary to have big batch size for good training
 # in attention mechanism, the model doesn't learn one word during one pass but all the loss gradients for the position and label in parallel in one pass, which is why its so powerful

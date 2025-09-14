@@ -135,10 +135,7 @@ class SiglipMLP(nn.Module):
         hidden_states = self.fc2(hidden_states)
         return hidden_states
 
-# difference between VLM and LLM is that in VLM we want to contexualize the visuals and patches in such a way that they capture information about all other patches while in LLMs we want patches to catch informations about its token and previous tokens
 
-# batch norm is size sensitive so its necessary to have big batch size for good training
-# in attention mechanism, the model doesn't learn one word during one pass but all the loss gradients for the position and label in parallel in one pass, which is why its so powerful
 class SiglipEncoderLayer(nn.Module):
     def __init__(self, config: SiglipVisionConfig):
         super().__init__()
@@ -161,6 +158,22 @@ class SiglipEncoderLayer(nn.Module):
         
         hidden_states = self.mlp(hidden_states) # theres no mixing of batches its all independent
 
+class SiglipEncoder(nn.Module):
+    # actual sequence of encoding layers
+    def __init__(self, config):
+        super().__init__()
+        self.layers = nn.ModuleList([SiglipEncoderLayer(config) for _ in range(config.num_hidden_layers)])
+    
+    def forward(self,input_embeds):
+        hidden_states = input_embeds
+        for encoder_layer in self.layers:
+            hidden_states = encoder_layer(hidden_states)
+            
+
+# difference between VLM and LLM is that in VLM we want to contexualize the visuals and patches in such a way that they capture information about all other patches while in LLMs we want patches to catch informations about its token and previous tokens
+
+# batch norm is size sensitive so its necessary to have big batch size for good training
+# in attention mechanism, the model doesn't learn one word during one pass but all the loss gradients for the position and label in parallel in one pass, which is why its so powerful
 class SiglipVisionTransformer(nn.Module):
     
     def __init__(self, config: SiglipVisionConfig):

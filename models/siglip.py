@@ -71,6 +71,22 @@ class SiglipAttention(nn.Module):
         self.v_proj = nn.Linear(self.embed_dim, self.embed_dim)
         self.q_proj = nn.Linear(self.embed_dim, self.embed_dim)
         self.out_proj = nn.Linear(self.embed_dim, self.embed_dim)
+        
+    def forward(self,hidden_states):
+        # hidden states : batchsize, numpatches, embeddimension
+        batch_size,seq_len,_ = hidden_states.size()
+        
+        query_states = self.q_proj(hidden_states)
+        key_states = self.k_proj(hidden_states)
+        value_states = self.v_proj(hidden_states)
+        # QKV is just transformation of input sequence
+        query_states = query_states.view(batch_size, seq_len, self.num_heads, self.head_dim).transpose(1,2)
+        key_states = key_states.view(batch_size, seq_len, self.num_heads, self.head_dim).transpose(1,2)
+        value_states = value_states.view(batch_size, seq_len, self.num_heads, self.head_dim).transpose(1,2)
+        
+        # each matrix has 8 elements -> heads, each element has 4 tokens, each token has 128 dimensions
+        
+        
 
 
 class SiglipMLP(nn.Module):

@@ -29,3 +29,8 @@ class PaliGemmaProcessor:
     def __call__(self, text, images, padding, truncation):
         assert len(images) == 1 and len(text) == 1, f"Received {len(images)} images for {len(text)} prompts."
         
+        pixel_values = process_images(images,size=(self.image_size, self.image_size), resample=Image.Resampling.BICUPIC, rescale_factor=1/255.0,image_mean=IMAGENET_STANDARD_MEAN, image_std=IMAGENET_STANDARD_STD)
+        
+        pixel_values = np.stack(pixel_values, axis=0)
+        
+        pixel_values = torch.tensor(pixel_values)

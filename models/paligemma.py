@@ -25,3 +25,7 @@ class PaliGemmaProcessor:
         
         self.tokenizer = tokenizer
         
+    
+    def __call__(self, text, images, padding, truncation):
+        assert len(images) == 1 and len(text) == 1, f"Received {len(images)} images for {len(text)} prompts."
+        

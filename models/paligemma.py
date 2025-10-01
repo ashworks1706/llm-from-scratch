@@ -6,6 +6,15 @@ import torch
 IMAGENET_STANDARD_MEAN = [0.5,0.5,0.5]
 IMAGENET_STANDARD_STD = [0.5,0.5,0.5]
 
+def add_images_tokens_to_prompt(prefix_prompt: str, bos_token: Optional[str], image_seq_len: int, image_token: str):
+    # this function adds the image tokens to the prompt
+    # for example, if the prompt is "a cat", and the image_seq_len is 4, and the image_token is <image>, then the output will be "<bos> <image> <image> <image> <image> a cat"
+    # if bos_token is None, then the output will be "<image> <image> <image> <image> a cat"
+    if bos_token is not None:
+        return f"{bos_token} " + " ".join([image_token]*image_seq_len) + f" {prefix_prompt}"
+    else:
+        return " ".join([image_token]*image_seq_len) + f" {prefix_prompt}"
+
 def resize(image,size,resample,reducing_gap):
     # image resizing means changing the size of the image, it is needed when the input image size is different from the model input size
     # for example, the input image size is 512x512, but the model input size is 224x224, so we need to resize the image
@@ -78,5 +87,10 @@ class PaliGemmaProcessor:
         input_strings = [add_images_tokens_to_prompt(prefix_prompt = prompt, bos_token = self.tokenizer.bos_token, image_seq_len = self.image_seq_length, image_token=self.IMAGE_TOKEN) for prompt in text]
         
         inputs = self.tokenizer(input_strings, return_tensors="pt",padding=padding,truncation=truncation)
-        
-        return_data=
+        # padding is the process of adding extra tokens to the input sequence to make it the same length as the longest sequence in the batch
+        # truncation is the process of removing tokens from the input sequence to make it the same length as the longest sequence in the batch
+        # both padding and truncation are used to ensure that all input sequences in a batch have the same length, which is required for efficient processing by the model
+        # for example, if the longest sequence in the batch has a length of 10, and another sequence has a length of 8, we can add 2 padding tokens to the end of the shorter sequence to make it the same length as the longest sequence
+        # the difference between input ID and input embedding is that input ID is the index of the token in the vocabulary, while input embedding is the vector representation of the token, input ID is used to look up the input embedding in the embedding matrix and get the input embedding
+        return_data = {"pixel_values": pixel_values, **inputs}
+        return return_data

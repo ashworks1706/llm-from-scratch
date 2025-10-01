@@ -6,6 +6,30 @@ import torch
 IMAGENET_STANDARD_MEAN = [0.5,0.5,0.5]
 IMAGENET_STANDARD_STD = [0.5,0.5,0.5]
 
+def resize(image,size,resample,reducing_gap):
+    # image resizing means changing the size of the image, it is needed when the input image size is different from the model input size
+    # for example, the input image size is 512x512, but the model input size is 224x224, so we need to resize the image
+    height,width = size
+    # what does image.resize mean? since image is a PIL image, it means the new size of the image
+    resized_image=image.resize((width,height),resample=resample, reducing_gap=reducing_gap) # PIL size is (width,height)
+    return resized_image 
+
+def rescale(image,scale, dtype):
+    # image rescaling means changing the value of the image, it is needed when the input image value range is different from the model input value range
+    # for example, the input image value range is [0,255], but the model input value range is [0,1], so we need to rescale the image value
+    rescaled_image=image * scale
+    rescaled_image=rescaled_image.astype(dtype)
+    return rescaled_image
+
+def normalize(image,mean,std):
+    # image normalization means changing the value of the image to have a mean of 0 and a standard deviation of 1
+    # it is needed when the input image value range is different from the model input value range
+    # for example, the input image value range is [0,1], but the model input value range is [-1,1], so we need to normalize the image value
+    mean = np.array(mean, dtype=image.dtype)
+    std = np.array(std, dtype=image.dtype)
+    normalized_image=(image - mean) / std
+    return normalized_image
+
 def process_images(images,size,resample,rescale_factor,image_mean,image_std):
     height,width = size[0],size[1]
     images=[resize(image=image,size=(height,width),resample=resample) for image in images] # [0,1]
@@ -25,8 +49,14 @@ class PaliGemmaProcessor:
         
         tokens_to_add = {"additional_special_tokens": [self.IMAGE_TOKEN]}
         tokenizer.add_special_tokens(tokens_to_add)
-        EXTRA_TOKENS=[f"<loc{i:04d}>" for i in range(1024)] # tokens are used for object detection 
-        EXTRA_TOKENS+=[f"<seg{i:03d}" for i in range(128)] # tokens are used for object segmentation
+        # object detection means identifying the location of objects in an image and drawing a bounding box around them
+        # object segmentation means identifying the location of objects in an image and drawing a mask around them
+        # this is done by adding extra tokens to the tokenizer
+        # these tokens are used to represent the location and segmentation of objects in the image
+        # for example, <loc0001> represents the location of the first object in the image, <seg001> represents the segmentation of the first object in the image
+        # by adding these tokens to the tokenizer, we enable the model to understand and generate text that includes references to specific locations or segments within an image
+        EXTRA_TOKENS=[f"<loc{i:04d}>" for i in range(1024)] # tokens are used for object detection
+        EXTRA_TOKENS+=[f"<seg{i:03d}>" for i in range(128)] # tokens are used for object segmentation
         tokenizer.add_tokens(EXTRA_TOKENS)
         self.image_token_id = tokenizer.convert_tokens_to_ids(self.IMAGE_TOKEN)
         # we add BOS and EOS tokens

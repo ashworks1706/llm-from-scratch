@@ -1,1 +1,3 @@
-i implemented mixtral here
+# Mixtral Model
+
+Implementation of the Mixtral MoE model architecture.

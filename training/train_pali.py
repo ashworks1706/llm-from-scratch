@@ -1,0 +1,1 @@
+# PaliGemma Training Script

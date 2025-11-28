@@ -1,1 +1,3 @@
-i implemented olmo here
+# OLMo Model
+
+Implementation of the OLMo model architecture.

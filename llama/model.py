@@ -1,9 +1,10 @@
-# Main Gemma class
-from config import Config
+# Main Llama class
+from ..utils.config import Config
 
-class Gemma:
-    def __init__(self, config):
-        self.config = Config
+class Llama: 
+    def __init__(self, config, logger):
+        self.config = Config(**config)
+        self.logger = logger
 
     def generate(self, prompt):
         # get prompt and pass it through the model layers

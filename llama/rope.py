@@ -21,3 +21,5 @@ def precompute_freqs_cis(dim,end,theta=500000.0):
     theta: base frequency to handle very long context
     what is frequency in this scenario? frequency is basically the speed of rotation for each dimension
     """
+    # frequency bands
+    freqs = 1.0 / (theta ** (torch.arange(0,dim,2)[: (dim //2)].float() / dim))

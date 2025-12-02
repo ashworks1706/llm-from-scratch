@@ -72,7 +72,7 @@ class Attention(nn.Module):
         xk = self.repeat_v(xk, self.n_heads // self.n_kv_heads) # we do this devision because each key/value head is shared by multiple query heads
         xv = self.repeat_v(xv, self.n_heads // self.n_kv_heads) 
 
-        # since in pytroch when you give two 4d tensors, it treats the first two dimensions as "loops" and
+        # since in pytroch when we give two 4d tensors, it treats the first two dimensions as "loops" and
         # the last two as matrices to be multiplied, we need to transpose the heads and seq dimensions
 
         xq = xq.transpose(1,2) # (Batch, n_heads, Seq, Head_Dim)

@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch
 import torch.nn.functional as F
 class MLP(nn.Module):
-    # In PyTorch, every neural network block must inherit from nn.Module. If you don't do this, PyTorch won't 
+    # In PyTorch, every neural network block must inherit from nn.Module. If we don't do this, PyTorch won't 
     # know that this class contains trainable parameters (weights), so it won't update them during training
     def __init__(self, config):
         super().__init__()
@@ -18,11 +18,11 @@ class MLP(nn.Module):
         self.up_proj= nn.Linear(dim, hidden_dim, bias=False) 
         self.down_proj = nn.Linear(hidden_dim, dim, bias=False) # take result of big calculation and squeeze it back to original size
 
-    # SiLU(x) = x * σ(x)
-    # where:
-        # x is the input to the activation function.
-        # σ(x) is the logistic sigmoid function, defined as:
-            # σ(x) = 1 / (1 + e^(-x))
+        # SiLU(x) = x * σ(x)
+        # where:
+            # x is the input to the activation function.
+            # σ(x) is the logistic sigmoid function, defined as:
+                # σ(x) = 1 / (1 + e^(-x))
 
 
     def forward(self, x):

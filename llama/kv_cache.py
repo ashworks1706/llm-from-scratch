@@ -25,12 +25,15 @@ class KVCache:
         # We insert the new data into the pre-allocated tensor.
         # like writing to a specific page in a notebook.
         # [Batch, start_pos : end_pos, Heads, Dim]
-        self.k_cache[:batch_size, start_pos : start_pos+seq_len] = xk
+        self.k_cache[:batch_size, start_pos : start_pos+seq_len] = xk # We do not append! Appending forces the computer 
+        # to create a whole new array and copy everything over (slow). instead, we overwrite the zeros in the specific 
+        # empty slots.
         self.v_cache[:batch_size, start_pos : start_pos + seq_len] = xv
         # We don't just return the cache. We return the slice of the cache
         # that actually contains data (from index 0 up to current position).
         # Attention needs to see EVERYTHING: Past + Present.
         keys_out = self.k_cache[:batch_size, :start_pos + seq_len]
         values_out = self.v_cache[:batch_size, :start_pos + seq_len]
-
+        # we return keysout or valuesout specifically as subarray because the array might still be filled with 
+        # zero values which are not useful
         return keys_out, values_out

@@ -45,7 +45,7 @@ class Llama(nn.Module):
             end=config.max_sequence_length * 2 # *2 is a safety buffer for context extension
         )
 
-    def forward(self, tokens):
+    def forward(self, tokens, kv_cache_list=None):
         # tokens shape: (Batch, Seq_Len)
         
         # 1. Convert IDs to Vectors
@@ -53,13 +53,19 @@ class Llama(nn.Module):
 
         # 2. Prepare RoPE frequencies
         seq_len = tokens.shape[1]
-        freqs_cos = self.freqs_cos[:seq_len].to(tokens.device)
-        freqs_sin = self.freqs_sin[:seq_len].to(tokens.device)
+        freqs_cos = self.freqs_cos[start_pos : start_pos + seq_len].to(tokens.device)
+        freqs_sin = self.freqs_sin[start_pos : start_pos + seq_len].to(tokens.device)
+        # we slice RoPE here specifically because, is freqs[:1] was there, we would rotate the 
+        # second word after first word by 0 degrees
+        # basically model thinks every single word is the first word in the sentence, hence output 
+        # would be nonsense
 
         # 3. Run through the Decoder Stack
-        for layer in self.layers:
+        for i, layer in enumerate(self.layers):
+            # we must pick the correct cache object for this specific layer
+            layer_cache = kv_cache_list[i] if kv_cache_list is not None else None
             # We pass the rotation frequencies to every layer
-            h = layer(h, freqs_cos, freqs_sin)
+            h = layer(h, freqs_cos, freqs_sin, layer_cache, start_pos)
 
         # 4. Final Norm
         h = self.norm(h)

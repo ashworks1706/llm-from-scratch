@@ -1,3 +1,5 @@
+# RMSNorm + GQA + RoPE + KV Cache 
+
 
 from ..utils.config import Config
 from rope import apply_rotary_emb
@@ -45,7 +47,7 @@ class Attention(nn.Module):
         return x.reshape(batch_size, seq_len, n_kv_heads * n_rep, head_dim) # reshape to combine repeated heads
 
 
-    def forward(self, x, freqs_cis, freq_sin):
+    def forward(self, x, freqs_cis, freq_sin, kv_cache=None, start_pos=None):
         batch_size, seq_len, _ = x.shape # has dimensions that we need to get
 
         # turning input into q,k,v vectors
@@ -71,6 +73,13 @@ class Attention(nn.Module):
         # now we apply GQA for grouping the query heads to key/value heads by repeating the key/value heads
         xk = self.repeat_v(xk, self.n_heads // self.n_kv_heads) # we do this devision because each key/value head is shared by multiple query heads
         xv = self.repeat_v(xv, self.n_heads // self.n_kv_heads) 
+
+        # we here use kv cache --added new
+
+        if kv_cache is not None and start_pos is not None:
+            # writing new kv to cache to retreive the full history past + present
+            # xk and xv grow from size 1 to size start_pos + 1
+            xk, xv = kv_cache.update(xk,xv,start_pos)
 
         # since in pytroch when we give two 4d tensors, it treats the first two dimensions as "loops" and
         # the last two as matrices to be multiplied, we need to transpose the heads and seq dimensions

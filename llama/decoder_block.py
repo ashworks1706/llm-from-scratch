@@ -33,7 +33,7 @@ class DecoderBlock(nn.Module):
         # SwiGLU activation function in the MLP.
         self.ffn_norm = RMSNorm(dim, eps)
 
-    def forward(self, x, freqs_cos, freqs_sin):
+    def forward(self, x, freqs_cos, freqs_sin, kv_cache=None, start_pos=None):
         
         # 1. self.attention_norm(x): Normalize BEFORE doing the work.
         #    (Original Transformers normalized after, which was unstable).
@@ -41,7 +41,7 @@ class DecoderBlock(nn.Module):
         # 3. x + ... : The Residual Connection (Skip Connection).
         #    This allows the gradient to flow through the network without vanishing.
         #    It effectively says: "Keep what we already knew (x), and ADD the new context."
-        h = x + self.attention(self.attention_norm(x), freqs_cos, freqs_sin)
+        h = x + self.attention(self.attention_norm(x), freqs_cos, freqs_sin, kv_cache, start_pos)
 
         # 1. self.ffn_norm(h): Normalize the output of Step 1.
         #    Notice we normalize 'h', not 'x'. The input has changed!

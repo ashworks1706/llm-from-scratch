@@ -1,4 +1,4 @@
-# RMSNorm + GQA + RoPE + KV Cache 
+# RMSNorm + SwigLU + GQA + RoPE + KV Cache 
 
 
 from ..utils.config import Config

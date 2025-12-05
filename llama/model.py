@@ -45,7 +45,7 @@ class Llama(nn.Module):
             end=config.max_sequence_length * 2 # *2 is a safety buffer for context extension
         )
 
-    def forward(self, tokens, kv_cache_list=None):
+    def forward(self, tokens, start_pos=0, kv_cache_list=None):
         # tokens shape: (Batch, Seq_Len)
         
         # 1. Convert IDs to Vectors

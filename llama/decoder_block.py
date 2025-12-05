@@ -31,7 +31,7 @@ class DecoderBlock(nn.Module):
         # Specialist 2: The MLP Normalizer
         # This layer learns to scale the input to hit the "sweet spot" of the 
         # SwiGLU activation function in the MLP.
-        self.ffn_norm = RMSNorm(dim, eps)
+        self.ffn_norm = RMSNorm(dim, eps=eps)
 
     def forward(self, x, freqs_cos, freqs_sin, kv_cache=None, start_pos=None):
         

@@ -34,6 +34,8 @@ class SparseMoE(nn.Module):
         # the appropriate number of experts is decided by specifying the trade off between Memory(VRAM) and Compute(Speed)
         self.num_experts_per_tok = config.num_experts_per_tok
 
+        self.gate = nn.Linear(config.embedding_size, self.num_experts, bias = False)
+
         self.experts = nn.ModuleList([MLP(config) for _ in range(self.num_experts)])
 
         # usually the goal is this : N*Size -> determines how smart the model is 
@@ -53,7 +55,7 @@ class SparseMoE(nn.Module):
 
     batch, seq_len, dim = x.shape 
 
-    x.flat = x.view(-1, dim) # shape: totaltokens, dim
+    x_flat = x.view(-1, dim) # shape: totaltokens, dim
 
     # projecting input through the linear layer to get the 8 scores for our expert probabilities
     router_logits = self.gate(x_flat)
@@ -63,7 +65,7 @@ class SparseMoE(nn.Module):
     router_probs = F.softmax(router_logits, dim=-1)
 
     # renormalize, we select top k by weights : probabilities of the winners, indices: the ids of the winners, dim=-1 -> we look at the expert dimensions
-    weights, indeces = torch.topk(router_probs, self.num_experts_per_tok, dim=-1)
+    weights, indices = torch.topk(router_probs, self.num_experts_per_tok, dim=-1)
 
     # we create a canvas of zeros to pain the results into
 
@@ -73,30 +75,55 @@ class SparseMoE(nn.Module):
     # we loop throuygh every possing expert (0 to 7)
     
     for i in range(self.num_experts):
-        # we check all k selections at once
-        
-        batch_max = (indices == i).any(dim=-1)
+            
+            # A. Create a Mask for this Expert
+            # 'indices' has shape (T, K). 
+            # We ask: "Is Expert 'i' anywhere in the Top-K for this token?"
+            # selection_mask shape: (T, K) -> True/False grid
+            selection_mask = (indices == i)
+            
+            # B. Check if this expert has ANY work to do
+            # We collapse the K dimension. If it's True in column 0 OR column 1, 
+            # then this token needs Expert 'i'.
+            # token_mask shape: (T, ) -> 1D Boolean array
+            token_mask = selection_mask.any(dim=-1)
+            
+            # Optimization: If no tokens selected this expert, skip computation.
+            if token_mask.any():
+                
+                # C. Extract Inputs (Gather)
+                # We grab the rows from x_flat where token_mask is True.
+                # shape: (Num_Active_Tokens, Dim)
+                expert_input = x_flat[token_mask] # We physically copy the data of the relevant tokens into a new, smaller list. 
+                # If batch size is 10, but only 2 people need Expert 0, this tensor is size 2.
+                
+                # D. Run the Expert
+                expert_output = self.experts[i](expert_input) # The MLP ran on only the relevant data. This is where we save compute! 
+                # We didn't run it on the 8 people who didn't need it.
+                
+                # E. Extract Specific Weights (The "True" Way)
+                # We do NOT do mathematical tricks here. We use indexing.
+                # 'weights' is shape (T, K). 'selection_mask' is (T, K).
+                # By doing weights[selection_mask], PyTorch extracts a 1D list of 
+                # values where the mask is True.
+                # Because Top-K guarantees an expert appears AT MOST once per token,
+                # the length of this list exactly matches 'Num_Active_Tokens'.
+                # shape: (Num_Active_Tokens, )
+                expert_weights = weights[selection_mask]
+                
+                # F. Apply Weights
+                # (N, D) * (N, 1) broadcast
+                weighted_output = expert_output * expert_weights.unsqueeze(-1)
+                
+                # G. Accumulate (Scatter Add)
+                # We add the results back to the specific rows in the final canvas.
+                # PyTorch handles the indexing automatically here.
+                final_output[token_mask] += weighted_output
 
-        # if an expert is not needed, then skip it
-        if batch_mask.any():
-            # extract only tokens that need this expert network
-            tokens_for_expert = x_flat[batch_mask]
-
-            expert_out = self.experts[i](tokens_for_expert) # executing the select expert
-
-            # We need to multiply the output by the Router Weight (e.g., * 0.8)
-            # We have to find the specific weight for Expert 'i' for these tokens.
-            # We use 'where' to find which rank (1st choice or 2nd choice) this expert was.
-            # THIS is the magic , we dont just choose best layer but the best weight for the best token as well
-
-            prob = weights[batch_mask]
 
 
-
-
-    
-
-
+        # Reshape back to sequence
+        return final_output.view(batch, seq_len, dim) 
 
 
 

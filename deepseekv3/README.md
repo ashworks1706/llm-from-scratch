@@ -1,37 +1,5 @@
-this is the third part of my llm architecture research journey
+this is my implementation of deepseek v3 which is the most complex architecture so far. it combines multi-head latent attention with mixture of experts to be extremely parameter efficient.
 
-The Flow of Data:
+instead of storing full key and value vectors, mla compresses them into tiny latent representations which saves a ton of memory in the kv cache. it splits the key into content and position parts to apply rope correctly on compressed vectors. the model also uses 64 experts with top 6 routing which is much more fine grained than mixtral.
 
-Input ($x$): The token comes in from the previous floor.
-
-Normalization 1: Clean up the data (RMSNorm).
-
-MLA (Attention):
-
-Compress input to latent.
-
-Store in Cache.
-
-Extract Meaning/Position.
-
-Look at history.
-
-Result: "I understand the context now."
-
-Residual Connection 1: Add the result back to $x$.
-
-Normalization 2: Clean up the data again (RMSNorm).
-
-MoE (FeedForward):
-
-Router looks at data.
-
-Selects 6 out of 64 experts.
-
-Experts process the data.
-
-Result: "I have analyzed the meaning."
-
-Residual Connection 2: Add result back to $x$.
-
-Output: Send to the next floor.
+the feedforward uses shared experts plus routed experts for better parameter sharing. all this compression and routing makes it complicated but very efficient for the number of parameters.

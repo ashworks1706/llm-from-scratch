@@ -1,10 +1,5 @@
-# llm-from-scratch
+this repository is where i build language models from scratch to understand how they work. the goal is educational so i can learn the internals of modern llms by implementing them myself with detailed notes and comments.
 
-A small, educational codebase and notebook that implements and documents core concepts behind large language models (LLMs) from first principles. This repository collects notes, math derivations, and simple implementations so you can learn the building blocks of modern LLMs and experiment with training & inference.
+each subdirectory contains a different model architecture. llama3 is the baseline transformer decoder using grouped query attention. mixtral8x7b extends that with sparse mixture of experts. deepseekv3 adds multi-head latent attention for compression. kimik2 focuses on extreme long context with optimized rope parameters.
 
-This repo is intended for learning and research — not a production LLM.
-
-## What you'll find here
-
-- `tutorial.ipynb` — the core learning notebook with notes, math, and runnable code.
-- `explanability/` — supporting code that documents explainability concepts used in the repo.
+i try to keep the code readable with inline explanations of what each component does and why certain design choices were made. this helps me remember the reasoning when i come back to review the code later.

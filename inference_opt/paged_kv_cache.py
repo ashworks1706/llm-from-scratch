@@ -1,25 +1,20 @@
-# so normally in KV cache, we reserve a massive contiguous block of VRAM for every user, -> 4096
-# what if the user just says "Hi!" , in that case all 4095 slots of VRAM is unused
-# paged attention uses noncontiguous blocks of memory to provide on demand service when needed in VRAM
-
-
 import torch
 import math 
 
 class PhysicalTokenBlock:
-    def __init__(self, config):
+    # UPDATED: Changed __init__ to take explicit args so it matches how you call it below
+    def __init__(self, block_number, block_size, head_dim, num_heads, device):
         # this is a single chunk of physical memory on the GPU
         # this holds the block_size tokens
         
-        self.block_number = config.block_number
-        self.block_size = config.block_size
+        self.block_number = block_number
+        self.block_size = block_size
         
         # the actual storage
         # shape: (num_heads, block_size, head_dim)
         # We put block_size in the middle for contiguous memory access pattern
-
-        self.key_block = torch.zeros((config.num_heads ,config.block_size, config.head_dim), dtype=torch.float32, device=config.device)
-        self.value_block = torch.zeros((config.num_heads ,config.block_size, config.head_dim), dtype=torch.float32, device=config.device)
+        self.key_block = torch.zeros((num_heads, block_size, head_dim), dtype=torch.float32, device=device)
+        self.value_block = torch.zeros((num_heads, block_size, head_dim), dtype=torch.float32, device=device)
 
         self.ref_count = 0 # for beam search / sharing
 
@@ -36,8 +31,10 @@ class KVBlockManager:
         self.free_blocks = []
         self.all_blocks = []
         # pre alocating all gpu memory at startup
+        self.block_tables = {} # Initialize the map
 
         for i in range(config.num_blocks):
+            # Calls the corrected __init__ above
             block = PhysicalTokenBlock(i, config.block_size, config.head_dim, config.num_heads, config.device)
             self.all_blocks.append(block)
             self.free_blocks.append(i)
@@ -50,6 +47,11 @@ class KVBlockManager:
 
         # popping a free block index
         physical_block_id = self.free_blocks.pop()
+        
+        # Reset block state
+        block = self.all_blocks[physical_block_id]
+        block.ref_count = 1 
+        block.num_filled = 0
 
         # assigning to user's block table
         if request_id not in self.block_tables:
@@ -57,7 +59,27 @@ class KVBlockManager:
 
         self.block_tables[request_id].append(physical_block_id)
 
-        return self.all_blocks[physical_block_id]
+        return block
+
+    # --- NEW: The Forking Mechanism ---
+    def fork_sequence(self, parent_id, child_id):
+        """
+        Creates a new sequence (child) that shares the memory of the parent.
+        Used when Beam Search decides to split 1 path into 2.
+        """
+        if child_id in self.block_tables:
+            raise ValueError(f"ID {child_id} already exists!")
+
+        # 1. Copy the Page Table (The Map)
+        # We don't copy the data! We just copy the list of IDs.
+        # Parent: [10, 11] -> Child: [10, 11]
+        parent_table = self.block_tables[parent_id]
+        self.block_tables[child_id] = parent_table.copy()
+        
+        # 2. Increment Reference Counts
+        # Tell the physical blocks: "Hey, one more person is pointing at you."
+        for block_id in parent_table:
+            self.all_blocks[block_id].ref_count += 1
 
 
     def get_physical_block(self, request_id, logical_token_index):
@@ -68,17 +90,17 @@ class KVBlockManager:
         
         block_table = self.block_tables[request_id]
 
-
         # which block in the sequence is this?
         logical_block_idx = logical_token_index // self.block_size
 
         # if we need a new bock, allocate it 
-        if logical_block_idx >= len(block_tables):
+        if logical_block_idx >= len(block_table): # Fixed typo: block_tables -> block_table
             self.allocate_block(request_id)
 
         physical_block_id = block_table[logical_block_idx]
 
         return self.all_blocks[physical_block_id]
+
 
     def append_token(self, request_id, key_vector, value_vector):
         # writes a single token's KV to the correct spot in the physical memory
@@ -91,9 +113,39 @@ class KVBlockManager:
         last_physical_id = self.block_tables[request_id][-1]
         last_block = self.all_blocks[last_physical_id]
         
+        # --- NEW: Copy-On-Write (COW) Logic ---
+        # Before we write, we check: Is anyone else watching this block?
+        if last_block.ref_count > 1:
+            # STOP! Shared block. We must split.
+            
+            # 1. Alloc new block
+            new_block = self.allocate_block(request_id) # Adds to table end automatically
+            
+            # Note: allocate_block adds the NEW block to the end of the list.
+            # But we want to REPLACE the SHARED block (which is also at the end).
+            # So the table currently looks like [..., Shared_ID, New_ID].
+            # We need to fix this.
+            
+            # Remove the New_ID we just added to the end
+            self.block_tables[request_id].pop() 
+            # Replace the Shared_ID with New_ID
+            self.block_tables[request_id][-1] = new_block.block_number
+            
+            # 2. Copy valid data from old shared block to new private block
+            valid_slots = last_block.num_filled
+            new_block.key_block[:, :valid_slots, :] = last_block.key_block[:, :valid_slots, :].clone()
+            new_block.value_block[:, :valid_slots, :] = last_block.value_block[:, :valid_slots, :].clone()
+            new_block.num_filled = valid_slots
+            
+            # 3. Decrement old block ref
+            last_block.ref_count -= 1
+            
+            # 4. Switch focus
+            last_block = new_block
+        # --------------------------------------
 
         # is this block full?
-        if last_block.num_filled>= self.block_size:
+        if last_block.num_filled >= self.block_size:
             # allocate a new block
             last_block = self.allocate_block(request_id)
         
@@ -105,7 +157,6 @@ class KVBlockManager:
         last_block.value_block[:,slot,:] = value_vector
 
         last_block.num_filled+=1
-
 
 
     def get_attention_memory(self, request_id):
@@ -134,6 +185,3 @@ class KVBlockManager:
         full_v = torch.cat(values_list, dim=1)
         
         return full_k, full_v
-
-
-

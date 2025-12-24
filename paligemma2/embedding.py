@@ -9,7 +9,7 @@
 import torch
 import torch.nn as nn 
 
-class Embeddings(nn.Module):
+class Embedding(nn.Module):
     def __init__(self, config):
         super().__init__()
         self.config = config

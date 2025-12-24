@@ -49,3 +49,25 @@ import torch
 
     def forward(self, pixel_values: torch.FloatTensor) -> torch.Tensor:
         # pixel_values shape : (Batch_size, 3 , height, width)
+        
+        # we apply patching
+        # output shape: (batch, embed_dim, grid_h, grid_w)
+        embeddings = self.patch_embedding(pixel_values)
+        
+        # Flatten them into sequence
+        # shape: (batch, embed_dim, num_patches)
+        embeddings = embeddings.flatten(2)
+        
+        # we transpose it to channel list (rules)
+        # shape: (batch, 256, 1152)
+        embeddings = embeddings.transpose(1,2)
+        
+
+        # adding position_embedding
+        # we just add the learned vector for position 0 to patch 0,etc..
+        embeddings = embeddings + self.position_embedding(self.position_ids)
+
+        return embeddings
+
+
+

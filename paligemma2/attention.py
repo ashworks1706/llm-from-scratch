@@ -65,12 +65,21 @@ class Attention(nn.Module):
         # then we transpose to bring 'num_heads' before 'seq_len' so we can do 
         # matrix multiplication per head
         # target shape : (batch, num_heads, seq_len, head_dim)
+        
+        # we do this because, pytorch's matrix mulitplication operates on the last two dimensions
+        # since it treats everything else as a batch dimension to loop over 
+        # if we did not do this, then it would matrix mulitply 16x72 which is wrong other than seq_len
+        # by doing this, we tell pytorch to treat (batch,16) as independent matrices that it needs to process
+        # Reshape : Split the big vector into heads
+        # Transpose : Move 'Heads' dimension out of the way
         query_states = query_states.view(batch_size, seq_len, self.num_heads, self.head_dim).transpose(1,2)
         key_states = key_states.view(batch_size, seq_len, self.num_heads, self.head_dim).transpose(1,2)
         value_states = value_states.view(batch_size, seq_len, self.num_heads, self.head_dim).transpose(1,2)
 
         # K transposed shape : (Batch, heads, head_dim, seq_len)
         # Result shape: (Batch, heads, seq_len, seq_len) -> (B,16,256,256)
+        # why? we do this to compress the feature dimension to find the relationship between sequence positions
+        # if we did not do this, we would try to multiply 256x72 * 256x72, which is impossible
         attn_weights = (torch.matmul(query_states, key_states.transpose(2,3)) * self.scale)
 
         # we then use softmax, to convert all scores to probabilities laon the last dimension (columns)
@@ -81,9 +90,13 @@ class Attention(nn.Module):
         attn_output = torch.matmul(attn_weights, value_states)
 
         # we then transpose them back (B, 256, 16, 72)
-        attn_output=attn_output.transpose(1,2).contiguous()
-        # flatte back 
-        attn_output = attn_output.view(batch_size, seq_len, self.embed_dim)
+        attn_output=attn_output.transpose(1,2).contiguous() # <- this does not actually move data in memoory, it just changes
+        # the stride to read the memory
+        # now in RAM, the data for "head 1" is still far away from "head 0". it's fragmented.
+        # flatten back 
+        attn_output = attn_output.view(batch_size, seq_len, self.embed_dim) # <- this forces the pytroch to make a fresh copy 
+        # of tensor where the memory layout physically matches the shape. it defragged the tensor so we can flatten it safely
+
 
         # final linear projection
         attn_output = self.out_proj(attn_output)

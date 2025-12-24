@@ -113,4 +113,42 @@ class SiglipAttention(nn.Module):
         # hidden_states: (batch, seq_len, embed_dim) -> (B,256,1152)
         batch_size, seq_len, _ = hidden_states.size()
 
+        # Projection to Q, K, V 
+        # shape: (B, 256, 1152)
+        query_states = self.q_proj(hidden_states)
+        key_states = self.k_proj(hidden_states)
+        value_states = self.v_proj(hidden_states)
+
+        # split it into heads 
+        # we reshape 1152 -> 16 heads x 72 dimension
+        # then we transpose to bring 'num_heads' before 'seq_len' so we can do 
+        # matrix multiplication per head
+        # target shape : (batch, num_heads, seq_len, head_dim)
+        query_states = query_states.view(batch_size, seq_len, self.num_heads, self.head_dim).transpose(1,2)
+        key_states = key_states.view(batch_size, seq_len, self.num_heads, self.head_dim).transpose(1,2)
+        value_states = value_states.view(batch_size, seq_len, self.num_heads, self.head_dim).transpose(1,2)
+
+        # K transposed shape : (Batch, heads, head_dim, seq_len)
+        # Result shape: (Batch, heads, seq_len, seq_len) -> (B,16,256,256)
+        attn_weights = (torch.matmul(query_states, key_states.transpose(2,3)) * self.scale)
+
+        # we then use softmax, to convert all scores to probabilities laon the last dimension (columns)
+        attn_weights = nn.functional.softmax(attn_weights, dim=-1, dtype = torch.float32).to(query_states.dtype)
+
+        # apply to values
+        # (B, 16, 256, 256) * (B, 16, 256, 72) -> (B, 16, 256, 72)
+        attn_output = torch.matmul(attn_weights, value_states)
+
+        # we then transpose them back (B, 256, 16, 72)
+        attn_output=attn_output.transpose(1,2).contiguous()
+        # flatte back 
+        attn_output = attn_output.view(batch_size, seq_len, self.embed_dim)
+
+        # final linear projection
+        attn_output = self.out_proj(attn_output)
+
+        return attn_output
+
+
+
 

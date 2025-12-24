@@ -42,5 +42,10 @@ import torch
         self.num_positions = self.num_patches
         self.position_embedding = nn.Embedding(self.num_positions, self.embed_dim)
         
-        
+        # we register the buffer for position_ids so they are saved with the model but not 
+        # updated by the optimizer
+        # but why? because in buffer, u store things that u will likely update like embedding and position ids
+        # input like patchids, stay in cpu
 
+    def forward(self, pixel_values: torch.FloatTensor) -> torch.Tensor:
+        # pixel_values shape : (Batch_size, 3 , height, width)

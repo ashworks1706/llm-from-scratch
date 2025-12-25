@@ -1,10 +1,10 @@
-# encoder is basically the layer that combines the attention (context) and MLP (reasoning)
+# encoder layer combines attention and mlp
 
 import torch
 import torch.nn as nn 
 
-from .attention import Attention
-from .mlp import MLP 
+from vision_attention import Attention
+from vision_mlp import MLP 
 
 class EncoderLayer(nn.Module):
     def __init__(self, config):

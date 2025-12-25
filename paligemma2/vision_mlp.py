@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn 
-from .attention import Attention
 
 # once we're done with attetnion, we use MLP to process the new informaton and think about it 
 # it looks at one patch at a tme, it does not look at neighbors, it just takes
@@ -23,7 +22,7 @@ class MLP(nn.Module):
         self.act_fn = nn.GELU(approximate="tanh")
 
 
-    def forward(self, hidden_states : torch.Tensor) -. torch.Tensor:
+    def forward(self, hidden_states : torch.Tensor) -> torch.Tensor:
         # hidden_stateas : (Batch, seq_len, 1152)
         hidden_states = self.fc1(hidden_states)
 

@@ -38,7 +38,7 @@ class Attention(nn.Module):
         super().__init__()
         self.config = config
         self.embed_dim = config.vision_config.hidden_size # 1152
-        self.num_heads = config.vision_conffig.num_attention_heads # 16
+        self.num_heads = config.vision_config.num_attention_heads # 16
         self.head_dim = self.embed_dim // self.num_heads # 1152/ 16 = 72
         self.scale = self.head_dim ** -0.5 # 1 / sqrt(72)
 

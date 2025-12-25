@@ -68,7 +68,6 @@ class PaliGemmaProcessor:
         Returns:
             input_ids: (batch, seq_len)
         """
-        # this is simplified - real implementation would use sentencepiece or similar
         # for now just showing the structure
         
         processed = []

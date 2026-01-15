@@ -31,6 +31,9 @@ import math
 # benefits: faster inference, no memory overhead, can delete A and B
 # downside: can't switch between different LoRA adapters anymore
 
+# in normal SFT it trains all parameters that is attention + MLP + embeddings + layer_norms
+# every single weight in the model gets updated 
+# whereas in LoRA, we only update attention layers, everything else is frozen
 
 class LoRALayer(nn.Module):
     def __init__(self, original_layer, rank=8, alpha=16):

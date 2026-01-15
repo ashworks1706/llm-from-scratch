@@ -1,3 +1,13 @@
+# SFT adapts a pretrained language model to follow instructions and give helpful responses.
+# The key difference from pretraining:
+# - Pretraining: model learns general language patterns from raw text
+# - SFT: model learns to map instructions → responses
+
+# the linear layer is the layer that does output =x @ W+b, its an object containing weights 
+# weight is the actual tensors inside the linear layer, layer.weight is the tensor with shape (out_f, in_F)
+# nn.Parameter is a tensor that torch should track for training, when we do nn.prameter(tensor), torch includes it 
+# in modle.parameters() compute gradietns for it and optimizer updates it 
+
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
@@ -12,11 +22,7 @@ from llama3.model import Llama
 from utils.config import Config
 from dataset import SFTDataset, SFTDataPreprocessor
 class SFTTrainer:
-    # SFT adapts a pretrained language model to follow instructions and give helpful responses.
-    # The key difference from pretraining:
-    # - Pretraining: model learns general language patterns from raw text
-    # - SFT: model learns to map instructions → responses
-    
+   
     # Training process:
     # 1. Feed instruction + response as one sequence
     # 2. Only calculate loss on response tokens (mask instruction)

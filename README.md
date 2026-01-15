@@ -5,13 +5,7 @@ each subdirectory contains a different model architecture. llama3 is the baselin
 i try to keep the code readable with inline explanations of what each component does and why certain design choices were made. this helps me remember the reasoning when i come back to review the code later.
 
 
-1. Pretraining (2.5 hours remaining)
-
-  - ✅ dataset.py 
-  - ⏳ train.py (filling TODOs + testing)
-  - 📝 README.md
-
-2. SFT Pipeline (2-3 hours)
+. SFT Pipeline (2-3 hours)
 
 Files to create:
 
@@ -19,6 +13,7 @@ Files to create:
   - sft/train.py - Similar to pretraining but different data (~30 min)
   - sft/format_data.py - Convert raw data to instruction format (~30 min)
   - sft/README.md (~15 min)
+  - PEFT 
 
 
 3. Inference Pipeline (2-3 hours)
@@ -65,7 +60,7 @@ Files to create:
 ├──────────────────────┼─────────────┼───────────┤
 │ Pretraining (finish) │ 2.5h        │ 🔴 HIGH   │
 ├──────────────────────┼─────────────┼───────────┤
-│ SFT Pipeline         │ 2-3h        │ 🔴 HIGH   │
+│ SFT Pipeline + PEFT  │ 2-3h        │ 🔴 HIGH   │
 ├──────────────────────┼─────────────┼───────────┤
 │ Inference Pipeline   │ 2-3h        │ 🟡 MEDIUM │
 ├──────────────────────┼─────────────┼───────────┤

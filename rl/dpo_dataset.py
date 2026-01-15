@@ -112,21 +112,18 @@ class DPODataset(Dataset):
 class DPODataPreprocessor:
     """
     converts different formats to DPO format
-    
-    common sources:
     - human feedback data (ranked responses)
     - synthetic data (good vs bad responses)
     - reward model scores (filter best vs worst)
     """
     
     def preprocess_preference_data(self, input_path, output_path):
-        """
-        convert preference data to DPO format
+        # convert preference data to DPO format
         
-        input formats handled:
-        - anthropic HH format: conversations with rankings
-        - reward model format: responses with scores
-        """
+        
+        # input formats handled:
+        # - anthropic HH format: conversations with rankings
+        # - reward model format: responses with scores
         with open(input_path, 'r') as f:
             raw_data = json.load(f)
         

@@ -1,3 +1,9 @@
+# Pretraining is the process of teaching a model to predict the next token in a sequence.
+# The model learns language patterns, grammar, facts, and reasoning from raw text data.
+# This is different from fine-tuning which adapts a pretrained model to specific tasks.
+# pretraining is entirely sequential its not comparision, its just one sequence of predicting next token, 
+# there's casual masking of half parts of sequence tokens
+
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
@@ -13,14 +19,7 @@ from utils.config import Config
 from dataset import TextDataset, DataPreprocessor
 
 class PreTrainer:
-    
-    # Pretraining is the process of teaching a model to predict the next token in a sequence.
-    # The model learns language patterns, grammar, facts, and reasoning from raw text data.
-    # This is different from fine-tuning which adapts a pretrained model to specific tasks.
-    # pretraining is entirely sequential its not comparision, its just one sequence of predicting next token, 
-    # there's casual masking of half parts of sequence tokens
-    
-    # The training process:
+    # The pre-training process:
     # 1. Feed sequences of tokens to the model
     # 2. Model predicts next token at each position
     # 3. Compare predictions to actual next tokens (CrossEntropy loss)
@@ -61,22 +60,13 @@ class PreTrainer:
 
 
     def train_step(self, inputs, targets):
-        """
-        Executes a single training step (one batch).
+       
+        # This is the core of the training loop where learning actually happens:
+        # 1. Forward pass: data flows through the model to get predictions
+        # 2. Loss calculation: measure how wrong the predictions are
+        # 3. Backward pass: compute gradients (how to adjust each weight)
+        # 4. Weight update: use gradients to make model slightly better
         
-        This is the core of the training loop where learning actually happens:
-        1. Forward pass: data flows through the model to get predictions
-        2. Loss calculation: measure how wrong the predictions are
-        3. Backward pass: compute gradients (how to adjust each weight)
-        4. Weight update: use gradients to make model slightly better
-        
-        Args:
-            inputs: Token IDs, shape (batch_size, seq_len)
-            targets: Target token IDs (inputs shifted by 1), shape (batch_size, seq_len)
-        
-        Returns:
-            Loss value as a float (for logging/monitoring)
-        """
         # Move data to GPU/CPU - PyTorch operations need tensors on same device as model
         inputs = inputs.to(self.device)
         targets = targets.to(self.device)
@@ -127,21 +117,8 @@ class PreTrainer:
 
 
     def train_epoch(self, epoch):
-        """
-        Trains for one complete pass through the dataset (one epoch).
+       
         
-        An epoch is one complete iteration through all training data.
-        In practice, we need many epochs because:
-        - One pass isn't enough to learn all patterns
-        - Model needs to see examples multiple times to generalize
-        - Each time it sees data, it understands patterns slightly better
-        
-        Args:
-            epoch: Current epoch number (for logging)
-        
-        Returns:
-            Average loss across all batches in this epoch
-        """
         # Set model to training mode
         # This enables dropout, batch norm updates, etc. (behavior differs from eval mode)
         # Important because some layers behave differently during training vs inference
@@ -171,17 +148,6 @@ class PreTrainer:
 
 
     def train(self):
-        """
-        Main training loop - orchestrates the entire training process.
-        
-        This runs multiple epochs of training and handles:
-        - Progress monitoring across epochs
-        - Checkpoint saving (so we can resume or use model later)
-        - Overall training orchestration
-        
-        The model gets better with each epoch as it sees the data multiple times.
-        We save checkpoints periodically so we don't lose progress if training stops.
-        """
         print("Starting training...")
         
         # Create directory for saving model checkpoints
@@ -215,20 +181,6 @@ class PreTrainer:
 
 
 if __name__ == "__main__":
-    """
-    Example setup for pretraining a small Llama3 model.
-    
-    This config creates a "tiny" version for testing/learning:
-    - Small dimensions (512) instead of full size (4096+)
-    - Few layers (4) instead of many (32+)
-    - Short sequences (128) instead of long (4096+)
-    - Small batch size (4) for fitting in limited memory
-    
-    For real pretraining you'd use much larger values, but this is perfect for:
-    - Understanding the training process
-    - Testing code changes quickly
-    - Running on consumer GPUs
-    """
     # Create config for small model (for testing)
     config = Config(
         model_name="llama3",

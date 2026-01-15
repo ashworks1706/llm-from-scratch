@@ -11,11 +11,6 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from llama3.model import Llama
 from utils.config import Config
 from dataset import SFTDataset, SFTDataPreprocessor
-# in LoRA fientuning, instead of output = W @ input updating W entire matrix, we just add two small matrices A and B and keep W 
-# frozen, like output = W @ input + (B @ A) input so total trainable params becomes 4096*r + r*4096 = ~65k vs 16M
-# we only capture the small changes that happen in finetuning not retain everyting
-# B @ A represents the delta change to the original weights 
-
 class SFTTrainer:
     # SFT adapts a pretrained language model to follow instructions and give helpful responses.
     # The key difference from pretraining:

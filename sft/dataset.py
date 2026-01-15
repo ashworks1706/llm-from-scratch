@@ -4,17 +4,14 @@ import json
 import tiktoken
 
 class SFTDataset(Dataset):
-    """
-    SFT teaches a pretrained model to follow instructions and give helpful responses.
-    The key difference from pretraining:
-    - Pretraining: learn from raw text (predict next token everywhere)
-    - SFT: learn from instruction-response pairs (only predict response tokens)
+    # The key difference from pretraining:
+    # - Pretraining: learn from raw text (predict next token everywhere)
+    # - SFT: learn from instruction-response pairs (only predict response tokens)
     
-    During training, we:
-    1. Concatenate instruction + response into one sequence
-    2. Only calculate loss on response tokens (mask instruction tokens)
-    3. This teaches the model: "given instruction, generate this response"
-    """
+    # During training, we:
+    # 1. Concatenate instruction + response into one sequence
+    # 2. Only calculate loss on response tokens (mask instruction tokens)
+    # 3. This teaches the model: "given instruction, generate this response"
     
     def __init__(self, data_path, max_seq_len, tokenizer_name="cl100k_base"):
        self.max_seq_len = max_seq_len
@@ -64,6 +61,9 @@ class SFTDataset(Dataset):
         
         input_ids = tokens[:-1]
         target_ids = tokens[1:]
+        # we do all this string slicing because we have all we need in one sequence and we have to correctly
+        # identify which is instruction and whihc is response of llm, since we want the llm to train on the response token 
+        # theres no point of lelarning instruction tokens since llm provide answers 
         
         # loss mask: 0 for instruction tokens, 1 for response tokens
         # this is the key difference from pretraining
@@ -84,15 +84,9 @@ class SFTDataPreprocessor:
         pass
     
     def preprocess_conversations(self, input_path, output_path):
-        """
-        Input format examples:
-        - Alpaca format: {"instruction": "...", "input": "...", "output": "..."}
-        - ShareGPT format: {"conversations": [{"from": "human", "value": "..."}, {"from": "gpt", "value": "..."}]}
+        # - Alpaca format: {"instruction": "...", "input": "...", "output": "..."}
+        # - ShareGPT format: {"conversations": [{"from": "human", "value": "..."}, {"from": "gpt", "value": "..."}]}
         
-        Output format:
-        [{"instruction": "...", "response": "..."}, ...]
-        
-       """
         with open(input_path, 'r', encoding='utf-8') as f:
             raw_data = json.load(f)
         
@@ -121,14 +115,12 @@ class SFTDataPreprocessor:
                         })
                         break
         
-        # Save formatted data
         with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(formatted_data, f, indent=2, ensure_ascii=False)
         
         print(f"Preprocessed {len(formatted_data)} examples")
         print(f"Saved to {output_path}")
         
-        # Print sample
         if formatted_data:
             print("\nSample:")
             print(f"Instruction: {formatted_data[0]['instruction'][:100]}...")

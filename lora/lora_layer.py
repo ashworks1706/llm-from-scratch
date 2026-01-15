@@ -99,3 +99,8 @@ class LoRALayer(nn.Module):
         
         with torch.no_grad():
             self.original_layer.weight.add_(scaling * delta)
+
+# r (rank): Determines the dimension/size of the low-rank matrices. A lower rank means fewer parameters and smaller file size, while a higher rank offers more learning capacity. Common values range from 4 to 32.
+# lora_alpha (scaling factor): Scales the output of the LoRA module, controlling the strength of the adaptation. It is typically set to twice the rank.
+# target_modules: Specifies which specific layers of the base model architecture (e.g., "q_proj", "v_proj", or "all-linear") will receive the LoRA adaptations. 
+

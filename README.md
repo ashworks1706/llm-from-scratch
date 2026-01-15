@@ -15,18 +15,6 @@ Files to create:
   - Already have: paged_kv_cache.py
   - inference_opt/README.md (~15 min)
 
-4. RL Pipeline (3-4 hours) - MOST COMPLEX
-
-Files to create:
-
-  - rl/reward_model.py - Train reward model (~1 hour)
-  - rl/ppo_trainer.py - PPO implementation (~1.5 hours)
-  - rl/dpo_trainer.py - DPO (simpler alternative) (~1 hour)
-  - rl/dataset.py - Preference pairs dataset (~30 min)
-  - rl/README.md (~15 min)
-
-Key concepts: Reward modeling, policy gradients, KL divergence penalty
-
 5. Distillation (2-3 hours)
 
 Files to create:

@@ -5,26 +5,19 @@ each subdirectory contains a different model architecture. llama3 is the baselin
 i try to keep the code readable with inline explanations of what each component does and why certain design choices were made. this helps me remember the reasoning when i come back to review the code later.
 
 
-3. Inference Pipeline (2-3 hours)
-
-Files to create:
-
+Inference Pipeline (2-3 hours)
   - inference_opt/batched_inference.py - Batch multiple requests (~45 min)
   - inference_opt/quantization.py - 8-bit/4-bit quantization (~1 hour)
   - inference_opt/server.py - Simple API server (~45 min)
   - Already have: paged_kv_cache.py
   - inference_opt/README.md (~15 min)
 
-5. Distillation (2-3 hours)
-
-Files to create:
-
+Distillation (2-3 hours)
   - distillation/teacher_student.py - Knowledge distillation (~1.5 hours)
   - distillation/dataset.py - Generate teacher outputs (~45 min)
   - distillation/README.md (~15 min)
 
-6. Integration & Testing (1-2 hours)
-
+Integration & Testing (1-2 hours)
   - End-to-end pipeline test
   - Documentation
   - Examples

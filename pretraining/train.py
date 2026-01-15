@@ -13,20 +13,20 @@ from utils.config import Config
 from dataset import TextDataset, DataPreprocessor
 
 class PreTrainer:
-    """
-    Handles the complete pretraining pipeline for language models.
     
-    Pretraining is the process of teaching a model to predict the next token in a sequence.
-    The model learns language patterns, grammar, facts, and reasoning from raw text data.
-    This is different from fine-tuning which adapts a pretrained model to specific tasks.
+    # Pretraining is the process of teaching a model to predict the next token in a sequence.
+    # The model learns language patterns, grammar, facts, and reasoning from raw text data.
+    # This is different from fine-tuning which adapts a pretrained model to specific tasks.
+    # pretraining is entirely sequential its not comparision, its just one sequence of predicting next token, 
+    # there's casual masking of half parts of sequence tokens
     
-    The training process:
-    1. Feed sequences of tokens to the model
-    2. Model predicts next token at each position
-    3. Compare predictions to actual next tokens (CrossEntropy loss)
-    4. Backpropagate gradients to update weights
-    5. Repeat millions of times until model learns language patterns
-    """
+    # The training process:
+    # 1. Feed sequences of tokens to the model
+    # 2. Model predicts next token at each position
+    # 3. Compare predictions to actual next tokens (CrossEntropy loss)
+    # 4. Backpropagate gradients to update weights
+    # 5. Repeat millions of times until model learns language patterns
+
     def __init__(self, config, train_dataset_path):
         self.config = config
         # Device selection: CUDA (GPU) for fast training, CPU as fallback
@@ -258,5 +258,4 @@ if __name__ == "__main__":
     # trainer = PreTrainer(config, "data/tokens.pt")
     # trainer.train()
     
-    print("Setup complete. Uncomment the code above to preprocess and train.")
 

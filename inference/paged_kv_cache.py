@@ -63,10 +63,8 @@ class KVBlockManager:
 
     # --- NEW: The Forking Mechanism ---
     def fork_sequence(self, parent_id, child_id):
-        """
-        Creates a new sequence (child) that shares the memory of the parent.
-        Used when Beam Search decides to split 1 path into 2.
-        """
+        # Creates a new sequence (child) that shares the memory of the parent.
+        # Used when Beam Search decides to split 1 path into 2.
         if child_id in self.block_tables:
             raise ValueError(f"ID {child_id} already exists!")
 
@@ -160,11 +158,9 @@ class KVBlockManager:
 
 
     def get_attention_memory(self, request_id):
-        """
-        Reconstructs the full Key/Value tensors for attention.
-        In vLLM, this is done by a custom CUDA kernel that reads directly from blocks.
-        Here, we will 'Gather' them back into a contiguous tensor for PyTorch.
-        """
+        # Reconstructs the full Key/Value tensors for attention.
+        # In vLLM, this is done by a custom CUDA kernel that reads directly from blocks.
+        # Here, we will 'Gather' them back into a contiguous tensor for PyTorch.
         block_ids = self.block_tables[request_id]
         
         keys_list = []

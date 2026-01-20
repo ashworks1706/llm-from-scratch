@@ -9,9 +9,9 @@ Distillation (2-3 hours)
   - distillation/dataset.py - Generate teacher outputs (~45 min)
   - distillation/README.md (~15 min)
 
-Integration & Testing (1-2 hours)
-  - End-to-end pipeline test
-  - Examples
+Neural Network basics CNNs RNNs LSTMs Pytorch 
 
+AE, VAE from scratch 
 
+stable diffusion model from scratch
 

@@ -4,6 +4,9 @@ each subdirectory contains a different model architecture. llama3 is the baselin
 
 i try to keep the code readable with inline explanations of what each component does and why certain design choices were made. this helps me remember the reasoning when i come back to review the code later.
 
+QAT
+QLoRA
+
 Distillation (2-3 hours)
   - distillation/teacher_student.py - Knowledge distillation (~1.5 hours)
   - distillation/dataset.py - Generate teacher outputs (~45 min)

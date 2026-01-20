@@ -36,6 +36,9 @@ class QuantizedLinear(nn.Module):
         # quantizing bias saves almost no memory but loses precision
         if bias is not None:
             self.bias = nn.Parameter(bias, requires_grad=False)
+            # nn.linear creates an actual layer with stored weights 
+            # F.Linear just creates a function thta has no state and u have to pass it the states 
+            # it just does the math and returns 
         else:
             self.bias = None
     

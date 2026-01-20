@@ -4,17 +4,18 @@ each subdirectory contains a different model architecture. llama3 is the baselin
 
 i try to keep the code readable with inline explanations of what each component does and why certain design choices were made. this helps me remember the reasoning when i come back to review the code later.
 
-QAT
-QLoRA
+Neural Network basics CNNs RNNs LSTMs Pytorch 
+
+AE, VAE from scratch 
+
+stable diffusion model from scratch
 
 Distillation (2-3 hours)
   - distillation/teacher_student.py - Knowledge distillation (~1.5 hours)
   - distillation/dataset.py - Generate teacher outputs (~45 min)
   - distillation/README.md (~15 min)
 
-Neural Network basics CNNs RNNs LSTMs Pytorch 
+QAT
+QLoRA
 
-AE, VAE from scratch 
-
-stable diffusion model from scratch
 

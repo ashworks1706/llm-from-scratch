@@ -19,7 +19,6 @@ from utils.config import Config
 from dataset import TextDataset, DataPreprocessor
 
 class PreTrainer:
-    # The pre-training process:
     # 1. Feed sequences of tokens to the model
     # 2. Model predicts next token at each position
     # 3. Compare predictions to actual next tokens (CrossEntropy loss)
@@ -32,15 +31,14 @@ class PreTrainer:
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         print(f"Using device: {self.device}")
         
-        # Load preprocessed tokens from disk
         # These tokens were created by tokenizing raw text and saved for reuse
         tokens = torch.load(train_dataset_path)
         
-        # Create dataset: converts token list into (input, target) pairs
+        # converts token list into (input, target) pairs
         # Each sample: input=[tok1,tok2,tok3], target=[tok2,tok3,tok4] (shifted by 1)
         self.dataset = TextDataset(tokens, config.max_sequence_length)
         
-        # DataLoader: batches samples together and shuffles for better training
+        # batches samples together and shuffles for better training
         # Shuffling prevents model from memorizing order and helps generalization
         self.dataloader = DataLoader(self.dataset, batch_size=config.batch_size, shuffle=True)
         
@@ -48,7 +46,7 @@ class PreTrainer:
         # .to(device) moves all model parameters to the specified device
         self.model = Llama(config).to(self.device)
         
-        # AdamW optimizer: adaptive learning rate optimizer with weight decay
+        # optimizer: adaptive learning rate optimizer with weight decay
         # Adam adapts learning rate per parameter based on gradient history
         # Weight decay helps prevent overfitting by penalizing large weights
         self.optimizer = AdamW(self.model.parameters(), lr=config.learning_rate)

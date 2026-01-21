@@ -81,6 +81,8 @@ class DistillationTrainer:
 
         # since loss depednds on gradients, softmax derivative scales with 1/T so loss scales with 1/T², we multiply by T² to normalize
         # without this, soft loss would be too small compared to hard loss 
+        # softmax(x) = exp(x) / sum(exp(x))
+        # log_softmax(x) = log(softmax(x)) = x - log(sum(exp(x)))
 
         # compute hard loss (cross entropy)
         # we use student's logits without temperature on cross entropy loss formula since we want accurate predicts on true labels 

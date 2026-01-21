@@ -6,9 +6,10 @@ i try to keep the code readable with inline explanations of what each component 
 
 Neural Network basics CNNs RNNs LSTMs Pytorch 
 
+stable diffusion model from scratch
+
 AE, VAE from scratch 
 
-stable diffusion model from scratch
 
 QAT
 QLoRA

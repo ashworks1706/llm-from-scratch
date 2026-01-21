@@ -38,7 +38,7 @@
 #                                 + Hard Loss (with true labels)
 #                                      ↓
 #                                 Total Loss → Backprop → Update Student Only
-
+import os
 import torch 
 import torch.nn.functional as F 
 import torch.optim as optim 
@@ -173,6 +173,7 @@ class DistillationTrainer:
         return average_loss
 
     def train(self):
+        os.makedirs("distill_checkpoints", exists_ok=True)
         for epoch in range(self.epochs):
             average_loss = self.train_epoch(epoch)
             print(f"Average loss : {average_loss}")

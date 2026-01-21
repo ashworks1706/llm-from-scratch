@@ -42,11 +42,17 @@
 import torch 
 import torch.nn.functional as F 
 class DistillationTrainer:
-    def __init__(self, teacher_model, student_model, config):
+    def __init__(self, teacher_model, student_model, config, train_dataset):
         self.teacher = teacher_model # frozen (not supposed to be trained)
         self.student = student_model # training 
         self.temperature = config.temperature
         self.alpha = config.alpha # balance soft vs hard loss
+        # add optimizer for student 
+        self.optimizer = torch.AdamW(config.learning_rate)
+
+        self.data_loader = DataLoader(train_dataset, batch_size=config.batch_size,shuffle=True)
+
+        self.teacher.eval(requires_grad=False)
 
     # what happens in one trainign step?
     # normal training (without teacher):
@@ -136,5 +142,32 @@ class DistillationTrainer:
 
         
         return total_loss.item(), soft_loss.item(), hard_loss.item()
+
+
+    def train_epoch(self, epoch):
+        return 
+
+    def train(self):
+        return 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

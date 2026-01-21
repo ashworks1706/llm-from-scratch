@@ -42,6 +42,7 @@
 import torch 
 import torch.nn.functional as F 
 import torch.optim as optim 
+from torch.utils.data import DataLoader
 class DistillationTrainer:
     def __init__(self, teacher_model, student_model, config, train_dataset):
         self.teacher = teacher_model # frozen (not supposed to be trained)
@@ -49,27 +50,29 @@ class DistillationTrainer:
         self.temperature = config.temperature
         self.alpha = config.alpha # balance soft vs hard loss
         # add optimizer for student 
-        self.optimizer = optim.AdamW(student_model.parameters(), config.learning_rate)
+        self.optimizer = optim.AdamW(student_model.parameters(), lr=config.learning_rate)
 
         self.data_loader = DataLoader(train_dataset, batch_size=config.batch_size,shuffle=True)
 
-        self.epochs = config.epochs
+        self.epochs = config.num_epochs
 
-        self.teacher.eval(requires_grad=False)
+        self.teacher.eval()
+        for param in self.teacher.parameters():
+            param.requires_grad=False
 
-    # what happens in one trainign step?
-    # normal training (without teacher):
-    # forwrad pass -> get logits 
-    # compute loss (crossentropy with true labels)
-    # backward pass -> update student weights 
+        # what happens in one trainign step?
+        # normal training (without teacher):
+        # forwrad pass -> get logits 
+        # compute loss (crossentropy with true labels)
+        # backward pass -> update student weights 
 
-    # Distillation training (with teacher):
-    # forward pass throguh BOTH models 
-    # compute two losses :
-    # a) soft loss : math teacher's distribution 
-    # b) hard loss : match true labels 
-    # combine losses 
-    # backward pass -> update student only (teacher frozen)
+        # Distillation training (with teacher):
+        # forward pass throguh BOTH models 
+        # compute two losses :
+        # a) soft loss : math teacher's distribution 
+        # b) hard loss : match true labels 
+        # combine losses 
+        # backward pass -> update student only (teacher frozen)
 
     def train_step(self, input_ids, labels):
 
@@ -108,7 +111,7 @@ class DistillationTrainer:
         # token 0 is somewhat likely, KL measures how much Q differ from P 
         # KL =0 means P and Q are identical, >0 means P and Q differ (student needs to learn)
         # Larger the KL bigger the difference 
-        soft_loss = F.kl_div(student_log_probs,teacher_probs,reduction='batch_mean')
+        soft_loss = F.kl_div(student_log_probs,teacher_probs,reduction='batchmean')
 
         # we need log_softmax for student not for teacher because kldivergence formula needs log probabilities for Q 
         # we need softmax because the logits have raw scores, which can be negative, cannot always sum up to 1
@@ -139,7 +142,7 @@ class DistillationTrainer:
         # combine and backprop
         # we combine totalloss = alpha * soft_loss + (1-alpha) * hardloss 
         # we use both so that soft loss learns teacher's reasoning and nuances and hardloss ensures accuracy on true labels i.e correct teacher's mistakes
-        total_loss = self.alpha * soft_loss * (1-alpha) * hard_loss 
+        total_loss = self.alpha * soft_loss * (1-self.alpha) * hard_loss 
 
         total_loss.backward()
 
@@ -149,25 +152,25 @@ class DistillationTrainer:
 
     def train_epoch(self, epoch):
         # set student to training mode 
-        
+       self.student.train() 
         average_loss=0
         for batch_idx, (input_ids, labels) in enumerate(self.data_loader):
             # zero gradients 
-            torch.zero_grad()
+            self.optimizer.zero_grad()
             # use train step 
             total_loss, soft_loss, hard_loss = self.train_step(input_ids, labels)
             # optimizer step 
-            optimizer.step()
+            self.optimizer.step()
 
-            average_loss = total_loss / epoch 
+            average_loss+=total_loss 
 
             print(f"Epoch {epoch}")
             print(f"Batch {batch_idx}")
             print(f"Soft loss {soft_loss}")
             print(f"Hard loss {hard_loss}")
 
-
-        return  average_loss
+        average_loss = average_loss / len(self.data_loader) # divide by num batches
+        return average_loss
 
     def train(self):
         for epoch in range(self.epochs):
@@ -176,13 +179,13 @@ class DistillationTrainer:
                 
             checkpoint = {
                 'epoch': epoch,
-                'student_model_state_dict': self.student_model.state_dict(),
-                'teacher_model_state_dict': self.teacher_model.state_dict(),
+                'student_model_state_dict': self.student.state_dict(),
+                'teacher_model_state_dict': self.teacher.state_dict(),
                 'optimizer_state_dict': self.optimizer.state_dict(),
                 'loss': average_loss,
             }
 
-            torch.save(checkpoint,"../model_checkpoint.pth")
+            torch.save(checkpoint, f"distill_checkpoints/student_epoch_{epoch+1}.pth")
 
         return 
 

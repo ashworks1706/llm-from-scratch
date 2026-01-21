@@ -41,3 +41,13 @@ def pad_sequences(sequences, pad_value=0):
     mask_tensor = torch.tensor(masks, dtype=torch.long)
     
     return padded_tensor, mask_tensor
+
+def batch_generate(model, prompts, tokenizer, max_new_tokens=50):
+    # tokenize all prompts at once 
+    # add padding 
+    # move to device 
+    # generate an autoregressive loop so for each new token, perform 
+    # forward pass on all sequences at once and then sample next token for each 
+    # and append to sequence
+    # loop through generates sequences and decode them back 
+    return  

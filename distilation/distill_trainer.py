@@ -29,6 +29,15 @@
 # - Only train LoRA adapters on student
 # - Makes distillation even more efficient!
 
+#Input → Teacher (frozen) → Teacher Logits → Soft Targets (T=5)
+#       ↓                                              ↓
+#       └──→ Student (training) → Student Logits → Predictions (T=5)
+#                                       ↓
+#                                 KL Divergence = Soft Loss
+#                                       ↓
+#                                 + Hard Loss (with true labels)
+#                                      ↓
+#                                 Total Loss → Backprop → Update Student Only
 
 class DistillationTrainer:
     def __init__(self, teacher_model, student_model, config):
@@ -53,9 +62,7 @@ class DistillationTrainer:
 
     def train_step(self, input_ids, labels):
 
-        # T² prevents gradient explosion
-        # since softmax derivative scales with 1/T so loss scales with 1/T², we multiply by T² to normalize
-        
+       
         # get teacehr predictions (no grad)
         
         # get student predictions (with grad)
@@ -69,10 +76,19 @@ class DistillationTrainer:
         # where KL(P || Q) = Σ P(x) * log(P(x) / Q(x))
         # - P = teacher's distribution (what we want student to match)
         # - Q = student's distribution (what student currently produces)
+        # we just use torch built in kl_dv function for this, 
+        # we need log_softmax for student not for teacher because kldivergence formula needs log probabilities for Q 
+
+        # since loss depednds on gradients, softmax derivative scales with 1/T so loss scales with 1/T², we multiply by T² to normalize
+        # without this, soft loss would be too small compared to hard loss 
 
         # compute hard loss (cross entropy)
+        # we use student's logits without temperature on cross entropy loss formula since we want accurate predicts on true labels 
         
         # combine and backprop
+        # we combine totalloss = alpha * soft_loss + (1-alpha) * hardloss 
+        # we use both so that soft loss learns teacher's reasoning and nuances and hardloss ensures accuracy on true labels i.e correct teacher's mistakes
+
         
         return 
 

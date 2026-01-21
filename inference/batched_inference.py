@@ -44,10 +44,42 @@ def pad_sequences(sequences, pad_value=0):
 
 def batch_generate(model, prompts, tokenizer, max_new_tokens=50):
     # tokenize all prompts at once 
+    tok_prompts = [tokenizer.encode(prompt) for prompt in prompts]
     # add padding 
+    pad_tensor, mask_tensor = pad_sequences(tok_prompts)
     # move to device 
+    device = next(model.parameters()).device # why? because this gives all 
+    # parameters, next() gets the first one and .device tells us where it is 
+    pad_tensor = pad_tensor.to(device)
+    mask_tensor = mask_tensor.to(device)
     # generate an autoregressive loop so for each new token, perform 
-    # forward pass on all sequences at once and then sample next token for each 
-    # and append to sequence
-    # loop through generates sequences and decode them back 
-    return  
+    for _ in range(max_new_tokens):
+        # forward pass on all sequences at once and then sample next token for each 
+        # and append to sequence
+        # loop through generates sequences and decode them back 
+        # forward pass on current sequences
+        logits = model(pad_tensor) # shape: batch, seq
+        # we get logits for last position of each sequence since we want 
+        # (batch,vocabsize) from (batch,seqlen,vocabsize)
+        next_token_logits = logits[:,-1,:] # not [-1] since that gives last sequence only
+        # i.e (seq, vocabsize) but we want (batch,vocabsize) i.e last positiion of all sequences
+        # [:,-1,: ] : -> all batches, -1 -> last position, : = all vocab
+        probs = torch.softmax(next_token_logits, dim=-1) # convert to prob
+        next_tokens = torch.multinomial(probs, num_samples=1) # sample one token per seq 
+
+        # append new tokens to sequences 
+        # pad_tensor is (batch, seq_len), next_tokens is (batch, 1)
+        # concatenate along sequence dimension
+        pad_tensor = torch.cat([pad_tensor, next_tokens], dim=-1)
+        
+        # step 5: extend attention mask (new tokens are real, not padding!)
+        new_mask = torch.ones((mask_tensor.shape[0], 1), device=device, dtype=torch.long)
+        mask_tensor = torch.cat([mask_tensor, new_mask], dim=1)
+    
+    # decode all sequences back to text
+    generated_texts = []
+    for seq in pad_tensor:
+        text = tokenizer.decode(seq.tolist())  # Convert tensor to list
+        generated_texts.append(text)
+    
+    return generated_texts

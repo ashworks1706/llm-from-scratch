@@ -117,12 +117,21 @@ class DistillationTrainer:
         # the alpha in totla loss is 0.9 usually, 90% trust teacher, 10% trust labels 
         # why? because teacher is usually right, soft targets are richer than hard labels,
         # hard loss is just a saftey net for when teacher fails 
+        vocab_size = student_logits.size(-1)
+
+        hard_loss = F.cross_entropy(
+            student_logits.view(input_ids.shape), # reshape to (batch*seq, vocab)
+            labels.view(labels) # reshape to (batch*seq)
+        )
         
         # combine and backprop
         # we combine totalloss = alpha * soft_loss + (1-alpha) * hardloss 
         # we use both so that soft loss learns teacher's reasoning and nuances and hardloss ensures accuracy on true labels i.e correct teacher's mistakes
+        total_loss = alpha * soft_loss * (1-alpha) * hard_loss 
+
+        total_loss.backward()
 
         
-        return 
+        return total_loss.item(), soft_loss.item(), hard_loss.item()
 
 

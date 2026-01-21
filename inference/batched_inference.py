@@ -64,8 +64,20 @@ def batch_generate(model, prompts, tokenizer, max_new_tokens=50):
         next_token_logits = logits[:,-1,:] # not [-1] since that gives last sequence only
         # i.e (seq, vocabsize) but we want (batch,vocabsize) i.e last positiion of all sequences
         # [:,-1,: ] : -> all batches, -1 -> last position, : = all vocab
+        # we want (3,50000) because 3 is for one prediction per promptp and 50000 for probability 
+        # distribution over all vocab for each 
         probs = torch.softmax(next_token_logits, dim=-1) # convert to prob
+        # dim 0 means stack vertically, rows while dim =1 means to stack horrizontally, columns
+        # sampling is picking one token based on probabillities 
         next_tokens = torch.multinomial(probs, num_samples=1) # sample one token per seq 
+        # returns highest probaibility token_id 
+        #
+        # sampling is generating a sequence = sampling tokens one at a time repeatedly
+        # each step = sampling one token, full process = generating a sequence 
+        #
+        # why sample insteade of always picking highest?
+        # because the greedy approach is borring and repetitive while sampling is more diverse
+        # and often more interesting 
 
         # append new tokens to sequences 
         # pad_tensor is (batch, seq_len), next_tokens is (batch, 1)
@@ -74,6 +86,7 @@ def batch_generate(model, prompts, tokenizer, max_new_tokens=50):
         
         # step 5: extend attention mask (new tokens are real, not padding!)
         new_mask = torch.ones((mask_tensor.shape[0], 1), device=device, dtype=torch.long)
+        # we copy the batch dimension and add 1 token so 1 new token each 
         mask_tensor = torch.cat([mask_tensor, new_mask], dim=1)
     
     # decode all sequences back to text

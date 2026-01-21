@@ -76,11 +76,24 @@ class DistillationTrainer:
         # where KL(P || Q) = Σ P(x) * log(P(x) / Q(x))
         # - P = teacher's distribution (what we want student to match)
         # - Q = student's distribution (what student currently produces)
+        # Each term P(i) * log(P(i)/Q(i)) means if teacher assings high probability P(i) to token i, but student assings 
+        # low probability Q(i), this term becomes LARGE (big penalty)
+        # KL penalizes when student disagrees on teacher's high confience predictions 
         # we just use torch built in kl_dv function for this, 
-        
+        # for ex, if teacher has a probability distribution that says token 0 is very likely and student says 
+        # token 0 is somewhat likely, KL measures how much Q differ from P 
+        # KL =0 means P and Q are identical, >0 means P and Q differ (student needs to learn)
+        # Larger the KL bigger the difference 
+
         
 
         # we need log_softmax for student not for teacher because kldivergence formula needs log probabilities for Q 
+        # we need softmax because the logits have raw scores, which can be negative, cannot always sum up to 1
+        # so inorder to fit these tokens in a range and make sure that its summing up to 1 
+        # we use softmax, we exponentiate all integers to make all positive, divide by sum, then it fits the range
+        # now we use log softmax, because softmax has numerical issues, taking exponents can be quadratically crazy 
+        # so we instead take log than just doing exponential quadratics sincei n log prababilities negative numbers, closer 0 are more likely 
+
 
         # since loss depednds on gradients, softmax derivative scales with 1/T so loss scales with 1/T², we multiply by T² to normalize
         # without this, soft loss would be too small compared to hard loss 
@@ -89,6 +102,11 @@ class DistillationTrainer:
 
         # compute hard loss (cross entropy)
         # we use student's logits without temperature on cross entropy loss formula since we want accurate predicts on true labels 
+        # why not MSE? KL Divergence respects that probabilities must sum to 1
+        # It measures "information divergence" not just numeric difference
+        # the alpha in totla loss is 0.9 usually, 90% trust teacher, 10% trust labels 
+        # why? because teacher is usually right, soft targets are richer than hard labels,
+        # hard loss is just a saftey net for when teacher fails 
         
         # combine and backprop
         # we combine totalloss = alpha * soft_loss + (1-alpha) * hardloss 

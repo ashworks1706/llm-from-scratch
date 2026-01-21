@@ -77,6 +77,9 @@ class DistillationTrainer:
         # - P = teacher's distribution (what we want student to match)
         # - Q = student's distribution (what student currently produces)
         # we just use torch built in kl_dv function for this, 
+        
+        
+
         # we need log_softmax for student not for teacher because kldivergence formula needs log probabilities for Q 
 
         # since loss depednds on gradients, softmax derivative scales with 1/T so loss scales with 1/T², we multiply by T² to normalize

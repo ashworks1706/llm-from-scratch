@@ -142,7 +142,7 @@ class DistillationTrainer:
         # combine and backprop
         # we combine totalloss = alpha * soft_loss + (1-alpha) * hardloss 
         # we use both so that soft loss learns teacher's reasoning and nuances and hardloss ensures accuracy on true labels i.e correct teacher's mistakes
-        total_loss = self.alpha * soft_loss * (1-self.alpha) * hard_loss 
+        total_loss = self.alpha * soft_loss + (1-self.alpha) * hard_loss 
 
         total_loss.backward()
 
@@ -152,7 +152,7 @@ class DistillationTrainer:
 
     def train_epoch(self, epoch):
         # set student to training mode 
-       self.student.train() 
+        self.student.train() 
         average_loss=0
         for batch_idx, (input_ids, labels) in enumerate(self.data_loader):
             # zero gradients 
@@ -173,7 +173,7 @@ class DistillationTrainer:
         return average_loss
 
     def train(self):
-        os.makedirs("distill_checkpoints", exists_ok=True)
+        os.makedirs("distill_checkpoints", exist_ok=True)
         for epoch in range(self.epochs):
             average_loss = self.train_epoch(epoch)
             print(f"Average loss : {average_loss}")

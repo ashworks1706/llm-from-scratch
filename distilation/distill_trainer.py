@@ -39,6 +39,8 @@
 #                                      ↓
 #                                 Total Loss → Backprop → Update Student Only
 
+import torch 
+import torch.nn.functional as F 
 class DistillationTrainer:
     def __init__(self, teacher_model, student_model, config):
         self.teacher = teacher_model # frozen (not supposed to be trained)

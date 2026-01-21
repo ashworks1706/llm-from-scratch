@@ -24,6 +24,10 @@
 # - RL: Learn from human preferences (chosen vs rejected)
 # - Distillation: Learn from teacher's knowledge (soft probabilities)
 
+# LoRA with distillation:
+# - We can freeze student's base weights
+# - Only train LoRA adapters on student
+# - Makes distillation even more efficient!
 
 
 class DistillationTrainer:
@@ -48,6 +52,11 @@ class DistillationTrainer:
     # backward pass -> update student only (teacher frozen)
 
     def train_step(self, input_ids, labels):
+        # T² normalization:
+        # - Yes! Prevents gradient explosion
+        # - Mathematical reason: softmax derivative scales with 1/T
+        # - So loss scales with 1/T², we multiply by T² to normalize
+
         # get teacehr predictions (no grad)
         # get student predictions (with grad)
         # compute soft loss (KL divergence)

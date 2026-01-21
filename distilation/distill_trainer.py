@@ -41,6 +41,7 @@
 
 import torch 
 import torch.nn.functional as F 
+import torch.optim as optim 
 class DistillationTrainer:
     def __init__(self, teacher_model, student_model, config, train_dataset):
         self.teacher = teacher_model # frozen (not supposed to be trained)
@@ -48,9 +49,11 @@ class DistillationTrainer:
         self.temperature = config.temperature
         self.alpha = config.alpha # balance soft vs hard loss
         # add optimizer for student 
-        self.optimizer = torch.AdamW(config.learning_rate)
+        self.optimizer = optim.AdamW(student_model.parameters(), config.learning_rate)
 
         self.data_loader = DataLoader(train_dataset, batch_size=config.batch_size,shuffle=True)
+
+        self.epochs = config.epochs
 
         self.teacher.eval(requires_grad=False)
 
@@ -145,9 +148,42 @@ class DistillationTrainer:
 
 
     def train_epoch(self, epoch):
-        return 
+        # set student to training mode 
+        
+        average_loss=0
+        for batch_idx, (input_ids, labels) in enumerate(self.data_loader):
+            # zero gradients 
+            torch.zero_grad()
+            # use train step 
+            total_loss, soft_loss, hard_loss = self.train_step(input_ids, labels)
+            # optimizer step 
+            optimizer.step()
+
+            average_loss = total_loss / epoch 
+
+            print(f"Epoch {epoch}")
+            print(f"Batch {batch_idx}")
+            print(f"Soft loss {soft_loss}")
+            print(f"Hard loss {hard_loss}")
+
+
+        return  average_loss
 
     def train(self):
+        for epoch in range(self.epochs):
+            average_loss = self.train_epoch(epoch)
+            print(f"Average loss : {average_loss}")
+                
+            checkpoint = {
+                'epoch': epoch,
+                'student_model_state_dict': self.student_model.state_dict(),
+                'teacher_model_state_dict': self.teacher_model.state_dict(),
+                'optimizer_state_dict': self.optimizer.state_dict(),
+                'loss': average_loss,
+            }
+
+            torch.save(checkpoint,"../model_checkpoint.pth")
+
         return 
 
 

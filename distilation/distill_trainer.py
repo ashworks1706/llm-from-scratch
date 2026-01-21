@@ -52,15 +52,28 @@ class DistillationTrainer:
     # backward pass -> update student only (teacher frozen)
 
     def train_step(self, input_ids, labels):
-        # T² normalization:
-        # - Yes! Prevents gradient explosion
-        # - Mathematical reason: softmax derivative scales with 1/T
-        # - So loss scales with 1/T², we multiply by T² to normalize
 
+        # T² prevents gradient explosion
+        # since softmax derivative scales with 1/T so loss scales with 1/T², we multiply by T² to normalize
+        
         # get teacehr predictions (no grad)
+        
         # get student predictions (with grad)
+        
+        # we use temperatures to make distributioins softer high temperature -> more creative response -> more SD 
+        # we divide the logits by temeprature so the softmax logits dont overfit or are too confident
+         
         # compute soft loss (KL divergence)
+        
+        # KL divergence measures difference between two probaiblity distributions 
+        # where KL(P || Q) = Σ P(x) * log(P(x) / Q(x))
+        # - P = teacher's distribution (what we want student to match)
+        # - Q = student's distribution (what student currently produces)
+
         # compute hard loss (cross entropy)
+        
         # combine and backprop
+        
+        return 
 
 

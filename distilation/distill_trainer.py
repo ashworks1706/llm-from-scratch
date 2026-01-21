@@ -62,16 +62,28 @@ class DistillationTrainer:
 
     def train_step(self, input_ids, labels):
 
+        # move tensors to GPU
+        device = next(self.student.parameters()).device 
+        input_ids = input_ids.to(device)
+        labels = labels.to(device)
        
         # get teacehr predictions (no grad)
-        
-        # get student predictions (with grad)
+        with torch.no_grad():
+            teacher_logits = self.teacher(input_ids)
+            # get student predictions (with grad)
+            student_logits = self.student(input_ids)
         
         # we use temperatures to make distributioins softer high temperature -> more creative response -> more SD 
         # we divide the logits by temeprature so the softmax logits dont overfit or are too confident
+        T = self.temperature 
+        teacher_soft = teacher_logits / T 
+        student_soft = student_logits / T 
+
          
         # compute soft loss (KL divergence)
-        
+        teacher_probs = F.softmax(teacher_soft, dim=-1)
+        student_log_probs = F.log_softmax(student_soft, dim=-1)
+
         # KL divergence measures difference between two probaiblity distributions 
         # where KL(P || Q) = Σ P(x) * log(P(x) / Q(x))
         # - P = teacher's distribution (what we want student to match)
@@ -84,8 +96,7 @@ class DistillationTrainer:
         # token 0 is somewhat likely, KL measures how much Q differ from P 
         # KL =0 means P and Q are identical, >0 means P and Q differ (student needs to learn)
         # Larger the KL bigger the difference 
-
-        
+        soft_loss = F.kl_div(teacher_probs,student_log_probs,reduction='batch_mean')
 
         # we need log_softmax for student not for teacher because kldivergence formula needs log probabilities for Q 
         # we need softmax because the logits have raw scores, which can be negative, cannot always sum up to 1
@@ -93,12 +104,11 @@ class DistillationTrainer:
         # we use softmax, we exponentiate all integers to make all positive, divide by sum, then it fits the range
         # now we use log softmax, because softmax has numerical issues, taking exponents can be quadratically crazy 
         # so we instead take log than just doing exponential quadratics sincei n log prababilities negative numbers, closer 0 are more likely 
-
-
         # since loss depednds on gradients, softmax derivative scales with 1/T so loss scales with 1/T², we multiply by T² to normalize
         # without this, soft loss would be too small compared to hard loss 
         # softmax(x) = exp(x) / sum(exp(x))
         # log_softmax(x) = log(softmax(x)) = x - log(sum(exp(x)))
+        soft_loss = soft_loss * (T**2)
 
         # compute hard loss (cross entropy)
         # we use student's logits without temperature on cross entropy loss formula since we want accurate predicts on true labels 

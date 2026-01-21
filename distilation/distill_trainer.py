@@ -70,8 +70,9 @@ class DistillationTrainer:
         # get teacehr predictions (no grad)
         with torch.no_grad():
             teacher_logits = self.teacher(input_ids)
-            # get student predictions (with grad)
-            student_logits = self.student(input_ids)
+        
+        # get student predictions (with grad)
+        student_logits = self.student(input_ids)
         
         # we use temperatures to make distributioins softer high temperature -> more creative response -> more SD 
         # we divide the logits by temeprature so the softmax logits dont overfit or are too confident
@@ -96,7 +97,7 @@ class DistillationTrainer:
         # token 0 is somewhat likely, KL measures how much Q differ from P 
         # KL =0 means P and Q are identical, >0 means P and Q differ (student needs to learn)
         # Larger the KL bigger the difference 
-        soft_loss = F.kl_div(teacher_probs,student_log_probs,reduction='batch_mean')
+        soft_loss = F.kl_div(student_log_probs,teacher_probs,reduction='batch_mean')
 
         # we need log_softmax for student not for teacher because kldivergence formula needs log probabilities for Q 
         # we need softmax because the logits have raw scores, which can be negative, cannot always sum up to 1
@@ -120,14 +121,14 @@ class DistillationTrainer:
         vocab_size = student_logits.size(-1)
 
         hard_loss = F.cross_entropy(
-            student_logits.view(input_ids.shape), # reshape to (batch*seq, vocab)
-            labels.view(labels) # reshape to (batch*seq)
+            student_logits.view(-1, vocab_size ), # reshape to (batch*seq, vocab)
+            labels.view(-1) # reshape to (batch*seq, )
         )
         
         # combine and backprop
         # we combine totalloss = alpha * soft_loss + (1-alpha) * hardloss 
         # we use both so that soft loss learns teacher's reasoning and nuances and hardloss ensures accuracy on true labels i.e correct teacher's mistakes
-        total_loss = alpha * soft_loss * (1-alpha) * hard_loss 
+        total_loss = self.alpha * soft_loss * (1-alpha) * hard_loss 
 
         total_loss.backward()
 

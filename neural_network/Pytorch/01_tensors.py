@@ -91,6 +91,29 @@ print(f"a * d (element-wise): {e.shape}")
 
 
 
+# === BROADCASTING (SUPER IMPORTANT!) ===
+print("\n=== Broadcasting ===")
+
+# Rule: PyTorch automatically expands smaller tensors to match larger ones
+a = torch.tensor([[1, 2, 3],
+                [4, 5, 6]])  # Shape: (2, 3)
+
+b = torch.tensor([10, 20, 30])  # Shape: (3,)
+
+# Add them - b gets "broadcasted" to match a's shape
+c = a + b  # b becomes [[10, 20, 30], [10, 20, 30]]
+print(f"a:\n{a}")
+print(f"b: {b}")
+print(f"a + b:\n{c}")
+
+# Another example - scalar broadcasting
+x = torch.randn(2, 3)
+y = x + 5  # 5 gets added to every element
+print(f"\nScalar broadcast: {y}")
+
+# This is EXACTLY what happens in your LLM:
+# logits / temperature  <- temperature (scalar) broadcasts to all logits!
+
 
 
 

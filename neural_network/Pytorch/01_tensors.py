@@ -53,12 +53,41 @@ print(f"4D - shape: {tensor_4d.shape}, ndim: {tensor_4d.ndim}")
 # TODO 5: What would a 5D tensor represent?
 # Think: video = (batch, frames, channels, height, width)
 video = torch.randn(4, 10, 3, 64, 64)  # Create a batch of 4 videos, 10 frames each, RGB, 
-64x64
 print(f"Video tensor shape: {video.shape}")
 
+x = torch.tensor([[1, 2, 3, 4],
+                       [5, 6, 7, 8],
+                       [9, 10, 11, 12]])
 
+     
+print("\n=== Indexing ===")
+print(f"First row: {x[0]}")           # [1, 2, 3, 4]
+print(f"First column: {x[:, 0]}")     # [1, 5, 9]
+print(f"Element at (1,2): {x[1, 2]}")  # 7
 
+# === RESHAPE vs VIEW ===
+print("\n=== Reshape ===")
+y = torch.randn(2, 3, 4)  # Shape: (2, 3, 4) = 24 elements
+print(f"Original: {y.shape}")
 
+y_reshaped = y.view(6, 4)  # Same data, different shape
+print(f"Reshaped to (6, 4): {y_reshaped.shape}")
+
+y_flat = y.view(-1)  # Flatten to 1D, -1 means "figure it out"
+print(f"Flattened: {y_flat.shape}")  # Should be (24,)
+
+# === MATRIX MULTIPLICATION (CRITICAL!) ===
+print("\n=== Matrix Multiplication ===")
+a = torch.randn(3, 4)  # 3 rows, 4 columns
+b = torch.randn(4, 5)  # 4 rows, 5 columns
+
+c = a @ b  # Matrix multiply, result: (3, 5)
+print(f"a: {a.shape}, b: {b.shape}, a @ b: {c.shape}")
+
+# Element-wise multiply (different!)
+d = torch.randn(3, 4)
+e = a * d  # Element-wise, shapes must match
+print(f"a * d (element-wise): {e.shape}")
 
 
 

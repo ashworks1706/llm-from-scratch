@@ -82,6 +82,15 @@ class TwoLayerNet(nn.Module):
         return output
 
 model = TwoLayerNet(input_size=4, hidden_size=8, output_size=2)
+# Input (4)
+#        ↓
+#     [Layer 1: w1, b1 + ReLU]
+#        ↓
+#     Hidden (8)
+#        ↓
+#     [Layer 2: w2, b2]
+#        ↓
+#     Output (2)
 # Test it
 x = torch.randn(3, 4)  # Batch of 3 samples, 4 features each
 output = model(x)

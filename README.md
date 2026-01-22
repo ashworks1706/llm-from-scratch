@@ -4,11 +4,8 @@ each subdirectory contains a different model architecture. llama3 is the baselin
 
 i try to keep the code readable with inline explanations of what each component does and why certain design choices were made. this helps me remember the reasoning when i come back to review the code later.
 
-Neural Network basics CNNs RNNs LSTMs Pytorch 
 
 stable diffusion model from scratch
-
-AE, VAE from scratch 
 
 QAT
 QLoRA

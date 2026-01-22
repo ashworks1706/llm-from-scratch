@@ -65,18 +65,19 @@ class TwoLayerNet(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
         super().__init__()
 
-        self.w1 = nn.Parameter(torch.randn(input_size, output_size))
+        self.w1 = nn.Parameter(torch.randn(input_size, hidden_size))
         self.b1 = nn.Parameter(torch.randn(hidden_size))
-        self.w2 = nn.Parameter(torch.randn(input_size, output_size))
-        self.b2 = nn.Parameter(torch.randn(hidden_size))
+        self.w2 = nn.Parameter(torch.randn(hidden_size, output_size))
+        self.b2 = nn.Parameter(torch.randn(output_size))
 
     def forward(self, x):
         # x is batch size, inputsize
         # hidden layer 
-        h = x @ self.w1 + self.b1
-        h = torch.relu(h)
+        # since shapes won't match we do matrix mult in x and w1
+        h = x @ self.w1 + self.b1 # linear transformation 
+        h = torch.relu(h) # activation (non linearity)
 
-        output = h @ self.w2 + self.b2
+        output = h @ self.w2 + self.b2 # linear transformation
 
         return output
 

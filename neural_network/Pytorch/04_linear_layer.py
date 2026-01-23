@@ -64,6 +64,9 @@ print(f"Output shape: {output.shape}")
 print(f"\nOur Linear output:\n{output}")
 
 # Compare with PyTorch's nn.Linear
-pytorch_linear = nn.Linear(2, 2)
+pytorch_linear = nn.Linear(4, 2)
+# in linear, the output is usually put as small and readable, but input dimension is always fixed that should match your data 
+# if ur doing classification to 10 classes u should do (4,10) for 10 possible examples etc.
+# embedding? linear(in,512) etc 
 pytorch_output = pytorch_linear(x)
 print(f"\nPyTorch Linear output:\n{pytorch_output}")

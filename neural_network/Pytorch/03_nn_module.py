@@ -13,6 +13,55 @@
 
 # nn.module is the base class fsor all nns in pytorch 
 
+# common terms in AI/ML:
+# - model: a neural network architecture with parameters
+# - layer: a building block of a neural network (e.g., linear layer, convolutional layer)
+# - neuron: a single computational unit within a layer
+# - parameter: a learnable weight or bias in the model
+# - forward pass: the process of passing input data through the model to get output
+# - backward pass: the process of computing gradients for parameters based on loss
+# - activation function: a non-linear function applied to the output of a neuron or layer
+# - loss function: a function that measures the difference between predicted and true values
+# - optimizer: an algorithm that updates model parameters based on gradients
+# - epoch: one complete pass through the training dataset   
+# - batch size: the number of samples processed before the model is updated
+# - overfitting: when a model learns the training data too well and performs poorly on new data
+# - underfitting: when a model is too simple to capture the underlying patterns in the data
+# - regularization: techniques used to prevent overfitting (e.g., dropout, weight decay)
+# - dropout: a regularization technique where random neurons are ignored during training
+# - weight decay: a regularization technique that adds a penalty to the loss function based on the size of the weights
+# - batch normalization: a technique to normalize the inputs of each layer to improve training speed and stabiltiy
+# - convolutional layer: a layer that applies convolution operations, commonly used in image processing
+# - recurrent layer: a layer that processes sequential data, commonly used in natural language processing
+# - transformer: a neural network architecture that uses self-attention mechanisms, commonly used in NLP tasks
+# - self-attention: a mechanism that allows the model to weigh the importance of different parts of the input data
+# - embedding: a dense vector representation of discrete variables, commonly used for words in NLP
+# - fine-tuning: the process of taking a pre-trained model and adapting it to a specific task by training it on new data
+# - transfer learning: the process of leveraging knowledge from one task to improve performance on a different but related task
+# - hyperparameters: settings that control the training process (e.g., learning rate, batch size, number of epochs)
+# - learning rate: a hyperparameter that controls the step size during optimization
+# - gradient descent: an optimization algorithm that updates parameters to minimize the loss function
+# - stochastic gradient descent (SGD): a variant of gradient descent that updates parameters using a subset of the data (mini-batch)
+# - Adam: an optimization algorithm that combines the benefits of RMSProp and momentum
+# - RMSProp: an optimization algorithm that adapts the learning rate for each parameter based on recent gradients
+# - momentum: a technique that accelerates gradient descent by considering past gradients
+# - early stopping: a technique to prevent overfitting by stopping training when performance on a validation set starts to gradients
+# - validation set: a subset of the data used to tune hyperparameters and evaluate model performance during training
+# - test set: a subset of the data used to evaluate the final model performance after training
+# - cross-validation: a technique to assess model performance by splitting the data into multiple training and validation settings
+# - data augmentation: techniques used to increase the diversity of the training data by applying transformations (e.g., rotation, flipping)
+# - feature extraction: the process of transforming raw data into a set of relevant features for model training
+# - dimensionality reduction: techniques used to reduce the number of features while preserving important information (e.g., PCA, t-SNE)
+# - ensemble learning: combining multiple models to improve overall performance (e.g., bagging, boosting)
+# - bagging: an ensemble technique that trains multiple models on different subsets of the data and averages their predictions
+# - boosting: an ensemble technique that sequentially trains models to correct the errors of previous models
+# - ROC curve: a graphical representation of a model's performance across different classification thresholds
+# - AUC (Area Under the Curve): a metric that quantifies the overall performance of a classification model based on the ROC curve
+# - precision: the ratio of true positive predictions to the total predicted positive
+# - recall: the ratio of true positive predictions to the total actual positive
+# - F1 score: the harmonic mean of precision and recall, providing a single metric for model performance
+# - confusion matrix: a table that summarizes the performance of a classification model by showing true vs predicted labels
+
 
 import torch 
 import torch.nn as nn 

@@ -40,6 +40,11 @@ print(f"My ReLU : {my_relu(x)}")
 # Neuron is "dead" - stuck at 0 forever
 # Solution: Use Leaky ReLU or other variants
 
+def my_leaky_relu(x):
+    return torch.maximum(x, torch.tensor(0.1)*x)
+
+print(f"My LeakyRelu : {my_leaky_relu(x)}")
+
 # When to use:
 
 # - Hidden layers of most networks

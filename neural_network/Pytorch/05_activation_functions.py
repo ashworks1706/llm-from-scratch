@@ -41,3 +41,38 @@
 # - Hidden layers of most networks
 # - Your default choice
 # - Fast, simple, works well]
+
+
+
+
+
+# Sigmoid 
+# σ(x) = 1 / (1 + e^(-x));  where e ≈ 2.718 (Euler's number)
+# use case : interprets output as probability lol 
+# imagine we need binary classification between cat dog 
+
+# we got a logit of 2.5 raw score 
+# we do sigmoid on that sigmoid(2.5) = 0.92 92% confident its a cat 
+# - Always between 0 and 1 ✓
+# - Smooth (differentiable) ✓
+# - Maps large positive → ~1
+# - Maps large negative → ~0
+# - Maps 0 → 0.5 (neutral)
+
+# The Problem - Vanishing Gradients:
+
+# For large |x|, gradient → 0
+
+# x = 10
+# σ(10) = 0.99995  # Very close to 1
+# gradient = σ(10) * (1 - σ(10))
+#         = 0.99995 * 0.00005
+#         = 0.000045  # Tiny!
+
+# Learning is VERY slow for saturated neurons
+
+# When to use:
+
+# - Output layer for binary classification
+# - Gate mechanisms (LSTM forget/input/output gates)
+# - When you need probabilities between 0 and 1

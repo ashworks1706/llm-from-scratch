@@ -76,3 +76,36 @@
 # - Output layer for binary classification
 # - Gate mechanisms (LSTM forget/input/output gates)
 # - When you need probabilities between 0 and 1
+
+
+
+# Tanh - Hyperbolic tangent 
+
+# the math behind this is that tanh(x) = (e^x - e^(-x)) / (e^x + e^(-x))
+# which is actually tanh(x) = 2* sigmoid(2x) - 1 
+# its just a scaled sigmoid function 
+# the derivaive is d(tanh)/dx = 1 - tan^2(X)
+
+# now why the fuck is tanh better than sigmoid ? 
+# Sigmoid: outputs [0, 1]
+# Mean ≈ 0.5 (not zero-centered)
+
+# Tanh: outputs [-1, 1]  
+# Mean ≈ 0 (zero-centered)
+
+# Why zero-centered matters?
+# Consider gradient updates:
+# With Sigmoid (all positive activations):
+# h = [0.8, 0.9, 0.7]  # All positive
+# Gradients all have same sign
+# Updates zigzag, slow convergence
+
+# With Tanh (mixed activations):
+#h = [0.5, -0.3, 0.8]  # Mixed
+# Gradients can have different signs
+# Updates more direct, faster convergence
+
+# When to use:
+# - Hidden layers (better than sigmoid)
+# - RNNs/LSTMs (traditional choice before ReLU)
+# - When you need outputs centered around 0

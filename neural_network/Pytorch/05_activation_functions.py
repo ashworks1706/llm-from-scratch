@@ -195,11 +195,6 @@ print(f"My softmax {my_softmax(x)}")
 # so basically, in attention we use softmax to convert scores to probabilities 
 # in MLP, we use swiglu for better pattern recognition than ReLU 
 # softmax is applied in loss from logits, RMSNorm for normalization and not activation 
-
-
-# why do we use swiglu over relu in transformers?? 
-# because ReLU is simple but infromation loss since (negatives ->0)
-# while swiglu solves this by using relu + sigmoid to allow negative values 
 print("\n=== Key Properties ===")
 print("ReLU:")
 print("  - Range: [0, ∞)")
@@ -224,3 +219,39 @@ print("  - Range: (0, 1), sums to 1")
 print("  - Use: Multi-class classification output")
 print("  - Pro: Probability distribution")
 print("  - Con: Only for output layer")
+
+
+
+
+# why do we use swiglu over relu in transformers?? 
+# because ReLU is simple but infromation loss since (negatives ->0)
+# while swiglu solves this by using relu + sigmoid to allow negative values 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

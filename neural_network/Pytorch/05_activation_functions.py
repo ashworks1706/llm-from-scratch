@@ -78,6 +78,11 @@ print(f"My ReLU : {my_relu(x)}")
 
 # Learning is VERY slow for saturated neurons
 
+def my_sigmoid(x):
+    return 1 / (1 + torch.exp(-x))
+
+print(f"My sigmoid :{my_sigmoid(x)}")
+
 # When to use:
 
 # - Output layer for binary classification
@@ -120,6 +125,14 @@ print(f"My ReLU : {my_relu(x)}")
 # we use sigmoid  in LSTM gates and not Tanh?
 # because sigmoid tells us how much in percentage or probability distribution (0 to 1)
 # while tanh tells us what value (actual content) (-1 to 1 ) we can't treat negative memory in lstm 
+
+def my_tanh(x):
+    exp_x = torch.exp(x)
+    exp_neg_x = torch.exp(-x)
+    return (exp_x - exp_neg_x) / (exp_x + exp_neg_x)
+
+print(f"My tanh {my_tanh(x)}")
+
 
 
 # Softmax - the multi class master 
@@ -173,6 +186,15 @@ print(f"My ReLU : {my_relu(x)}")
 # - Converting logits to probabilities
 # - In your LLM: Converting vocabulary scores to token probabilities!
 
+# equation is = e^(xᵢ) / Σⱼ e^(xⱼ)
+def my_softmax(x, dim=-1):
+    # numerical stabiltiy trick : subtract max before exp to prevento verflow 
+    x_stable = x - torch.max(x, dim=dim, keepdim=True)[0]
+    exp_x = torch.exp(x_stable)
+    return exp_x / torch.sum(exp_x, dim=dim, keepdim=True)
+
+print(f"My softmax {my_softmax(x)}")
+
 
 # so basically, in attention we use softmax to convert scores to probabilities 
 # in MLP, we use swiglu for better pattern recognition than ReLU 
@@ -182,4 +204,27 @@ print(f"My ReLU : {my_relu(x)}")
 # why do we use swiglu over relu in transformers?? 
 # because ReLU is simple but infromation loss since (negatives ->0)
 # while swiglu solves this by using relu + sigmoid to allow negative values 
+print("\n=== Key Properties ===")
+print("ReLU:")
+print("  - Range: [0, ∞)")
+print("  - Use: Hidden layers (default choice)")
+print("  - Pro: Fast, no saturation for positive values")
+print("  - Con: Dying ReLU problem")
 
+print("\nSigmoid:")
+print("  - Range: (0, 1)")
+print("  - Use: Binary classification output, LSTM gates")
+print("  - Pro: Interpretable as probability")
+print("  - Con: Vanishing gradients")
+
+print("\nTanh:")
+print("  - Range: (-1, 1)")
+print("  - Use: LSTM cell content, some hidden layers")
+print("  - Pro: Zero-centered (better than sigmoid)")
+print("  - Con: Still has vanishing gradients")
+
+print("\nSoftmax:")
+print("  - Range: (0, 1), sums to 1")
+print("  - Use: Multi-class classification output")
+print("  - Pro: Probability distribution")
+print("  - Con: Only for output layer")

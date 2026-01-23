@@ -16,6 +16,8 @@ class MyLinear(nn.Module):
         # weight matrix (outfeat, infeat)
         # we use this shape so we can do x @ weight.T
         self.weight = nn.Parameter(torch.randn(out_features, in_Features))
+        # the reason we do torch.random and not zeros because all neurons compute teh same thing, gradients become identical and neuron never differentiates
+        # so each neuron starts different learns different features, this is called symmetry breaking
         # why? because we we want to transform to 2 outputs
         # We need a weight matrix W: (2, 3)
         

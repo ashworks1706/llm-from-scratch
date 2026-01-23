@@ -64,6 +64,6 @@ print(f"Output shape: {output.shape}")
 print(f"\nOur Linear output:\n{output}")
 
 # Compare with PyTorch's nn.Linear
-pytorch_linear = nn.Linear(4, 2)
+pytorch_linear = nn.Linear(2, 2)
 pytorch_output = pytorch_linear(x)
 print(f"\nPyTorch Linear output:\n{pytorch_output}")

@@ -14,3 +14,30 @@
 #         x   if x > 0
 #         0   if x ≤ 0
 #     }
+# use case: detecting if feature is present 
+
+# imagine we got x = [ brightness, contrast, edge_strength] some stuff 
+# after some layers, we get h = [-0.5, 2.3, -1.0]  # Mixed positive/negative
+    
+# ReLU turns this into:
+# activated = [0, 2.3, 0]  # Only "active" features remain
+
+# This creates SPARSE activations
+# Network learns: "only respond to certain patterns"
+
+# The Problem - Dying ReLU:
+# but how to know if its a dyling ReLU in a real world application ?
+# - 
+# If a neuron always gets negative inputs:
+# x = -5.0
+# ReLU(x) = 0
+# gradient = 0  # No learning signal!
+
+# Neuron is "dead" - stuck at 0 forever
+# Solution: Use Leaky ReLU or other variants
+
+# When to use:
+
+# - Hidden layers of most networks
+# - Your default choice
+# - Fast, simple, works well]

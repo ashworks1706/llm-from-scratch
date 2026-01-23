@@ -16,7 +16,7 @@ class MyLinear(nn.Module):
         # weight matrix (outfeat, infeat)
         # we use this shape so we can do x @ weight.T
         self.weight = nn.Parameter(torch.randn(out_features, in_Features))
-        # why? because we # We want to transform to 2 outputs
+        # why? because we we want to transform to 2 outputs
         # We need a weight matrix W: (2, 3)
         
         # W = [[0.5, 0.3, 0.1],   # Weights for output 1

@@ -34,26 +34,26 @@ class MyLinear(nn.Module):
 
         # why bias? because this line always passes through oriign so we can't model more linear equations 
         # thats why we use bias to shift the line up or down or whatever in dimension, this gives the network more flexibility
-        def forward(self, x):
-            # x: (batch, in_features)
-            # weight: (out_features, in_features)
-            # weight.T: (in_features, out_features) after transpose
-            
-            # matrix multiply: (batch, in_features) @ (in_features, out_features)
-            # result: (batch, out_features)
-            output = x @ self.weight.T
-            
-            # why transpose? PyTorch stores weights as (out, in)
-            # but we need (in, out) for multiplication with x
-            # transposing flips the dimensions
-            
-            # add bias if it exists
-            # bias broadcasts: (batch, out_features) + (out_features,)
-            # each batch element gets the same bias added
-            if self.bias is not None:
-                output = output + self.bias
-            
-            return output
+    def forward(self, x):
+        # x: (batch, in_features)
+        # weight: (out_features, in_features)
+        # weight.T: (in_features, out_features) after transpose
+        
+        # matrix multiply: (batch, in_features) @ (in_features, out_features)
+        # result: (batch, out_features)
+        output = x @ self.weight.T
+        
+        # why transpose? PyTorch stores weights as (out, in)
+        # but we need (in, out) for multiplication with x
+        # transposing flips the dimensions
+        
+        # add bias if it exists
+        # bias broadcasts: (batch, out_features) + (out_features,)
+        # each batch element gets the same bias added
+        if self.bias is not None:
+            output = output + self.bias
+        
+        return output
 
 my_linear = MyLinear(in_features=4, out_features=2)
 x = torch.randn(3,4) # batch pf 3 each w 4 features

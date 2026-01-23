@@ -17,11 +17,9 @@
 # use case: detecting if feature is present 
 
 # imagine we got x = [ brightness, contrast, edge_strength] some stuff 
-# after some layers, we get h = [-0.5, 2.3, -1.0]  # Mixed positive/negative
-    
+# after some layers, we get h = [-0.5, 2.3, -1.0]  # Mixed positive/negative    
 # ReLU turns this into:
 # activated = [0, 2.3, 0]  # Only "active" features remain
-
 # This creates SPARSE activations
 # Network learns: "only respond to certain patterns"
 
@@ -41,6 +39,9 @@
 # - Hidden layers of most networks
 # - Your default choice
 # - Fast, simple, works well]
+
+# we can't use RelU for output layer because RelU is for feature detection in hidden layers
+# not probability estimation which is what softmax does by summing to 1, all positive, interpretable as probability
 
 
 
@@ -110,8 +111,12 @@
 # - RNNs/LSTMs (traditional choice before ReLU)
 # - When you need outputs centered around 0
 
+# we use sigmoid  in LSTM gates and not Tanh?
+# because sigmoid tells us how much in percentage or probability distribution (0 to 1)
+# while tanh tells us what value (actual content) (-1 to 1 ) we can't treat negative memory in lstm 
 
-# softmax - the multi class master 
+
+# Softmax - the multi class master 
 # equation is = e^(xᵢ) / Σⱼ e^(xⱼ)
 # where all outputs are positive, sum to 1 and large inputs -> larger probabilities 
 # supppose we have raw scores 
@@ -161,3 +166,11 @@
 # - Output layer for multi-class classification
 # - Converting logits to probabilities
 # - In your LLM: Converting vocabulary scores to token probabilities!
+
+
+# so basically, in attention we use softmax to convert scores to probabilities 
+# in MLP, we use swiglu for better pattern recognition than ReLU 
+# softmax is applied in loss from logits, RMSNorm for normalization and not activation 
+
+
+

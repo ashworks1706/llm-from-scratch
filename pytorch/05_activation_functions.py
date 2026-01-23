@@ -235,30 +235,3 @@ print("  - Range: (0, 1), sums to 1")
 print("  - Use: Multi-class classification output")
 print("  - Pro: Probability distribution")
 print("  - Con: Only for output layer")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

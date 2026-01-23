@@ -50,9 +50,6 @@ print(f"My ReLU : {my_relu(x)}")
 # not probability estimation which is what softmax does by summing to 1, all positive, interpretable as probability
 
 
-
-
-
 # Sigmoid 
 # σ(x) = 1 / (1 + e^(-x));  where e ≈ 2.718 (Euler's number)
 # use case : interprets output as probability lol 
@@ -132,8 +129,6 @@ def my_tanh(x):
     return (exp_x - exp_neg_x) / (exp_x + exp_neg_x)
 
 print(f"My tanh {my_tanh(x)}")
-
-
 
 # Softmax - the multi class master 
 # equation is = e^(xᵢ) / Σⱼ e^(xⱼ)

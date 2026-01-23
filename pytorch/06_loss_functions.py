@@ -8,3 +8,65 @@
 # - why cross entropy for classification not mse
 # - numerical stability issues
 # - reduction methods (mean, sum, none)
+
+
+import torch 
+import torch.nn as nn 
+import torch.nn.functional as F # Operations in torch.nn.functional are pure functions
+
+# MSE -> For regression 
+# why square? because it makes all errors positive, penalizes large errors more and its differentiable 
+
+def my_mse(predictions, targets):
+    errors = (predictions - targets)
+    squared_errors = (predictions - targets) ** 2
+    return torch.mean(squared_errors)
+
+# gradient for backprop:
+# d(MSE)/d(pred) = 2 * (pred - target) / n
+
+pred = torch.tensor([2.5, 0.0, 2.1, 7.8])
+target = torch.tensor([3.0, -0.5, 2.0, 8.0])
+
+print(f"my_mse {my_mse(pred,target)}")
+
+
+# CrossEntropy -> For classification
+# it's basically negative log of probability of correct classes 
+# -log(probability of correct classes)
+# for multi classes : 
+# CE = -Σ target_i * log(predicted_prob_i)
+# But usually target is one-hot, so:
+# CE = -log(predicted_prob[correct_class])
+#  Step-by-Step Example:
+# 3 classes: cat, dog, bird
+# logits = [2.0, 1.0, 0.1]  # Raw scores from model
+# target = 0  # Correct class is "cat"
+
+# Step 1: Convert logits to probabilities (softmax)
+# exp = [e^2.0, e^1.0, e^0.1] = [7.39, 2.72, 1.11]
+# sum = 7.39 + 2.72 + 1.11 = 11.22
+
+# probs = [7.39/11.22, 2.72/11.22, 1.11/11.22]
+    = [0.659, 0.242, 0.099]
+
+# Step 2: Take negative log of correct class probability
+# CE = -log(probs[0])
+#    = -log(0.659)
+#    = -(-0.417)
+#    = 0.417
+
+# Why Negative Log?
+
+# Model is CONFIDENT and CORRECT:
+# prob_correct = 0.99
+# loss = -log(0.99) = 0.01  # Small loss ✓
+# Model is UNCERTAIN:
+# prob_correct = 0.50
+# loss = -log(0.50) = 0.69  # Medium loss
+# Model is CONFIDENT but WRONG:
+# prob_correct = 0.01
+ #loss = -log(0.01) = 4.61  # HUGE loss! ✗
+# The curve: -log(p)
+# p → 1: loss → 0 (perfect!)
+# p → 0: loss → ∞ (terrible!)

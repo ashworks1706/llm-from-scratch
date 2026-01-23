@@ -48,7 +48,7 @@ print(f"my_mse {my_mse(pred,target)}")
 # sum = 7.39 + 2.72 + 1.11 = 11.22
 
 # probs = [7.39/11.22, 2.72/11.22, 1.11/11.22]
-    = [0.659, 0.242, 0.099]
+#    = [0.659, 0.242, 0.099]
 
 # Step 2: Take negative log of correct class probability
 # CE = -log(probs[0])
@@ -66,7 +66,54 @@ print(f"my_mse {my_mse(pred,target)}")
 # loss = -log(0.50) = 0.69  # Medium loss
 # Model is CONFIDENT but WRONG:
 # prob_correct = 0.01
- #loss = -log(0.01) = 4.61  # HUGE loss! ✗
+# loss = -log(0.01) = 4.61  # HUGE loss! ✗
 # The curve: -log(p)
 # p → 1: loss → 0 (perfect!)
 # p → 0: loss → ∞ (terrible!)
+
+
+
+
+logits = torch.tensor([2.0, 1.0, 0.1])
+target = 0
+
+probs = F.softmax(logits, dim=-1)
+
+print(f"F.softmax {probs}")
+
+# negative log of correct class
+loss_manual = -torch.log(probs[target])
+print(f"negative log of correct class {loss_manual}")
+
+print("\n Batch Example")
+     logits_batch = torch.tensor([
+         [2.0, 1.0, 0.1],  # Sample 1: prefers class 0
+         [0.5, 3.0, 0.2],  # Sample 2: prefers class 1
+         [0.1, 0.3, 2.5],  # Sample 3: prefers class 2
+     ])
+targets_batch = torch.tensor([0, 1, 2])  # All correct!
+
+loss = F.cross_entropy(logits_batch, targets_batch)
+print(f"Logits shape: {logits_batch.shape}")
+print(f"Targets: {targets_batch}")
+print(f"Batch CE loss: {loss:.4f}")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

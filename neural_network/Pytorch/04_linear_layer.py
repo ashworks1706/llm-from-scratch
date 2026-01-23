@@ -26,6 +26,7 @@ class MyLinear(nn.Module):
         
         # Compute y = Wx + b:
         # bias is (outfeat, )
+
         if bias:
             self.bias = nn.Parameter(torch.zeros(out_features))
         else:

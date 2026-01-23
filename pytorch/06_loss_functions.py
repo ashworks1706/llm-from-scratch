@@ -129,7 +129,6 @@ print("  3. CE has better gradient properties")
 print("  4. CE matches the probabilistic interpretation")
 
 # Demonstration
-print("\n=== Gradient Behavior ===")
 # When model is confident but wrong:
 wrong_logits = torch.tensor([[0.1, 0.2, 5.0]], requires_grad=True)  # Predicts class 2
 correct_target = torch.tensor([0])  # But class 0 is correct

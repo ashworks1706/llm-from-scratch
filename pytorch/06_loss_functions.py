@@ -86,17 +86,42 @@ loss_manual = -torch.log(probs[target])
 print(f"negative log of correct class {loss_manual}")
 
 print("\n Batch Example")
-     logits_batch = torch.tensor([
-         [2.0, 1.0, 0.1],  # Sample 1: prefers class 0
-         [0.5, 3.0, 0.2],  # Sample 2: prefers class 1
-         [0.1, 0.3, 2.5],  # Sample 3: prefers class 2
-     ])
+logits_batch = torch.tensor([
+    [2.0, 1.0, 0.1],  # Sample 1: prefers class 0
+    [0.5, 3.0, 0.2],  # Sample 2: prefers class 1
+    [0.1, 0.3, 2.5],  # Sample 3: prefers class 2
+])
 targets_batch = torch.tensor([0, 1, 2])  # All correct!
 
 loss = F.cross_entropy(logits_batch, targets_batch)
 print(f"Logits shape: {logits_batch.shape}")
 print(f"Targets: {targets_batch}")
 print(f"Batch CE loss: {loss:.4f}")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

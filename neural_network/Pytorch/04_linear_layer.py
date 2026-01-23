@@ -1,21 +1,19 @@
 # implementing linear layer from scratch
 # the most fundamental building block of neural networks
 
-# topics to cover:
-# - linear transformation: y = Wx + b
-# - weight initialization (why random, not zeros)
-# - forward pass computation
-# - understanding parameter shapes
-# - connection to matrix multiplication
-# - bias term (optional but important)
+# this is how neural networks learn patterns 
+# W are learned parameters that capture relationships 
+# bias shifts the ouput adding flexibility 
 
+import torch
+import torch.nn as nn 
 class MyLinear(nn.Module):
     def __init__(self, in_features, out_features, bias=True):
         super().__init__()
 
         # weight matrix (outfeat, infeat)
         # we use this shape so we can do x @ weight.T
-        self.weight = nn.Parameter(torch.randn(out_features, in_Features))
+        self.weight = nn.Parameter(torch.randn(out_features, in_features))
         # the reason we do torch.random and not zeros because all neurons compute teh same thing, gradients become identical and neuron never differentiates
         # so each neuron starts different learns different features, this is called symmetry breaking
         # why? because we we want to transform to 2 outputs
@@ -34,19 +32,28 @@ class MyLinear(nn.Module):
         else:
             self.bias = None
 
-
-        def forward(self, x ):
-            # x : batch, infeatr
-            # weight : outfeat, infeat
-            # weight.T : infeat, outfeat
+        # why bias? because this line always passes through oriign so we can't model more linear equations 
+        # thats why we use bias to shift the line up or down or whatever in dimension, this gives the network more flexibility
+        def forward(self, x):
+            # x: (batch, in_features)
+            # weight: (out_features, in_features)
+            # weight.T: (in_features, out_features) after transpose
             
-            # matrix multiply 
-            output = x @ self.weight.T # batch,infeat @ infeat,outfeat
-            # why tanspose? PyTorch stores weights as (out_features, in_features)
-            # But we want: (batch, in_features) @ (in_features, out_features)           if self.bias is not None:
-            output + output + self.bias
+            # matrix multiply: (batch, in_features) @ (in_features, out_features)
+            # result: (batch, out_features)
+            output = x @ self.weight.T
+            
+            # why transpose? PyTorch stores weights as (out, in)
+            # but we need (in, out) for multiplication with x
+            # transposing flips the dimensions
+            
+            # add bias if it exists
+            # bias broadcasts: (batch, out_features) + (out_features,)
+            # each batch element gets the same bias added
+            if self.bias is not None:
+                output = output + self.bias
+            
             return output
-
 
 my_linear = MyLinear(in_features=4, out_features=2)
 x = torch.randn(3,4) # batch pf 3 each w 4 features

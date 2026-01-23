@@ -109,3 +109,55 @@
 # - Hidden layers (better than sigmoid)
 # - RNNs/LSTMs (traditional choice before ReLU)
 # - When you need outputs centered around 0
+
+
+# softmax - the multi class master 
+# equation is = e^(xᵢ) / Σⱼ e^(xⱼ)
+# where all outputs are positive, sum to 1 and large inputs -> larger probabilities 
+# supppose we have raw scores 
+# Step 1: Exponentiate
+# e^2.0 = 7.389
+# e^1.0 = 2.718
+# e^0.1 = 1.105
+
+# but why Exponentiate? we want to amplify differences, 
+# if we just do linear normalization the differences are too small 
+# to make them more rangeable and bigger, we do exponentiate them 
+#
+# confient model -> one class has high probability 
+# uncertain model -> probabilities spread out 
+    
+# Step 2: Sum
+# sum = 7.389 + 2.718 + 1.105 = 11.212
+    
+# Step 3: Normalize
+# softmax[0] = 7.389 / 11.212 = 0.659 (66%)
+# softmax[1] = 2.718 / 11.212 = 0.242 (24%)
+# softmax[2] = 1.105 / 11.212 = 0.099 (10%)
+# Check: 0.659 + 0.242 + 0.099 = 1.0
+#
+# we also use temperature in softmax:for distillation 
+# Normal softmax:
+# softmax(x) = e^x / Σ e^x
+
+# Temperature softmax:
+# softmax(x/T) = e^(x/T) / Σ e^(x/T)
+
+# Example:
+# logits = [4, 2, 1]
+
+# T = 1 (normal):
+# softmax = [0.84, 0.11, 0.05]  # Very confident!
+
+# T = 5 (high):
+# softmax = [0.46, 0.30, 0.24]  # More uncertain
+
+# Lower T → sharper (more confident)
+# Higher T → softer (less confident)
+
+# In your distvillation: T=5 made teacher's knowledge softer!
+
+# When to use:
+# - Output layer for multi-class classification
+# - Converting logits to probabilities
+# - In your LLM: Converting vocabulary scores to token probabilities!

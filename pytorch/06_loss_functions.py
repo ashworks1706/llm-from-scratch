@@ -102,7 +102,46 @@ print(f"Batch CE loss: {loss:.4f}")
 
 
 
+# why not MSE for classification ?
+# Example: 3-class problem
+logits = torch.tensor([[2.0, 1.0, 0.1]])  # Batch of 1
+target_class = 0
 
+# Convert to one-hot for MSE
+target_onehot = torch.tensor([[1.0, 0.0, 0.0]])
+
+# Try MSE
+probs = F.softmax(logits, dim=-1)
+mse_loss = F.mse_loss(probs, target_onehot)
+
+# Try Cross Entropy
+ce_loss = F.cross_entropy(logits, torch.tensor([target_class]))
+
+print(f"Predictions (softmax): {probs}")
+print(f"Target (one-hot):      {target_onehot}")
+print(f"\nMSE loss:  {mse_loss:.4f}")
+print(f"CE loss:   {ce_loss:.4f}")
+
+print("\nWhy CE is better:")
+print("  1. MSE treats all errors equally")
+print("  2. CE penalizes confident wrong predictions heavily")
+print("  3. CE has better gradient properties")
+print("  4. CE matches the probabilistic interpretation")
+
+# Demonstration
+print("\n=== Gradient Behavior ===")
+# When model is confident but wrong:
+wrong_logits = torch.tensor([[0.1, 0.2, 5.0]], requires_grad=True)  # Predicts class 2
+correct_target = torch.tensor([0])  # But class 0 is correct
+
+loss = F.cross_entropy(wrong_logits, correct_target)
+loss.backward()
+
+print(f"Wrong prediction logits: {wrong_logits}")
+print(f"Correct target: {correct_target}")
+print(f"Loss: {loss.item():.4f}")
+print(f"Gradient: {wrong_logits.grad}")
+print("Large gradient → strong learning signal!")
 
 
 

@@ -7,7 +7,8 @@
 
 # activations break linearity so netwroks can learn complex pattersn 
 
-
+import torch 
+import torch.nn as nn 
 
 # ReLU -> Rectified Linear Unit 
 # ReLU(x) = max(0, x) = {
@@ -23,6 +24,11 @@
 # This creates SPARSE activations
 # Network learns: "only respond to certain patterns"
 
+def my_relu(x):
+    return torch.maximum(x, torch.tensor(0.0))
+
+x = torch.tensor([-2.0, -1.0, 0.0, 1.0, 2.0])
+print(f"My ReLU : {my_relu(x)}")
 # The Problem - Dying ReLU:
 # but how to know if its a dyling ReLU in a real world application ?
 # - 
@@ -173,4 +179,7 @@
 # softmax is applied in loss from logits, RMSNorm for normalization and not activation 
 
 
+# why do we use swiglu over relu in transformers?? 
+# because ReLU is simple but infromation loss since (negatives ->0)
+# while swiglu solves this by using relu + sigmoid to allow negative values 
 

@@ -145,9 +145,140 @@ print("Large gradient → strong learning signal!")
 
 
 
+# binary cross entropy 
+# BCE is like two cross entropies combined 
+#
+# b_c_e = - [y * log(p) + (1-y) * log(1-p)]
+# where y = true label (0 or 1), p = predicted probability (0 to 1)
+# here probability of seeing data is 
+# P(y|p) = p^y * (1-p)^(1-y)
+# we're maximizing this = minimize negative log 
+# -log(P(y|p)) = -[y*log(p) + (1-y)*log(1-p)]
+# when target is 1 :
+# predicting close to 1 -> low loss 
+# predicting closee to 0 -> hgih loss 
+#
+#
+# Mean absolute error is basically MSE wihtout sequred 
+# The key difference between MSe and MAE
+# AE uses absolute differences, making it robust to outliers and interpretable (same units as data), 
+# while MSE squares errors, heavily penalizing large mistakes and favoring smoother optimization, 
+# though less robust to outliers and harder to interpret. Choose MAE for outlier-heavy data where 
+# all errors matter equally, and MSE when large errors are particularly costly and you need smooth 
+# gradients for optimization 
+# MSE quadratically punishes large errors while MAE linearly punishes all errors equally 
+# Use MSE when:
+# - Outliers are mistakes (should be penalized heavily)
+# - You want fast convergence
+# - Data is normally distributed
+
+# Use MAE when:
+# - Outliers are real but shouldn't dominate
+# - Example: Predicting house prices
+# - Most houses: $200k-$500k
+# - Outlier: $50M mansion
+# - MAE won't let mansion dominate training!
 
 
 
+# Hubr loss 
+# Huber loss is a robust loss function used in regression, combining the advantages of Mean 
+# Squared Error (MSE) and Mean Absolute Error (MAE)
+# Small errors (|x| < δ):
+# Use MSE → smooth, fast convergence
+# x = 0.5, δ = 1.0
+# Huber = 0.5 * 0.5² = 0.125
+
+# Large errors (|x| ≥ δ):
+# Use MAE → robust to outliers
+# x = 10, δ = 1.0
+# Huber = 1.0 * (10 - 0.5*1.0) = 9.5
+# Compare: MSE would be 10² = 100!
+
+# large errors get clipped gradient, prevents exploring gradients in RL
+
+# Example: RL value function
+# predicted_reward = 5.0
+# actual_reward = 100.0  # Rare huge reward
+# error = 95
+
+# MSE loss = 95² = 9025  → Exploding gradients!
+# Huber loss = 1*(95-0.5) = 94.5  → Stable!
+
+# Perfect for:
+# - Reinforcement learning (DQN, TD3)
+# - Regression with some outliers
+# - When you want smooth gradients near 0
+# - When you need stability for large errors
+
+
+
+# KL(P || Q) = Σ P(x) * log(P(x) / Q(x))
+                = Σ P(x) * [log(P(x)) - log(Q(x))]
+     
+# Where:
+# - P = "true" distribution (teacher, reference)
+# - Q = "approximate" distribution (student, policy)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# # Classification?
+# → Use Cross Entropy (99% of the time)
+
+# Regression?
+# → Use MSE (default) or MAE (if outliers)
+
+# Binary classification?
+# → Use BCE
+
+# Imbalanced classes?
+# → Use Focal Loss
+
+# Matching distributions?
+# → Use KL Divergence
+
+# Learning embeddings?
+# → Use Contrastive/Triplet Loss
 
 
 

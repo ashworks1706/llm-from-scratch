@@ -212,13 +212,49 @@ print("Large gradient → strong learning signal!")
 # - When you need stability for large errors
 
 
-
+# KL Divergence an information-theoretic measure of the dissimilarity or difference between two probability 
 # KL(P || Q) = Σ P(x) * log(P(x) / Q(x))
-                = Σ P(x) * [log(P(x)) - log(Q(x))]
+               # = Σ P(x) * [log(P(x)) - log(Q(x))]
      
 # Where:
 # - P = "true" distribution (teacher, reference)
 # - Q = "approximate" distribution (student, policy)
+
+
+# How suprised would P be if we used Q instead?
+# Small KL -> Q is close to P 
+# KL is always non negative, its 0 when identical 
+# Forward KL KL(P||Q) is to cover all of P''s mass 
+# Q tries to cover everywhere P has probability, results in Q being spread out 
+# Reverse KL KL(Q||P) 
+# put mass only where P does 
+# Q concentrates on high probability regions of P 
+# results in Q eing focuseed 
+# KL(Teacher || students) usually where studnet ties to match teacher everywhere (distillation)
+# 1. Distillation:
+# teacher_probs = softmax(teacher_logits / T)
+# student_log_probs = log_softmax(student_logits / T)
+# kl_loss = KL(teacher || student)
+# Student learns teacher's uncertainty!
+
+# 2. DPO (Reinforcement Learning):
+# policy_probs = π(action|state)
+# reference_probs = π_ref(action|state)
+# kl_penalty = KL(policy || reference)
+# Keep policy close to reference (stability)
+
+# 3. VAE (Variational Autoencoders):
+# latent_dist = encoder(x)
+# prior = N(0, 1)
+# kl_loss = KL(latent_dist || prior)
+# Force latent space to be normal distribution
+
+
+
+
+
+
+
 
 
 

@@ -157,6 +157,39 @@ print("Large gradient → strong learning signal!")
 # when target is 1 :
 # predicting close to 1 -> low loss 
 # predicting closee to 0 -> hgih loss 
+
+logit = torch.tensor([2.0]) # raw score from model
+prob = torch.sigmoid(logit) # convert to probability : 0.88
+target = torch.tensor([1.0]) # actually is spam
+
+if target.item() == 1:
+    manual_bce = -torch.log(prob)
+else:
+    manual_bce = -torch.log(1-prob)
+
+
+# PyTorch BCE
+bce_loss = F.binary_cross_entropy(prob, target)
+print(f"PyTorch BCE: {bce_loss.item():.4f}")
+
+# More stable: BCE with logits (does sigmoid internally)
+bce_with_logits = F.binary_cross_entropy_with_logits(logit, target)
+print(f"BCE with logits: {bce_with_logits.item():.4f}")
+
+# Demonstrate the penalty
+print("\n--- Understanding the penalty ---")
+test_probs = torch.tensor([0.1, 0.5, 0.9, 0.99])
+target_ones = torch.ones(4)
+
+for p in test_probs:
+    loss = -torch.log(p)
+    print(f"Prediction: {p:.2f} | Target: 1 | Loss: {loss:.4f}")
+
+print("\nNotice: Wrong confident prediction (0.1) has huge loss!")
+print("        Correct confident prediction (0.99) has tiny loss!")
+
+
+
 #
 #
 # Mean absolute error is basically MSE wihtout sequred 
@@ -179,6 +212,46 @@ print("Large gradient → strong learning signal!")
 # - Outlier: $50M mansion
 # - MAE won't let mansion dominate training!
 
+print("\n" + "="*50)
+print("4. MEAN ABSOLUTE ERROR (MAE / L1)")
+print("="*50)
+
+# Formula: MAE = mean(|pred - target|)
+# Use case: Regression when you don't want outliers to dominate
+
+pred = torch.tensor([2.5, 3.0, 2.0, 100.0])  # Note: huge outlier!
+target = torch.tensor([3.0, 3.0, 2.0, 2.0])
+
+print(f"Predictions: {pred}")
+print(f"Targets:     {target}")
+print(f"Errors:      {pred - target}")
+
+# Compute both MAE and MSE
+mae = F.l1_loss(pred, target)
+mse = F.mse_loss(pred, target)
+
+print(f"\nMAE: {mae.item():.4f}")
+print(f"MSE: {mse.item():.4f}")
+
+print("\n--- Why MAE is robust to outliers ---")
+# Outlier has error = 98
+print(f"Outlier error: 98")
+print(f"  MAE penalty: |98| = 98")
+print(f"  MSE penalty: 98² = {98**2} (dominates everything!)")
+
+# Without outlier
+pred_clean = pred[:-1]
+target_clean = target[:-1]
+mae_clean = F.l1_loss(pred_clean, target_clean)
+mse_clean = F.mse_loss(pred_clean, target_clean)
+
+print(f"\nWithout outlier:")
+print(f"  MAE: {mae_clean.item():.4f}")
+print(f"  MSE: {mse_clean.item():.4f}")
+
+print("\nUse MAE when:")
+print("  - Outliers are real but shouldn't dominate training")
+print("  - You want equal penalty for all error magnitudes")
 
 
 # Hubr loss 
@@ -210,6 +283,46 @@ print("Large gradient → strong learning signal!")
 # - Regression with some outliers
 # - When you want smooth gradients near 0
 # - When you need stability for large errors
+
+
+print("\n" + "="*50)
+print("5. HUBER LOSS (Smooth L1)")
+print("="*50)
+
+# Formula: MSE for small errors, MAE for large errors
+# Use case: Reinforcement learning, regression with some outliers
+
+pred = torch.tensor([2.5, 3.0, 2.0, 100.0])
+target = torch.tensor([3.0, 3.0, 2.0, 2.0])
+
+# Compute all three
+huber = F.smooth_l1_loss(pred, target, beta=1.0)
+mae = F.l1_loss(pred, target)
+mse = F.mse_loss(pred, target)
+
+print(f"Predictions: {pred}")
+print(f"Targets:     {target}")
+print(f"\nHuber Loss: {huber.item():.4f}")
+print(f"MAE:        {mae.item():.4f}")
+print(f"MSE:        {mse.item():.4f}")
+
+print("\n--- Huber is a compromise ---")
+print("Small errors: Uses MSE (smooth gradient)")
+print("Large errors: Uses MAE (robust to outliers)")
+
+# Demonstrate on individual errors
+errors = torch.tensor([0.5, 1.0, 2.0, 10.0])
+print(f"\nError magnitude | MSE | MAE | Huber (β=1)")
+for err in errors:
+    mse_loss = 0.5 * err**2
+    mae_loss = err
+    if err <= 1.0:
+        huber_loss = 0.5 * err**2
+    else:
+        huber_loss = err - 0.5
+    print(f"  {err:4.1f}          | {mse_loss:5.2f} | {mae_loss:4.2f} | {huber_loss:5.2f}")
+
+print("\nUsed in RL (DQN) to prevent exploding gradients!")
 
 
 # KL Divergence an information-theoretic measure of the dissimilarity or difference between two probability 

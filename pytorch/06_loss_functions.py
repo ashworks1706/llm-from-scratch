@@ -363,11 +363,136 @@ print("\nUsed in RL (DQN) to prevent exploding gradients!")
 # Force latent space to be normal distribution
 
 
+     
+     print("\n" + "="*50)
+     print("6. KL DIVERGENCE")
+     print("="*50)
+     
+     # Formula: KL(P||Q) = Σ P(x) * log(P(x)/Q(x))
+     # Use case: Matching distributions (distillation, VAEs, RL)
+     
+     # Example: Teacher-Student in distillation
+     teacher_probs = torch.tensor([0.7, 0.2, 0.1])
+     student_probs = torch.tensor([0.6, 0.3, 0.1])
+     
+     print(f"Teacher distribution (target): {teacher_probs}")
+     print(f"Student distribution (learned): {student_probs}")
+     
+     # Manual KL calculation
+     # KL expects log probabilities as input for student
+     student_log_probs = torch.log(student_probs)
+     kl_manual = torch.sum(teacher_probs * (torch.log(teacher_probs) - student_log_probs))
+     
+     print(f"\nManual KL divergence: {kl_manual.item():.4f}")
+     
+     # PyTorch KL (input needs to be log probabilities!)
+     kl_pytorch = F.kl_div(student_log_probs, teacher_probs, reduction='sum')
+     print(f"PyTorch KL divergence: {kl_pytorch.item():.4f}")
+     
+     # Perfect match should give 0
+     perfect_log = torch.log(teacher_probs)
+     kl_perfect = F.kl_div(perfect_log, teacher_probs, reduction='sum')
+     print(f"KL (teacher vs teacher): {kl_perfect.item():.6f} (≈ 0)")
+     
+     print("\n--- Step by step for first class ---")
+     p = teacher_probs[0].item()
+     q = student_probs[0].item()
+     print(f"P(class 0) = {p:.1f}")
+     print(f"Q(class 0) = {q:.1f}")
+     print(f"Contribution = P * log(P/Q) = {p:.1f} * log({p:.1f}/{q:.1f})")
+     print(f"             = {p:.1f} * {torch.log(torch.tensor(p/q)).item():.3f}")
+     print(f"             = {(p * torch.log(torch.tensor(p/q))).item():.4f}")
+     
+     print("\nYou used KL in:")
+     print("  - Distillation (match teacher's soft probabilities)")
+     print("  - DPO (stay close to reference model)")
+     print("  - VAE (match latent to prior distribution)")
 
 
+print("\n" + "="*50)
+print("8. CONTRASTIVE LOSS (InfoNCE)")
+print("="*50)
 
+# Formula: L = -log(exp(sim(x, x+)/τ) / Σ exp(sim(x, xi)/τ))
+# Use case: Self-supervised learning, CLIP, sentence embeddings
+# Contrastive loss is a metric-learning objective used to train models to produce similar 
+# embeddings for related data points (positive pairs) and distinct embeddings for unrelated data (negative 
+def contrastive_loss(anchor, positive, negatives, temperature=0.1):
+    """
+    InfoNCE contrastive loss
+    anchor: embedding of anchor (batch,)
+    positive: embedding of positive example (batch,)
+    negatives: embeddings of negative examples (num_negatives, batch)
+    """
+    # Cosine similarity
+    sim_pos = F.cosine_similarity(anchor.unsqueeze(0), positive.unsqueeze(0))
+    sim_neg = F.cosine_similarity(anchor.unsqueeze(0), negatives)
+    
+    # Temperature scaling
+    logits = torch.cat([sim_pos, sim_neg]) / temperature
+    
+    # InfoNCE: positive should have highest similarity
+    labels = torch.zeros(1, dtype=torch.long)  # Positive is at index 0
+    loss = F.cross_entropy(logits.unsqueeze(0), labels)
+    
+    return loss
 
+# Example: Image embeddings
+anchor = torch.tensor([0.5, 0.3, 0.2])      # Cat photo 1
+positive = torch.tensor([0.6, 0.4, 0.1])    # Cat photo 2 (similar!)
+negatives = torch.tensor([
+    [0.1, 0.7, 0.5],  # Dog photo
+    [0.2, 0.1, 0.9],  # Car photo
+])
 
+print(f"Anchor (cat 1):    {anchor}")
+print(f"Positive (cat 2):  {positive}")
+print(f"Negatives:         {negatives}")
+
+# Compute similarities
+sim_anchor_pos = F.cosine_similarity(anchor.unsqueeze(0), positive.unsqueeze(0))
+sim_anchor_neg1 = F.cosine_similarity(anchor.unsqueeze(0), negatives[0].unsqueeze(0))
+sim_anchor_neg2 = F.cosine_similarity(anchor.unsqueeze(0), negatives[1].unsqueeze(0))
+
+print(f"\nCosine similarities:")
+print(f"  anchor ↔ positive: {sim_anchor_pos.item():.3f} ← Should be high!")
+print(f"  anchor ↔ dog:      {sim_anchor_neg1.item():.3f}")
+print(f"  anchor ↔ car:      {sim_anchor_neg2.item():.3f}")
+
+# Compute loss
+loss = contrastive_loss(anchor, positive, negatives, temperature=0.1)
+print(f"\nContrastive loss: {loss.item():.4f}")
+
+print("\nThe loss encourages:")
+print("  - Similar items (positive pairs) → close in embedding space")
+print("  - Different items (negatives) → far in embedding space")
+
+print("\nUsed in:")
+print("  - CLIP (match images with text)")
+print("  - SimCLR (self-supervised learning)")
+print("  - Sentence embeddings (similar sentences together)")
+
+print("LOSS FUNCTION QUICK REFERENCE")
+print("="*50)
+
+summary = """
+Loss Function    | Task              | Key Use Case
+-----------------|-------------------|-----------------------------
+MSE              | Regression        | Default for continuous values
+Cross Entropy    | Classification    | Default for classes
+BCE              | Binary            | Yes/no decisions, multi-label
+MAE              | Regression        | Robust to outliers
+Huber            | Regression/RL     | RL, some outliers
+KL Divergence    | Distribution      | Distillation, DPO, VAE
+Focal            | Classification    | Severe class imbalance
+Contrastive      | Embeddings        | Self-supervised, CLIP
+"""
+
+print(summary)
+
+print("\n🎯 Your LLM uses:")
+print("  - Cross Entropy: For next token prediction")
+print("  - KL Divergence: For distillation and DPO")
 
 
 

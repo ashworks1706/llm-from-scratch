@@ -116,10 +116,19 @@
 # Even though gradient is decreasing, velocity keeps it going!
 # so with momentum, slower inititally but eventually converges faster 
 
+# code 
+#
+#
+#
 
 
 
 
+# ADAM - Adaptive Moment Estimation 
+# the problems with SGD was that all parameters use same learning rate, 
+# but some parameters need big steps, other need tiny steps 
+# adam compute separate adaptive learning rate for each parameter, based on history of gradients for that parameter 
+# 
 
 
 

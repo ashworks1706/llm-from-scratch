@@ -91,6 +91,33 @@ print(f"  Loss decreased from 100 → {loss.item():.6f}")
 # the noise acts as regularization (what is regularization? to prevent overfitting in algorithms) 
 # the trade off is that updates are a bit vague, need more total updates to converge but stil lfaster 
 
+# code 
+#
+#
+
+
+x = torch.tensor([10.0], requires_grad=True)
+optimizer_sgd = torch.optim.SGD([x], lr=0.2)
+
+history_sgd = []
+
+for step in range(15):
+    optimizer_sgd.zero_grad()
+    loss = x ** 2 
+    loss.backward()
+
+    history_sgd.append((step, x.item(), loss.item(), x.grad.item()))
+
+    optimizer_sgd.step() # this step updates the parameters, x = x - lr * x.grad
+
+    if step%3==0 or step < 3:
+        step_info = history_sgd[-1]
+        print(f"Step {step_info[0]:2d}: x={step_info[1]:7.4f}, loss={step_info[2]:8.4f}, grad={step_info[3]:7.4f}")
+    
+print(f"\n✓ Same result as manual: x = {x.item():.6f}")
+
+
+
 # SGD with momentum 
 # wihtout momentum, gradient points perpendicular to ravine walls, zigzags back and forth, slow progress toward goal 
 # with momentum, accumlates velocity in consistent direction, smooth path down ravine faster process 
@@ -129,8 +156,29 @@ print(f"  Loss decreased from 100 → {loss.item():.6f}")
 #
 #
 
+# momentum adds inertia like a ball rolling downhill 
+# Update rule: v_t = β*v_{t-1} + g_t
+#              θ_t = θ_{t-1} - lr*v_t
+# Where v = velocity (accumulated gradient), β = momentum coefficient (usually 0.9)
 
+x = torch.tensor([10.0], requires_grad=True)
+optimizer_momentum = torch.optim.SGD([x], lr=0.2, momentum=0.9)
 
+history_momentum =[]
+
+for step in range(15):
+    optimizer_momentum.zero_grad()
+
+    loss = x**2
+    loss.backward()
+    history_sgd.append((step, x.item(), loss.item(), x.grad.item()))
+    optimizer_momentum.step() # internally maintains velocity state, first few steps: velocity builds up 
+
+    if step%3==0 or step<3:
+        step_info = history_momentum[-1]
+        print(f"Step {step_info[0]:2d}: x={step_info[1]:7.4f}, loss={step_info[2]:8.4f}, grad={step_info[3]:7.4f}")
+ 
+print(f"\n✓ Converged to x = {x.item():.6f}")
 
 
 
@@ -186,9 +234,30 @@ print(f"  Loss decreased from 100 → {loss.item():.6f}")
 # code 
 #
 #
-#
+
+x = torch.tensor([10.0], requires_grad=True)
+optimizer_adam = torch.optim.ADAM([x], lr=0.5)
+
+history_adm = []
+
+for step in range(15):
+    optimizer_adam.zero_grad()
+
+    loss = x**2
+    loss.backward()
+
+    state = optimizer_adam.state[x]
+
+    optimizer_adam.step()
+
+    history_adm.append((step, x.item(), loss.item(), x.grad.item()))
+
+    if step%3==0 or step<3:
+        step_info = history_adm[-1]
+        print(f"Step {step_info[0]:2d}: x={step_info[1]:7.4f}, loss={step_info[2]:8.4f}, grad={step_info[3]:7.4f}")
 
 
+print(f"\n✓ Converged to x = {x.item():.6f}")
 
 # ADAMW - What normal LLM uses 
 # the weight decay issue with adam optimizers is that L2 regularization is applies weight decay to gradeint before adaptive scaling 
@@ -206,10 +275,26 @@ print(f"  Loss decreased from 100 → {loss.item():.6f}")
 # code 
 #
 #
-#
+x = torch.tensor([10.0], requires_grad=True)
+optimizer_adamw = torch.optim.AdamW([x], lr=0.5, weight_decay=0.01)
 
+history_adamw = []
 
+for step in range(15):
+    optimizer_adamw.zero_grad()
+    loss = x ** 2
+    loss.backward()
+    
+    history_adamw.append((step, x.item(), loss.item(), x.grad.item() if step < 14 else 0))
+    
+    # Weight decay pulls x toward 0 even without gradient!
+    # This is regularization - prevents weights from growing too large
+    optimizer_adamw.step()
+    
+    if step % 3 == 0 or step < 3:
+        print(f"Step {step:2d}: x={x.item():7.4f}, loss={loss.item():8.4f}")
 
+print(f"\n✓ Converged to x = {x.item():.6f}")
 #   ┌──────────────┬───────────┬────────┬─────────────────────┬───────────────────────────────────────────┐
 #   │ Optimizer    │ Memory    │ Speed  │ Hyperparams to Tune │ Typical Use                               │
 #   ├──────────────┼───────────┼────────┼─────────────────────┼───────────────────────────────────────────┤
@@ -228,7 +313,24 @@ print(f"  Loss decreased from 100 → {loss.item():.6f}")
 
 
 
+print("COMPARISON OF ALL OPTIMIZERS")
+print("="*60)
 
+# Print final values
+print("\n📊 Final x values (target: 0):")
+print(f"   Manual GD:  {history_manual[-1][1]:.6f}")
+print(f"   SGD:        {history_sgd[-1][1]:.6f}")
+print(f"   Momentum:   {history_momentum[-1][1]:.6f}")
+print(f"   Adam:       {history_adam[-1][1]:.6f}")
+print(f"   AdamW:      {history_adamw[-1][1]:.6f}")
+
+# Convergence speed comparison
+print("\n⚡ Convergence speed (steps to reach x < 0.1):")
+for name, hist in [("Manual GD", history_manual), ("SGD", history_sgd), 
+                    ("Momentum", history_momentum), ("Adam", history_adam), 
+                    ("AdamW", history_adamw)]:
+    steps = next((i for i, (step, x, _, _) in enumerate(hist) if abs(x) < 0.1), len(hist))
+    print(f"   {name:12s}: {steps} steps")
 
 
 

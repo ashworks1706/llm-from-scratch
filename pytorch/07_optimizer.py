@@ -25,3 +25,50 @@
 # Then: ∇L · Δθ = ∇L · (-η * ∇L) = -η * ||∇L||² < 0 ✓
 
 #  Moving opposite to gradient ALWAYS decreases loss (for small η)!
+
+
+
+
+# 1. Vanilla Gradient Descent 
+# Initialize: θ₀ = random values
+# repeat until convergence by computing the loss L = f(theta_t) then use that loss in gradient g_t = grad(L), then update
+# theta_{t+1} = theta_t - n * g_t where n is the learning rate (step size)
+# determining the step size is really important, n too small, baby steps, too big, jump too far, n is supposed to be just right 
+# 0 < n < 2/L where L is lipschitz constant (max curvature of loss)
+# we zero out gradients after each iteration why ? gradients accumulate by default in pytorch
+# Without zeroing:
+# Step 1: grad = 20, update by -2
+# Step 2: grad = 16 + 20 = 36 (!), update by -3.6
+# Step 3: grad = 12.8 + 36 = 48.8 (!), ...
+# → Explodes!
+
+# With zeroing:
+# Step 1: grad = 20, update by -2, ZERO
+# Step 2: grad = 16, update by -1.6, ZERO
+# Step 3: grad = 12.8, ...
+# → Correct descent!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

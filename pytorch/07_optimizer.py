@@ -48,6 +48,102 @@
 # Step 3: grad = 12.8, ...
 # → Correct descent!
 
+# code 
+#
+#
+
+
+
+
+
+
+
+
+
+
+
+
+
+# SGD 
+# the key difference between stochastic gradient and normal gradient is that in normal gradient descent 
+# we do 1 update per epoch, but in SGD we do N/B updates per epoch where is B is number of batch 
+# True gradient: ∇L = (1/N) Σᵢ ∇Lᵢ
+# (Average over ALL samples)
+
+# SGD gradient: ∇L̂ = (1/B) Σⱼ ∇L
+# (Average over BATCH samples)
+
+# ∇L̂ is NOISY estimate of ∇L, but
+# E[∇L̂] = ∇L (unbiased estimator!
+
+
+# why SGD ? 
+# the speed is way faster, since B << N and B/N times faster per update, can escape shallow local minima 
+# the noise acts as regularization (what is regularization? to prevent overfitting in algorithms) 
+# the trade off is that updates are a bit vague, need more total updates to converge but stil lfaster 
+
+# SGD with momentum 
+# wihtout momentum, gradient points perpendicular to ravine walls, zigzags back and forth, slow progress toward goal 
+# with momentum, accumlates velocity in consistent direction, smooth path down ravine faster process 
+#
+#
+# Velocity update (exponential moving average):
+# v_t = β * v_{t-1} + (1-β) * g_t
+     
+# Parameter update:
+# θ_t = θ_{t-1} - η * v_t
+
+# Where:
+# - β = momentum coefficient (typically 0.9)
+# - g_t = current gradient
+# - v_t = velocity (accumulated gradient)
+
+# v_t = β * v_{t-1} + (1-β) * g_t
+#    = (1-β) * g_t + β * [(1-β) * g_{t-1} + β * v_{t-2}]
+#    = (1-β) * g_t + β(1-β) * g_{t-1} + β² * v_{t-2}
+#    = (1-β) * [g_t + β*g_{t-1} + β²*g_{t-2} + β³*g_{t-3} + ...]
+
+#Recent gradients weighted more, but ALL history contributes!
+
+# With β = 0.9:
+# g_t weighted by: (1-0.9) = 0.1
+# g_{t-1} weighted by: 0.9*0.1 = 0.09
+# g_{t-2} weighted by: 0.81*0.1 = 0.081
+# ...
+
+# Effective averaging over ~1/(1-β) = 10 steps
+
+# Even though gradient is decreasing, velocity keeps it going!
+# so with momentum, slower inititally but eventually converges faster 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -12,6 +12,9 @@
 # this turns in fewer parameters and we do learn spatial awareness  for the same window we share 
 
 
+# 
+
+
 
 
 

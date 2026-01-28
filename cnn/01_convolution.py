@@ -84,7 +84,57 @@
 
 
 
+# pooling :
+# after convlution, feature maps can be large, pooling reduces size while keeping important info 
+# it reduces computation, overfitting and translation variance (small shifts dont matter )
+# Max pooling, average pooling 
+# # Take maximum value in each region
+     
+# Input (4×4):
+# 1   3   2   4
+# 5   6   7   8
+# 9   10  11  12
+# 13  14  15  16
 
+# Max Pool (2×2, stride=2):
+# Split into 2×2 regions:
+# Region 1:     Region 2:
+# 1  3          2  4
+# 5  6          7  8
+# Max: 6        Max: 8
+
+# Region 3:     Region 4:
+# 9  10         11 12
+# 13 14         15 16
+# Max: 14       Max: 16
+
+# Output (2×2):
+# 6   8
+# 14  16
+
+# Size reduced by 2x in each dimension!
+
+# Average Pooling:
+# Take average instead of max
+
+# Same input:
+# 1   3   2   4
+# 5   6   7   8
+# 9   10  11  12
+# 13  14  15  16
+
+# Average Pool (2×2, stride=2):
+# Region 1: (1+3+5+6)/4 = 3.75
+# Region 2: (2+4+7+8)/4 = 5.25
+# Region 3: (9+10+13+14)/4 = 11.5
+# Region 4: (11+12+15+16)/4 = 13.5
+
+# Output:
+# 3.75   5.25
+# 11.5   13.5
+
+# Max Pool: Keeps strongest activations
+# Avg Pool: Smooths features
 
 
 

@@ -56,6 +56,26 @@
 # - No gradients (faster, less memory)
 
 
+# gradient clipping is also needed to prevent exploding gradients, by scaling down large gradeints while skeeping direction 
+
+
+# why do we do validaiton seperately?
+# because training data: model learns from it, validation data: check if model generalizes well on unseen data 
+# if training loss is less but validation loss is high: that means the model is overfitting and not learning,
+# u can try regularization, more data or simpler model 
+# if the loss is NaN, it could because of leanring rate is too high or numerical instability
+# the soluton to this would be to lower learning rate, gradient clipping and data validation 
+
+# if the loss is not decreasing, maybe its because LR is too low, wrong Loss function, or data not noramlized
+# usualyl the soluton to this is increasing LR, looking for data shapes, and normalizing them 
+#
+# if the model is overfitting, that means training loss is less but validation loss is hihg 
+# solutions could be adding dropout, weight decay (l2 regularization), getting more data, or early stopping (stop when validation loss stops improving)
+
+
+
+
+
 
 
 

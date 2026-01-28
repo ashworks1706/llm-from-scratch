@@ -256,10 +256,41 @@ def manual_conv2d(image, kernel, stride=1, padding=0):
 
 
 # test image 
+image = np.array([
+    [1,  2,  3,  4,  5],
+    [6,  7,  8,  9,  10],
+    [11, 12, 13, 14, 15],
+    [16, 17, 18, 19, 20],
+    [21, 22, 23, 24, 25]
+], dtype=np.float32)
 
+# Vertical edge detector
+kernel_vertical = np.array([
+    [1,  0, -1],
+    [1,  0, -1],
+    [1,  0, -1]
+], dtype=np.float32)
 
+print("\n1. Manual Convolution")
+print("Image (5×5):")
+print(image)
+print("\nVertical edge kernel (3×3):")
+print(kernel_vertical)
 
+output = manual_conv2d(image, kernel_vertical, stride=1, padding=0)
+print(f"\nOutput (3×3):")
+print(output)
 
+# Horizontal edge detector
+kernel_horizontal = np.array([
+    [1,   1,  1],
+    [0,   0,  0],
+    [-1, -1, -1]
+], dtype=np.float32)
+
+output_h = manual_conv2d(image, kernel_horizontal)
+print(f"\nHorizontal edge output:")
+print(output_h)
 
 
 

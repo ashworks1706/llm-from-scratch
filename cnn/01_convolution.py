@@ -295,9 +295,7 @@ print(output_h)
 
 
 
-print("\n" + "="*70)
 print("2. Padding & Stride")
-print("="*70)
 
 # No padding: shrinks
 output_no_pad = manual_conv2d(image, kernel_vertical, stride=1, padding=0)
@@ -334,6 +332,7 @@ output_layer = conv_layer(image_torch)
 print(f"\nnn.Conv2d output:\n{output_layer.squeeze().detach().numpy()}")
 
 
+# Multiple filters 
 multi_conv = nn.Conv2d(in_channels =1, out_channels=3, kernel_size=3, stride =1 , padding =1 )
 output_multi = multi_conv(image_torch)
      

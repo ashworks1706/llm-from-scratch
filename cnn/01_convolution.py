@@ -238,7 +238,25 @@ def manual_conv2d(image, kernel, stride=1, padding=0):
 
     
     # output size: (input - kernel +2*padding) / stride + 1 
-    out_H = (H - K ) 
+    out_H = (H - K ) // stride + 1 
+    out_W = (W - K ) // stride + 1 
+
+    output = np.zeros((out_H, out_W))
+
+    for i in range(out_H):
+        for j in range(out_W):
+            h_start = i*stride 
+            w_start = j*stride 
+            h_end = h_start + K 
+            w_end = w_start + K 
+
+            patch= image[h_start:h_end, w_start:w_end]
+            output[i,j] = np.sum(patch * kernel) # dot product 
+    return output 
+
+
+# test image 
+
 
 
 

@@ -295,12 +295,54 @@ print(output_h)
 
 
 
+print("\n" + "="*70)
+print("2. Padding & Stride")
+print("="*70)
+
+# No padding: shrinks
+output_no_pad = manual_conv2d(image, kernel_vertical, stride=1, padding=0)
+print(f"No padding: {image.shape} → {output_no_pad.shape}")
+
+# Padding=1: same size
+output_pad1 = manual_conv2d(image, kernel_vertical, stride=1, padding=1)
+print(f"Padding=1:  {image.shape} → {output_pad1.shape}")
+
+# Stride=2: downsamples
+output_s2 = manual_conv2d(image, kernel_vertical, stride=2, padding=0)
+print(f"Stride=2:   {image.shape} → {output_s2.shape}")
+
+# Convert to tensors: (batch, channels, H, W)
+image_torch = torch.from_numpy(image).unsqueeze(0).unsqueeze(0)
+kernel_torch = torch.from_numpy(kernel_vertical).unsqueeze(0).unsqueeze(0)
+
+print(f"Image shape: {image_torch.shape}")
+print(f"Kernel shape: {kernel_torch.shape}")
+
+# Functional API
+output_torch = F.conv2d(image_torch, kernel_torch, stride=1, padding=0)
+print(f"Output shape: {output_torch.shape}")
+print(f"Output:\n{output_torch.squeeze().numpy()}")
+
+# Using nn.Conv2d
+conv_layer = nn.Conv2d(in_channels=1, out_channels=1, kernel_size=3, 
+                    stride=1, padding=0, bias=False)
+
+with torch.no_grad():
+    conv_layer.weight = nn.Parameter(kernel_torch)
+
+output_layer = conv_layer(image_torch)
+print(f"\nnn.Conv2d output:\n{output_layer.squeeze().detach().numpy()}")
 
 
+multi_conv = nn.Conv2d(in_channels =1, out_channels=3, kernel_size=3, stride =1 , padding =1 )
+output_multi = multi_conv(image_torch)
+     
+print(f"Input:  {image_torch.shape}")
+print(f"Output: {output_multi.shape}")
+print(f"3 filters → 3 feature maps")
 
-
-
-
+params = sum(p.numel() for p in multi_conv.parameters())
+print(f"Parameters: {params} (27 weights + 3 biases)")
 
 
 

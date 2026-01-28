@@ -137,13 +137,82 @@
 # Avg Pool: Smooths features
 
 
+# Typical CNN Structure:
+
+#    Input Image
+#        ↓
+#    [Conv → ReLU → Pool] × N    (Feature extraction)
+#        ↓
+#    [Flatten]                    (Convert 2D → 1D)
+#        ↓
+#    [Fully Connected → ReLU] × M (Classification)
+#        ↓
+#    Output (class probabilities)
+
+# Example: Simple CNN for MNIST
+
+#    Input: 28×28×1 (grayscale image)
+    
+#    Layer 1: Conv2D
+#    - Filters: 32
+#    - Kernel: 3×3
+#   - Output: 26×26×32
+#   - Learns: 32 different low-level patterns (edges, corners)
+    
+#   Layer 2: ReLU
+#   - Non-linearity
+#   - Output: 26×26×32 (same size)
+    
+#   Layer 3: MaxPool2D
+#   - Pool size: 2×2
+#   - Output: 13×13×32 (halved)
+    
+#   Layer 4: Conv2D
+#   - Filters: 64
+#   - Kernel: 3×3
+#   - Output: 11×11×64
+#   - Learns: 64 mid-level patterns (combine edges into shapes)
+    
+#   Layer 5: ReLU
+#   - Output: 11×11×64
+    
+#   Layer 6: MaxPool2D
+#   - Pool size: 2×2
+#   - Output: 5×5×64
+    
+#   Layer 7: Flatten
+#   - Output: 5×5×64 = 1600 neurons
+    
+#   Layer 8: Fully Connected
+#   - Output: 128 neurons
+#   - Combines features for classification
+    
+#   Layer 9: ReLU
+#   - Output: 128
+    
+#   Layer 10: Fully Connected
+#   - Output: 10 neurons (10 digit classes)
+#   - Logits for each class
+    
+#   Loss: CrossEntropyLoss
 
 
 
+# CNNs basically learn by - 
+# Early layers (Conv1-2):
+# Detect edges, corners, colors/tectures,
+# Middle layers (Conv3-4):
+# combine edges into shapes, detetct parts
+# Deep layers :
+# Detect whole objects, combine parts into concepts, high level features 
 
 
-
-
+# cat detection :
+# edge detectors 
+# curve detectors 
+# ear/whisker deteectors 
+# face part detectors 
+# whole cat detector 
 
 
 

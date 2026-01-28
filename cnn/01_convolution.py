@@ -58,6 +58,30 @@
 
 
 
+# the key parameters CNN has are 
+# kernel size : size of filter, if small cpatures fine details, if large captures bigger patterns
+# common is 3x3
+# stride : how much to move filter each step, stride 1, move 1 pixel at a time (more overlap), 2 move faster smaller output
+# padding : add border of zeros around image, without padding: output smaller than input, with padding: can keep same size
+# "small" padding : output size = input size 
+# "valid" padding : no padding (output shrinks)
+# number of filters : how many different pattersn to detect 
+# more filters = detect more patterns 
+# each filter produces one output channel 
+
+
+# output formula 
+# Output_heihgt = (input height - kernel_height + 2 * padding) / stride + 1
+# output_Width = (inputwidth - kernelwidth + 2 * padding) / stride + 1
+# Input: 28×28, Kernel: 3×3, Stride: 1, Padding: 0
+# Output: (28 - 3 + 0) / 1 + 1 = 26×26
+
+# Input: 28×28, Kernel: 3×3, Stride: 1, Padding: 1
+# Output: (28 - 3 + 2) / 1 + 1 = 28×28 (same size!)
+
+# Input: 32×32, Kernel: 5×5, Stride: 2, Padding: 2
+# Output: (32 - 5 + 4) / 2 + 1 = 16×16 (halved!)
+
 
 
 

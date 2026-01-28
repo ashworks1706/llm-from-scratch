@@ -11,9 +11,19 @@
 # we also preserve spatial structure 
 # this turns in fewer parameters and we do learn spatial awareness  for the same window we share 
 
+import torch 
+import torch.nn as nn 
+import torch.nn.functional as F 
+import numpy as np 
+
+# translation invariance is same pattern detected regardless of position 
+# why? shared weights, pooling aggregates nearby activates 
 
 # CNN is basically like sliding a small filter or window across an image, 
 # each position : multiply filter with image patch, sum up 
+# the reason we use same filter across entire image is because it reduces parameters
+# tranlsation invariance (cat anywhere -> detected), learns generalizable patterns 
+# but each neuron looks at small region, to fully exploit the meaning 
 # Simple example:
 # Image (5×5):
 # 1  2  3  4  5
@@ -55,8 +65,6 @@
 # Step 5: Move down, repeat
 
 # Result: Output feature map (smaller than input)
-
-
 
 # the key parameters CNN has are 
 # kernel size : size of filter, if small cpatures fine details, if large captures bigger patterns
@@ -215,11 +223,22 @@
 # whole cat detector 
 
 
+# code 
+#
+#
+#
 
+def manual_conv2d(image, kernel, stride=1, padding=0):
+    H,W = image.shape 
+    K = kernel.shape[0]
 
+    if padding > 0:
+        image = np.pad(image, padding, mode='constant', constant_values=0)
+        H, W = image.shape
 
-
-
+    
+    # output size: (input - kernel +2*padding) / stride + 1 
+    out_H = (H - K ) 
 
 
 

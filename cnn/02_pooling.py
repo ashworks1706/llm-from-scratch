@@ -91,3 +91,40 @@
 #   └──────────────┴──────────────────┴───────────────────┴────────────────────────┘
 
 
+import torch
+import torch.nn as nn 
+import torch.nn.functional as F 
+
+x = torch.tensor([
+         [1.,  3.,  2.,  4.],
+         [5.,  6.,  7.,  8.],
+         [9.,  10., 11., 12.],
+         [13., 14., 15., 16.]
+     ]).unsqueeze(0).unsqueeze(0)
+
+print(f"intput : {x}")
+
+# max pooling 
+max_pool = nn.MaxPool2d(kernel_size=2, stride=2)
+out_max = max_pool(n)
+print(f"max pool -> {out_max.shape[2]}x{out_max.shape[3]}:")
+print(out_max.squeeze())
+
+
+# average pooling 
+avg_pool = nn.AvgPool2d(kernel_size=2,stride=2)
+out_avg = avg_pool(x)
+
+print(f"min pool -> {out_avg.shape[2]}x{out_avg.shape[3]}:")
+print(out_avg.squeeze())
+
+
+
+# global pooling 
+x_large = torch.randn(1,512,7,7)
+gap=nn.AdaptiveAvgPool2d(1)
+out_gap=gap(x_large)
+
+print(f"\nGlobal Avg Pool: {x_large.shape} → {out_gap.shape}")
+print(f"Reduces 7×7×512 to 1×1×512")
+

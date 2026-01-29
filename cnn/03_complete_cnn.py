@@ -33,4 +33,7 @@ def SimpleCNN(nn.Module):
         x = self.fc2(x)
         return x
 
-model
+model = SimpleCNN()
+print(model)
+
+

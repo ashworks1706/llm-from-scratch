@@ -106,7 +106,7 @@ print(f"intput : {x}")
 
 # max pooling 
 max_pool = nn.MaxPool2d(kernel_size=2, stride=2)
-out_max = max_pool(n)
+out_max = max_pool(x)
 print(f"max pool -> {out_max.shape[2]}x{out_max.shape[3]}:")
 print(out_max.squeeze())
 

@@ -33,3 +33,15 @@
 # Rule of thumb:
 # - Hidden layers: Max pooling
 # - Final layer: Average pooling (or global avg pooling)
+
+
+# global average pooling :
+# take average of entire 7x7 spatial dimension, do this for each of 512 channels
+# massive reduce paramters, less overfitting, no spatial positions to memorize, works with any input size 
+
+
+
+# Overlapping pooling : we aim to retain more information over the kernel stride 
+# Stochastic pooling : instaedo of max or average, randomly sample based on activations then randomly pick one value wiht htose probabilities, high values more likely to be picked, used for regularization 
+# Mixed pooling: randomly vary pool size and stride during training, adds randomness = regularization 
+#

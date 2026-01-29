@@ -6,4 +6,30 @@
 
 # max pooling takes max value in each local region, why max? becasuse if a feature is detected, keep it
 # exact position doesn't matter, just that it exists, strong activates = important features 
-# 
+# out_size = (input_size - kernelsize) / stride + 1 
+
+
+# average pooling is just taking average values in each regions,
+# to smooth activations, less aggresive, keeps informaiton about all values, not just strongest 
+
+
+
+# Max vs Average - When to Use:
+
+# MAX POOLING:
+# ✓ Most common in CNNs
+# ✓ Better for feature detection (keep strongest signal)
+# ✓ More discriminative (sharp decisions)
+# ✓ Used in: Hidden layers, feature extraction
+# Examples: VGG, ResNet, AlexNet
+
+# AVERAGE POOLING:
+# ✓ Smoother, less aggressive
+# ✓ Better for final layer before classification
+# ✓ Summarizes entire region
+# ✓ Used in: Final pooling before FC layer
+# Examples: GoogLeNet (global avg pooling)
+
+# Rule of thumb:
+# - Hidden layers: Max pooling
+# - Final layer: Average pooling (or global avg pooling)

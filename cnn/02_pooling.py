@@ -45,3 +45,17 @@
 # Stochastic pooling : instaedo of max or average, randomly sample based on activations then randomly pick one value wiht htose probabilities, high values more likely to be picked, used for regularization 
 # Mixed pooling: randomly vary pool size and stride during training, adds randomness = regularization 
 #
+#
+#
+#
+#
+#
+# so over the years, we used to do conv -> pool -> conv -> pool etc 
+# heavy use of pooling 
+# but in modern cnns, conv with stride=2 insteawd of pooling or few pooling layers 
+# because pooling loses information, stride convlution learns how to downsample but pooling still useful for rreducing computation 
+
+
+
+
+

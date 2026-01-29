@@ -56,6 +56,38 @@
 # because pooling loses information, stride convlution learns how to downsample but pooling still useful for rreducing computation 
 
 
+# Where to Pool:
 
+#    Common pattern:
+#    Conv → Conv → Pool → Conv → Conv → Pool → ...
+#    
+#    Not after every conv!
+#    - Let features develop before downsampling
+#    - Multiple convs = richer features before pooling
+    
+#    Typical: Pool after every 2-3 conv layers
+
+# Final Layer:
+
+#    Instead of: Conv → Flatten → FC
+#    Use: Conv → Global Average Pool → FC
+    
+#    Why?
+#    - Fewer parameters
+#    - Less overfitting
+#    - Input size flexibility
+
+
+#   ┌──────────────┬──────────────────┬───────────────────┬────────────────────────┐
+#   │ Type         │ Formula          │ Use Case          │ Info Kept              │
+#   ├──────────────┼──────────────────┼───────────────────┼────────────────────────┤
+#   │ Max          │ max(region)      │ Feature detection │ Strongest signal       │
+#   ├──────────────┼──────────────────┼───────────────────┼────────────────────────┤
+#   │ Average      │ mean(region)     │ Smoothing         │ All signals equally    │
+#   ├──────────────┼──────────────────┼───────────────────┼────────────────────────┤
+#   │ Global Avg   │ mean(entire map) │ Before FC         │ One value per channel  │
+#   ├──────────────┼──────────────────┼───────────────────┼────────────────────────┤
+#   │ Strided Conv │ Conv stride>1    │ Modern nets       │ Learnable downsampling │
+#   └──────────────┴──────────────────┴───────────────────┴────────────────────────┘
 
 

@@ -57,14 +57,6 @@ import torch.nn.funtional as F
 # Can't vanish!
 
 
-# why do we do batchnorm in resnet?
-# in each residual block we do conv -> batchnorm -> relu -> conv -> batchnorm -> add -> relu 
-# where batchnorm normalizes activation: 
-# y= (x-mean) / std 
-# y = γ*y + β  (learnable scale and shift)
-# this benefits trainign, higher learning rate, reduces internal covariate shift, acts as regularizer 
-
-
 # Batch normalization (often shortened to BatchNorm) is a technique used in deep learning to make training faster and more stable
 # Training vs. Inference: During training, BatchNorm uses the statistics of the current batch. During 
 # inference (prediction), it uses a moving average of the mean and variance calculated during the 
@@ -97,8 +89,6 @@ import torch.nn.funtional as F
 # f(x) channels or downsample x with pooling for adjustingn the layers
 
 
-
-
 # all in alll benefits of resnet is that its like an esnemble of shorter netwroks 
 # resnet with n blocks has 2^n paths where each path is a diff netwrok depth benefiting the trainign 
 # the gradinet folow is much better and strong to early layers 
@@ -119,6 +109,14 @@ class BasicBlock(nn.Module):
         # we add differnet stride in conv1 and conv2 because in conv1 layer the shape is diff and in conv2
         # we want the shape to be same so that we can compute math within same shape of tensors with residdual block 
         self.bn2 = nn.BatchNorm2d(out_channels)
+        
+        # why do we do batchnorm in resnet?
+        # in each residual block we do conv -> batchnorm -> relu -> conv -> batchnorm -> add -> relu 
+        # where batchnorm normalizes activation: 
+        # y= (x-mean) / std 
+        # y = γ*y + β  (learnable scale and shift)
+        # this benefits trainign, higher learning rate, reduces internal covariate shift, acts as regularizer 
+
 
         # shortcut for dimension mismatch between x and F(x)
         # if channels change, or spatial size changes, project x to match 

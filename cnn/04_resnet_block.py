@@ -147,6 +147,16 @@ block_downsample= BasicBlock(64, 128, stride = 2)
 out_down = block_downsample(x)
 
 
+class BotteneckBlock(nn.Module):
+    expansion = 4 #output channels = mid_channels * 4 
+
+    def __init__(self, in_channels, mid_channels, stride =1 ):
+        super().__init__()
+        self.conv1 = nn.Conv2d(in_channels, mid_channels, kernel_size=1, bias=False)
+        self.bn1 = nn.BatchNorm2d(mid_channels)
+
+        self.conv2d = nn.Conv2d(mid_channels, mid_channels, kernel_size=1, stride=stride, padding =1, bias=False)
+        self.bn2 = nn.Conv2d()
 
 
 

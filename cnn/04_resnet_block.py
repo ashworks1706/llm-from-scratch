@@ -71,7 +71,10 @@
 
 
 
-
+# all in alll benefits of resnet is that its like an esnemble of shorter netwroks 
+# resnet with n blocks has 2^n paths where each path is a diff netwrok depth benefiting the trainign 
+# the gradinet folow is much better and strong to early layers 
+#
 
 
 

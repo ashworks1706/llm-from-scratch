@@ -193,6 +193,9 @@ out=bottleneck(x)
 
 
 
+class Resnet18(nn.Module):
+    def __init__(self, num_class=10):
+        super().__init__()
 
 
 

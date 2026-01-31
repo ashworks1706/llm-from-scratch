@@ -55,6 +55,14 @@
 # Can't vanish!
 
 
+# why do we do batchnorm in resnet?
+# in each residual block we do conv -> batchnorm -> relu -> conv -> batchnorm -> add -> relu 
+# where batchnorm normalizes activation: 
+# y= (x-mean) / std 
+# y = γ*y + β  (learnable scale and shift)
+# this benefits trainign, higher learning rate, reduces internal covariate shift, acts as regularizer 
+
+
 
 # looking inside the bottleneck block, the difference is that its 3 conv layers per block
 # 1x1 conv reduced computation, why 1x1? because without bottleneck:

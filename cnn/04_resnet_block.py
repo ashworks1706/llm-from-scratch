@@ -24,7 +24,9 @@
 # Gradient still decays through many layers
 
 
-
+import torch 
+import torch.nn as nn 
+import torch.nn.funtional as F 
 
 
 
@@ -63,6 +65,24 @@
 # this benefits trainign, higher learning rate, reduces internal covariate shift, acts as regularizer 
 
 
+# Batch normalization (often shortened to BatchNorm) is a technique used in deep learning to make training faster and more stable
+# Training vs. Inference: During training, BatchNorm uses the statistics of the current batch. During 
+# inference (prediction), it uses a moving average of the mean and variance calculated during the 
+# entire training process to ensure consistent results.
+# Placement: It is typically applied after a linear or convolutional layer but before the activation 
+# function (like ReLU), though applying it after the activation is also common. 
+
+# In machine learning, normalization is a preprocessing technique used to transform numerical features 
+# into a common range. This prevents features with large magnitudes (e.g., income) from dominating 
+# features with smaller magnitudes (e.g., age) during model training. 
+
+# In the context of BatchNorm, normalization refers to centering and scaling the 
+# hidden activations inside the neural network
+
+# database management, normalization is the process of organizing tables and 
+#  columns to reduce redundancy and improve data integrity
+
+
 
 # looking inside the bottleneck block, the difference is that its 3 conv layers per block
 # 1x1 conv reduced computation, why 1x1? because without bottleneck:
@@ -84,6 +104,13 @@
 # the gradinet folow is much better and strong to early layers 
 #
 
+
+class BasicBlock(nn.Module):
+    def __init__(self, in_channels, out_channels, stride=1):
+        super().__init__()
+        self.conv1 = nn.Conv3d(in_channels, out_channels, 3, stride=stride, padding=1, bias=False)
+        self.bn1 = nn.BatchNorm2d(out_channels)
+        self.
 
 
 

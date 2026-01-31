@@ -56,13 +56,17 @@
 
 
 
+# looking inside the bottleneck block, the difference is that its 3 conv layers per block
+# 1x1 conv reduced computation, why 1x1? because without bottleneck:
+# Input is 256 channels and conv 3x3, 2556 filters: 589,824 params 
+# whereas with bottleneck, input is 256 channels, 1x1 conv is 69,632 params 
+# 1x1 conv = dimension reduction/expansion
+# alos called projection or bottleneck 
 
 
-
-
-
-
-
+# however another problem in resnet block is that, the shape might be different when we're directly travelling the ouput to next layer 
+# for this reason, we use projection shortcut or do zero padding: channel increase by padding x with zeros to match 
+# f(x) channels or downsample x with pooling for adjustingn the layers
 
 
 

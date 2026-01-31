@@ -39,7 +39,20 @@
 #    (skip connection)
 
 
+# in code it is generally like Conv(ReLU(Conv(x))) + x 
 
+# why skip connections solve vanishing gradients?
+# traditionally gradient flows through weights, the derivative is just between layers of outputs 
+# when we hadd resnet which is F(x) + x, the derivative becomes 1 and we add it to the output derivative 
+# so now derivative for hte layer becomes derivative of output * derivative prev layer + 1 
+# so now its always in positive, and its called highway for gradients since it directly passes output to layers 
+# Forward pass : y = F(x, {w_i}) + x 
+# F is the residual function 
+# In a network with L residual blocks 
+# x_L = x_0 + Σ F_i(x_{i-1})
+# ∂x_L/∂x_0 = 1 + Σ ∂F_i/∂x_0
+# The "+1" ensures gradient always has minimum value of 1
+# Can't vanish!
 
 
 

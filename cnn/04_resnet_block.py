@@ -108,18 +108,48 @@ import torch.nn.funtional as F
 class BasicBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride=1):
         super().__init__()
+        # kernel_size=3: optimal efficiency, stacks well (two 3x3 = one 
+        # 5x5 receptive field but fewer params)
         self.conv1 = nn.conv2d(in_channels, out_channels, 3, stride=stride, padding=1, bias=False)
+        # stride=stride: first conv handles downsampling when needed 
+        # (stride=2 for layer transitions)
         self.bn1 = nn.BatchNorm2d(out_channels)
         self.conv2 = nn.Conv2d(out_channels, out_channels, 3, stride=1, padding=1, bias= False)
+        # we dont need specific bias in conv layer since its redundant and we alreayd have batchnorm 
+        # we add differnet stride in conv1 and conv2 because in conv1 layer the shape is diff and in conv2
+        # we want the shape to be same so that we can compute math within same shape of tensors with residdual block 
         self.bn2 = nn.BatchNorm2d(out_channels)
 
-        # shortcut for dimension mismatch 
+        # shortcut for dimension mismatch between x and F(x)
+        # if channels change, or spatial size changes, project x to match 
         self.shortcut = nn.Sequential()
         if stride != 1 or in_channels != out_channels:
+            # 1x1 conv: changes channels and/or downsamples to match f(x) dimensions 
             self.shortcut = nn.Sequential(
                 nn.Conv2d(in_channels, out_channels, 1, stride=stride, bias = False),
                 nn.BatchNorm2d(out_channels)
             )
+
+    def forward(self, x):
+        # main path: F(x) = conv -> bn -> relu -> conv -> bn
+        out = F.relu(self.bn1(self.conv1(x)))
+        out = self.bn2(self.conv(x))
+
+        out +=self.shortcut(x)
+        out = F.relu(out)
+
+        return out 
+
+
+x = torch.randn(2,64,56,56)
+block = BasicBlock(64,64)
+out = block(x)
+
+block_downsample= BasicBlock(64, 128, stride = 2)
+out_down = block_downsample(x)
+
+
+
 
 
 

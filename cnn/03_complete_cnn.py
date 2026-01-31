@@ -53,8 +53,9 @@ print(f"\nTest: {test_in.shape} → {test_out.shape}")
 
 
 
-class CNN(nn.module):
+class CNN(nn.Module):
     def __init__(self):
+        super().__init__()
         self.conv1= nn.Conv2d(1, 32,3, padding=1)
         self.bn1 = nn.BatchNorm2d(32)
         self.conv2 = nn.Conv2d(32, 64, 3, padding=1)
@@ -82,10 +83,53 @@ cnn = CNN()
 print(cnn)
 
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+model = CNN().to(device)
+optimizer=torch.optim.Adam(model.parameters(), lr=0.001)
+loss_fn = nn.CrossEntropyLoss()
 
+transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize((0.1307,), (0.3081))
+])
 
+train_dataset = datasets.MNIST('./data', train=True, download=True, transform=transform)
 
+train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
 
+def train_epoch(model, loader, optimizer, loss_fn, device):
+    model.train()
+    total_loss=0
+    correct=0
+    total=0
+
+    for batch_idx, (data,targets) in enumerate(loader):
+        data, targets = data.to(device), targets.to(device)
+
+        optimizer.zero_grad()
+
+        outputs = model(data)
+
+        loss = loss_fn(outputs, targets)
+
+        loss.backward()
+
+        optimizer.step()
+
+        total_loss += loss.item()
+
+        pred = outputs.argmax(dim=1)
+        correct += (pred == targets).sum().item()
+        total += targets.size(0)
+
+        if batch_size % 100 ==0 :
+            print(f"[{batch_idx}/{len(loader)}] Loss: {loss.item():.4f} Acc: {100*correct/total:.2f}%")
+
+    return total_loss / len(loader), correct/total
+
+train_loss, train_acc = train_epoch(model, train_loader, optimizer,
+                                    loss_fn, device)
+print(f"\nEpoch complete: Loss={train_loss:.4f}, Acc={train_acc*100:.2f}%")
 
 
 

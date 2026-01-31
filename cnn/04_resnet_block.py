@@ -22,3 +22,41 @@
 
 # Even with ReLU (helps but doesn't solve):
 # Gradient still decays through many layers
+
+
+
+
+
+
+# for this reason, instead of learning H(x), we learn the residual F(x) = H(x) - x 
+# where H(x) = desired mapping, F(x) = residual (what to add), x = identity (skip connection)
+# Traditional block:
+# x → [Conv → ReLU → Conv] → output
+
+# ResNet block:
+# x → [Conv → ReLU → Conv] → + → output
+# └────────────────────────────┘
+#    (skip connection)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

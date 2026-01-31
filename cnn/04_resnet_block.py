@@ -152,11 +152,42 @@ class BotteneckBlock(nn.Module):
 
     def __init__(self, in_channels, mid_channels, stride =1 ):
         super().__init__()
+        # conv 1x1 : reduce channels (Dimensionality reduction )
+        # this is dimension reduction only, not downsampling, so we dont need apdding 
+        # since padding is for 3x3 kernels 
         self.conv1 = nn.Conv2d(in_channels, mid_channels, kernel_size=1, bias=False)
         self.bn1 = nn.BatchNorm2d(mid_channels)
 
-        self.conv2d = nn.Conv2d(mid_channels, mid_channels, kernel_size=1, stride=stride, padding =1, bias=False)
-        self.bn2 = nn.Conv2d()
+        # 3x3 conv: process at reduced dimension 
+        self.conv2 = nn.Conv2d(mid_channels, mid_channels, kernel_size=1, stride=stride, padding =1, bias=False)
+        self.bn2 = nn.BatchNorm2d(mid_channels)
+
+
+        # 1x1 conv: expand channels back ( dimension expansion)
+        self.conv3 = nn.Conv2d(mid_channels, mid_channels + self.expansion, kernel_size=1, bias=False)
+        self.bn3 = nn.BatchNorm2d(mid_channels * self.expansion)
+
+        self.shortcut = nn.Sequential()
+        if stride!=1 or in_channels != mid_channels * self.expansion:
+            self.shortcut = nn.Sequential(
+                nn.Conv2d(in_channels, mid_channels * self.expansion, kernel_size=1, stride=stride, bias=False),
+                nn.BatchNorm2d(mid_channels * self.expansion)
+            )
+
+    def forward(self, x ):
+        out= F.relu(self.bn1(self.conv1(x)))
+        out = F.relu(self.bn2(self.conv2(x)))
+        out = self.bn3(self.conv3(x))
+        out+= self.shortcut(x)
+        out=F.relu(x)
+        return out 
+
+
+x = torch.randn(2,256,56,56)
+bottleneck = bottleneckBllock(256, 64)
+out=bottleneck(x)
+
+
 
 
 

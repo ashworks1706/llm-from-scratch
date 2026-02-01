@@ -99,6 +99,81 @@
 # h_t = o_t * tanh(C_t)
 
 
+class RNNCell(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super().__init__()
+        self.hidden_size = hidden_size
+
+        # W_xh: input to hidden 
+        self.W_xh = nn.Linear(input_size, hidden_size)
+        # W_hh : hiddne to hidden (recurrent connection)
+        self.W_hh = nn.Linear(hidden_size, hidden_size)
+
+    def forward(self, x, h_prev):
+        # h_t = tanh(W_xh * x_t + W_hh * h_{t-1})
+        h_new = torch.tanh(self.W_xh(x) + self.W_hh(h_prev))
+        return h_new
+
+input_size = 10 
+hidden_size = 20 
+rnn_cell = RNNCell(input_size, hidden_size)
+
+x = torch.randn(1, input_size)
+h=  torch.zeros(1, hidden_size)
+
+h_new = rnn_cell(x,h)
+
+seq_len = 5
+batch_size = 2 
+sequence = torch.randn(seq_len, batch_size, input_size)
+h = torch.zeros(batch_size, hidden_size)
+
+for t in range(seq_len):
+    x_t = sequence[t]
+    h = rnn_cell(x_t, h)
+    print(f"Step {t+1}: input {x_t.shape} -> hidden {h.shape}")
+
+print(f"Final hidden state : {h.shape}\n")
+
+
+
+class RNN:
+    def __init__(self, input_size, hidden_size, output_size):
+        super().__init__()
+        self.hidden_size = hidden_size
+        self.rnn_cell = RNNCell(input_size, hidden_size)
+        self.fc = nn.Linear(hidden_size, output_size)
+    def forward(self, sequence):
+        # seqlen, batch, input_size
+        batch_size = sequence.size(1)
+        h = torch.zeros(batch_size, self.hidden_size)
+
+        for t in range(sequence.size(0)):
+            h = self.rnn_cell(sequence[t], h)
+
+        # use final hidden state for classification 
+        output = self.fc(h)
+        return output 
+
+model = RNN(input_size=10, hidden_size= 20, output_size=3)
+sequence = torch.randn(5,2,10) # seq len = 5, batch = 2, input = 10
+output = model(sequence)
+
+
+
+long_seq = torch.randn(100, 1, 10, requires_grad=True)
+target = torch.Tensor([1])
+
+model = RNN(input_size=10,hidden_size=20, output_size=3)
+output = model(long_seq)
+loss = F.cross_entropy(output, target)
+loss.backward()
+grad_magnitude = long_seq.grad[0].abs().mean().item()
+
+
+
+
+
 
 
 

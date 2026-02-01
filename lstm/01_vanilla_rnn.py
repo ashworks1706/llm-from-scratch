@@ -79,7 +79,7 @@
 
 import torch 
 import torch.nn as nn 
-
+import torch.nn.functional as F 
 
 class RNNCell(nn.Module):
     def __init__(self, input_size, hidden_size):
@@ -119,7 +119,7 @@ print(f"Final hidden state : {h.shape}\n")
 
 
 
-class RNN:
+class RNN(nn.Module):
     # takes entire seq as input 
     # runs rnn_cell repeatedly (same cell, different inputs)
     # returns singlel classfiication for whole sequence 

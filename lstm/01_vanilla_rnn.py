@@ -1,29 +1,15 @@
 # the whole story of dealing with RNNs and LSTMs is that we want to use temporal data or sequential data
 # that is to deal with text, time series, audio etc where order MATTERSS
-
-
 # instead of processing input all at once, we process it sequentially with memory 
-#
-#
 # this is how RNN did it : 
 # that is, take current input, combine with previous hidden state (memory), output prediction, pass hidden state to next step 
 # we take same weights and we use it every step 
 # like tanh(W_hh * h{t} + Wxh * x{t})
 
-
-
 # but the problem with RNN is that gradient at step 1 needs to flow through all 100 steps 
 # there fore in early layers if W_hh eigen values < 1 gradient vanishes exponentially 
 # so it doesnt learn anything later, like context issues 
 #
-#
-
-
-
-
-
-
-
 # that is why we have LSTM 
 # instead of simple hidden state update i.e 
 # h_t = tanh(W * [h_{t-1}, x_t])
@@ -40,7 +26,6 @@
 # its like resnet skip connections, highway for gradients 
 # cell state update becomes =  C_t = f_t * C_{t-1} + i_t * C 
 # the addition is the thing, even if i_t * C_t vanishes , f_t * c_{t-1} provides gradients 
-#
 
 # Components : 
 # Cell state (C_t) : long term memory high way 
@@ -50,10 +35,7 @@
 # Hidden state (h_t) : Short-term working memory 
 # what we output at each step 
 
-
 # Gates - netowrks with sigmoid 
-
-
 
 # here h_{t-1} is previous hidden state (short term memory)
 # C_{t-1} is previous cell state (long term memory)
@@ -83,7 +65,6 @@
 # "fluffy" → high i_t (important info, add to memory!)                        
 # "very" → low i_t (filler word, don't store)                                 
 
-
 # Step 3: Update Cell State                                                       
 # C_t = f_t * C_{t-1} + i_t * C̃_                                                
 #        └─ forget old   └─ add new                                              
@@ -92,11 +73,12 @@
 # - Forgetting some old memory                                                
 # - Adding some new memory                
 
-
-
 # Output gate : what to output from C_t 
 # o_t = σ(W_o * [h_{t-1}, x_t] + b_o)
 # h_t = o_t * tanh(C_t)
+
+import torch 
+import torch.nn as nn 
 
 
 class RNNCell(nn.Module):
@@ -138,6 +120,9 @@ print(f"Final hidden state : {h.shape}\n")
 
 
 class RNN:
+    # takes entire seq as input 
+    # runs rnn_cell repeatedly (same cell, different inputs)
+    # returns singlel classfiication for whole sequence 
     def __init__(self, input_size, hidden_size, output_size):
         super().__init__()
         self.hidden_size = hidden_size
@@ -146,14 +131,18 @@ class RNN:
     def forward(self, sequence):
         # seqlen, batch, input_size
         batch_size = sequence.size(1)
-        h = torch.zeros(batch_size, self.hidden_size)
+        h = torch.zeros(batch_size, self.hidden_size) 
 
+        # time step by time step 
         for t in range(sequence.size(0)):
-            h = self.rnn_cell(sequence[t], h)
+            h = self.rnn_cell(sequence[t], h) # update hidden state
+
+        # we start with h = zeros, so each step we combine current input with previous hidden state -> hidden state 
+        # loop carries mmeory forward through time, final h = summary of entire sequence -> clarify 
 
         # use final hidden state for classification 
         output = self.fc(h)
-        return output 
+        return output # classify from final memory 
 
 model = RNN(input_size=10, hidden_size= 20, output_size=3)
 sequence = torch.randn(5,2,10) # seq len = 5, batch = 2, input = 10

@@ -32,6 +32,15 @@
 # what to add to memory 
 # what to output from meory 
 # so basically it has memory cells and traffic controllers 
+# in traditional RNN: h_t = tanh(w * h_{t-1})
+# multiplied by W and tanh' at every step -> vanishes over long sequences 
+# LSTM does element wise multiplication without W matrix 
+# so gradient flows through C_t via addition 
+# C_t = f_t * C_{t-1} + i_t * C 
+# its like resnet skip connections, highway for gradients 
+# cell state update becomes =  C_t = f_t * C_{t-1} + i_t * C 
+# the addition is the thing, even if i_t * C_t vanishes , f_t * c_{t-1} provides gradients 
+#
 
 # Components : 
 # Cell state (C_t) : long term memory high way 
@@ -43,10 +52,6 @@
 
 
 # Gates - netowrks with sigmoid 
-# Forrget gate : what to remove from C_t 
-# Input gate : what to add to C_t
-# Output gate : what to output from C_t 
-
 
 
 
@@ -54,7 +59,8 @@
 # C_{t-1} is previous cell state (long term memory)
 
 
-# Forget Gate 
+# Forrget gate : what to remove from C_t 
+
 # f_t = σ(W_f * [h_{t-1}, x_t] + b_f)
 # σ = sigmoid (outputs 0 to 1)
 # W_f -> weight matrix 
@@ -65,7 +71,7 @@
 # if 0, forget, 1 keep, 0.5 keep half 
 
 
-# Input gate + candidate 
+# Input gate + candidate : what to add to C_t
 # i_t = i_t = σ(W_i * [h_{t-1}, x_t] + b_i)       
 # "How much new info to add?"                                      
 
@@ -85,6 +91,34 @@
 # Cell state updated by:                                                        
 # - Forgetting some old memory                                                
 # - Adding some new memory                
+
+
+
+# Output gate : what to output from C_t 
+# o_t = σ(W_o * [h_{t-1}, x_t] + b_o)
+# h_t = o_t * tanh(C_t)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

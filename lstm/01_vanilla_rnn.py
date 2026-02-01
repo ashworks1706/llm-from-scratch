@@ -33,6 +33,23 @@
 # what to output from meory 
 # so basically it has memory cells and traffic controllers 
 
+# Components : 
+# Cell state (C_t) : long term memory high way 
+# runs through entire sequence 
+# information can flow unchanged (like resnetskip!!!!!!!)
+
+# Hidden state (h_t) : Short-term working memory 
+# what we output at each step 
+
+
+# Gates - netowrks with sigmoid 
+# Forrget gate : what to remove from C_t 
+# Input gate : what to add to C_t
+# Output gate : what to output from C_t 
+
+
+
+
 
 
 

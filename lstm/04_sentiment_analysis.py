@@ -245,6 +245,24 @@ with torch.no_grad():
 print(f"test acc : {correct/total:.4f}")
 
 
+test_reviews = [
+    "This movie was absolutely fantastic! Best film ever.",
+    "Such a  shit ass movie bro, boring and poorly acted"
+]
+
+
+for review in test_reviews:
+    tokens= vocab.encode(review)
+    tokens_padded = pad_sequences([tokens], max_len)[0]
+    x = torch.LongTensor([tokens_padded]).to(device)
+
+    with torch.no_grad():
+        output = model(x)
+        pred = output.argmax(dim=1).item()
+
+    print(f"{"Positive" if pred ==1 else "Negative"}")
+
+
 
 
 

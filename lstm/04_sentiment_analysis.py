@@ -189,6 +189,60 @@ print(f"Device : {device}")
 
 
 
+model = LSTM(vocab_size=len(vocab), embedding_dim = 128, hidden_size = 256, num_classes = 2).to(device)
+
+criterion = nn.CrossEntropyLoss() # ? 
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+batch_size = 64
+num_epochs = 5
+
+for epoch in range(num_epochs):
+    model.train()
+    total_loss =0 
+    correct = 0
+    total =0 
+
+    for i in  range(0, len(X_train), batch_size):
+        batch_X = X_train[i:i+batch_size].to(device)
+        batch_y = y_train[i:i+batch_size].to(device)
+
+        optimizer.zero_grad()
+
+        output = model(batch_X)
+        loss = criterion(outputs, batch_y)
+        loss.backward()
+        optimizer.step()
+
+        total_loss += loss.item()
+
+        pred = outputs.argmax(dim=1)
+
+        correct += (pred == batch_y).sum().item()
+
+        total+= batch_y.size(0)
+
+    acc = correct /total 
+
+    print(f"epoch : {epoch+1/num_epochs}, loss : {total_loss/(len(X_train)//batch_size):4.f}, Acc: {acc:.4f}")
+
+
+model.eval()
+correct=0
+total=0
+
+with torch.no_grad():
+    for i in range(0, len(X_test), batch_size):
+        batch_X = X_test[i:i+batch_size].to(device) # ? 
+        batch_y = y_test[i:i+batch_size].to(device) # ?
+
+        outputs = model(batch_X)
+        pred = outputs.argmax(dim=1) # ? 
+        correct+=(pred==batch_y).sum().item() # ?
+        total+=batch_y.size(0) # ?
+
+
+print(f"test acc : {correct/total:.4f}")
 
 
 

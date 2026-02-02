@@ -34,7 +34,7 @@ class LSTMCell(nn.Module):
         #       |- forget old   |- add new 
 
         # update hidden state (short term working memory )
-        h_new = o_t * torch.tanh(C_nw)
+        h_new = o_t * torch.tanh(C_new)
 
         return h_new, C_new
 

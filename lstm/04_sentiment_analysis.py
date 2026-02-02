@@ -111,6 +111,76 @@ def pad_sequences(sequences, max_len):
 
 
 
+class LSTMCell(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super().__init__()
+        self.W = nn.Linear(input_size + hidden_size, 4 * hidden_size) # since we have 4 splits 
+    def forward(self, x, h, C):
+        combined = torch.cat([x,h], dim=1)
+        # x is input 
+        # h is previous vector 
+        # C is new info 
+        gates = self.W(combined)
+
+        f,i,o,c_tilde = gates.chunk(4,dim=1)
+
+        f = torch.sigmoid(f) # forget gate 
+        i = torch.sigmoid(i) # input gate 
+        o = torch.sigmoid(o) # ouput gate 
+
+        c_tilde = torch.tanh(c_tilde) # new info 
+
+        C_new = f * C + i * c_tilde # update the cell 
+
+        h = o * torch.tanh(C_new) 
+        return h, C_new 
+
+
+class LSTM(nn.Module):
+    def __init__(self, vocab_size, embedding_dim, hidden_size, num_classes):
+        super().__init__()
+        self.hidden_size = hidden_size 
+        self.embedding = Embedding(vocab_size, embedding_dim)
+        self.lstm_cell = LSTMCell(embedding_dim, hidden_size)
+        self.fc = nn.Linear(hidden_size, num_classes)
+
+    def forward(self, x):
+        batch_size, seq_len = x.size()
+        embedded = self.embedding(x)
+
+        h = torch.zeros(batch_size, self.hidden_size, device=x.device)
+        C = torch.zeros(batch_size, self.hidden_size, device=x.device)
+
+        for t in range(seq_len):
+            h, C = self.lstm_cell(embedded[:,t,:], h, C)
+
+        out = self.fc(h)
+        return out 
+
+
+train_texts, train_labels, test_texts, test_labels = load_imdb()
+print(f"Train: {len(train_texts)}, Test: {len(test_texts)}")
+
+vocab = Vocabulary(max_vocab_size= 10000)
+
+vocab.build_vocab(train_texts)
+
+print(f"Vocab size: {len(vocab)}")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -74,7 +74,7 @@ class Vocabulary:
 # now we load the actual dataset 
 
 def load_imdb(data_dir = "./aclImdb"):
-    def read_files(path):
+    def read_files(path): # ? 
         text =[]
         files = os.listdir(path)
         for file in files:
@@ -83,7 +83,31 @@ def load_imdb(data_dir = "./aclImdb"):
                     texts.append(f.read())
         return texts 
 
-    
+    train_pos = read_files(os.path.join(data_dir,  'train/pos'))
+    train_neg = read_files(os.path.join(data_dir,  'train/neg'))
+    test_pos = read_files(os.path.join(data_dir,  'train/pos'))
+    test_neg = read_files(os.path.join(data_dir,  'train/neg'))
+
+
+    train_texts = train_pos + train_neg # ? 
+    train_labels = [1] * len(train_pos) + [0] * len(train_neg) # ? 
+
+    test_texts = text_pos + text_neg # ?
+    test_labels = [1] * len(test_pos) + [0] * len(test_neg) # ? 
+
+    return train_texts, train_labels, test_texts, test_labels 
+
+
+# add paddings for irregular sequences on shape errors 
+def pad_sequences(sequences, max_len):
+    padded = []
+    for seq in sequences:
+        if len(seq) < max_len:
+            padded.append(seq + [0] * (max_len - len(seq)))
+        else:
+            padded.append(seq[:max_len])
+    return padded 
+
 
 
 

@@ -74,7 +74,8 @@ class Vocabulary:
 # now we load the actual dataset 
 
 def load_imdb(data_dir = "./aclImdb"):
-    def read_files(path): # ? 
+    def read_files(path): # why is this defined in a function? 
+        # because it's only used here 
         text =[]
         files = os.listdir(path)
         for file in files:
@@ -88,12 +89,18 @@ def load_imdb(data_dir = "./aclImdb"):
     test_pos = read_files(os.path.join(data_dir,  'train/pos'))
     test_neg = read_files(os.path.join(data_dir,  'train/neg'))
 
+    #  :
+    # here we are trying to read all the positive and negative reviews from the IMDB dataset
+    # we have a function read_files that takes a path and reads all the .txt files in that path and returns a list of texts
+    # we call this function for train/pos, train/neg, test/pos, test/neg to get the respective reviews
 
-    train_texts = train_pos + train_neg # ? 
-    train_labels = [1] * len(train_pos) + [0] * len(train_neg) # ? 
+    train_texts = train_pos + train_neg # here we combine positive and negative reviews 
+    train_labels = [1] * len(train_pos) + [0] * len(train_neg) # 1 for positive, 0 for negative
 
-    test_texts = text_pos + text_neg # ?
-    test_labels = [1] * len(test_pos) + [0] * len(test_neg) # ? 
+    test_texts = text_pos + text_neg # combine positive and negative reviews
+
+    test_labels = [1] * len(test_pos) + [0] * len(test_neg) # 1 for positive, 0 for negative
+
 
     return train_texts, train_labels, test_texts, test_labels 
 
@@ -104,6 +111,9 @@ def pad_sequences(sequences, max_len):
     for seq in sequences:
         if len(seq) < max_len:
             padded.append(seq + [0] * (max_len - len(seq)))
+            # this equation means we add 0s to the end of the sequence until it reaches max_len
+            # for example if seq = [2,3,4] and max_len = 5
+            # then we add [0,0] to the end to make it [2,3,4,0,0]
         else:
             padded.append(seq[:max_len])
     return padded 
@@ -145,6 +155,17 @@ class LSTM(nn.Module):
         self.fc = nn.Linear(hidden_size, num_classes)
 
     def forward(self, x):
+        #  :
+        # here we are trying to define the forward pass of the LSTM model for sentiment analysis
+        # x is the input tensor of shape (batch_size, seq_len)
+        # and then we get the batch size and sequence length from the input tensor
+        # then we pass the input through the embedding layer to get the embedded representation of shape (batch_size, seq_len, embedding_dim)
+        # we initialize the hidden state h and cell state C to zeros
+        # then we iterate over each time step in the sequence length
+        # at each time step we pass the embedded input at that time step, along with the
+        # previous hidden state and cell state to the LSTM cell to get the new hidden state and cell state
+        # after processing the entire sequence, we pass the final hidden state through the fully connected layer
+        # to get the output logits for the sentiment classes
         batch_size, seq_len = x.size()
         embedded = self.embedding(x)
 
@@ -175,8 +196,14 @@ train_padded = pad_sequences(train_encoded, max_len) # ?
 train_encoded = [vocab.encode(text) for text in test_texts] # ? 
 test_padded = pad_sequences(test_encoded, max_len ) # ? 
 
+# here we are converting the text data into numerical format that can be fed into the model
+# we first encode the training texts using the vocabulary to get a list of token ids for each review
+# then we pad the encoded sequences to a fixed length of max_len using the pad_sequences function
+# we repeat the same process for the test texts
+# finally we convert the padded sequences and labels into PyTorch tensors for training and testing
 
 
+# train test split basically means we divide the data into two parts, one for training the model and one for testing its performance
 X_train = torch.LongTensor(train_padded) # ? 
 y_train = torch.LongTensor(train_labels) #? 
 X_test = torch.LongTensor(test_padded) #? 
@@ -191,7 +218,8 @@ print(f"Device : {device}")
 
 model = LSTM(vocab_size=len(vocab), embedding_dim = 128, hidden_size = 256, num_classes = 2).to(device)
 
-criterion = nn.CrossEntropyLoss() # ? 
+criterion = nn.CrossEntropyLoss() # criterion means loss function
+# why call this criterion? because it's a common term in machine learning for loss functions
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 batch_size = 64
@@ -204,18 +232,32 @@ for epoch in range(num_epochs):
     total =0 
 
     for i in  range(0, len(X_train), batch_size):
+        # first, we set the model to training mode using model.train()
+        # then we initialize total_loss, correct, and total to keep track of the loss and accuracy
+        # we iterate over the training data in batches of size batch_size
+        # for each batch, we extract the input data batch_X and the corresponding labels batch_y
+        # we move the data to the specified device (CPU or GPU)
+        # we update the count of correct predictions and the total number of samples
         batch_X = X_train[i:i+batch_size].to(device)
         batch_y = y_train[i:i+batch_size].to(device)
-
+        # we zero the gradients of the optimizer to prepare for backpropagation
         optimizer.zero_grad()
 
+       # we perform a forward pass through the model to get the output logits
+       
         output = model(batch_X)
+        # we compute the loss using the criterion (cross-entropy loss)
+        
         loss = criterion(outputs, batch_y)
+        # we perform backpropagation to compute the gradients
         loss.backward()
+        # we update the model parameters using the optimizer
         optimizer.step()
 
+        # we accumulate the total loss for the epoch
         total_loss += loss.item()
 
+        # we calculate the predicted labels by taking the argmax of the output logits
         pred = outputs.argmax(dim=1)
 
         correct += (pred == batch_y).sum().item()
@@ -233,12 +275,14 @@ total=0
 
 with torch.no_grad():
     for i in range(0, len(X_test), batch_size):
-        batch_X = X_test[i:i+batch_size].to(device) # ? 
-        batch_y = y_test[i:i+batch_size].to(device) # ?
+        batch_X = X_test[i:i+batch_size].to(device) # this is getting a batch of test data 
+        batch_y = y_test[i:i+batch_size].to(device) # this is getting the corresponding labels for the test data 
 
         outputs = model(batch_X)
-        pred = outputs.argmax(dim=1) # ? 
-        correct+=(pred==batch_y).sum().item() # ?
+        pred = outputs.argmax(dim=1) # argmax gets the index of the max value along the specified dimension, why do we need this?
+        # because the output of the model is a tensor of shape (batch_size, num_classes) containing the logits for each class
+        # we need to convert these logits into predicted class labels by taking the index of the maximum logit for each sample in the batch
+        correct+=(pred==batch_y).sum().item()  
         total+=batch_y.size(0) # ?
 
 

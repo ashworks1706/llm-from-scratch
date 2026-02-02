@@ -195,7 +195,7 @@ trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
 print(f"\n  Total parameters: {total_params:,}")
 print(f"  Trainable parameters: {trainable_params:,}")
 
-print(f"\n  Parameter breakdown:")
+print(f"\n  Parameter  :")
 for name, param in model.named_parameters():
     print(f"    {name:20s}: {param.shape} = {param.numel():,} params")
 

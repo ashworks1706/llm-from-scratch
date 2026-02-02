@@ -168,6 +168,24 @@ vocab.build_vocab(train_texts)
 print(f"Vocab size: {len(vocab)}")
 
 
+# encoding voab 
+max_len = 256
+train_encoded = [vocab.encode(text) for text in train_texts] # ? 
+train_padded = pad_sequences(train_encoded, max_len) # ?
+train_encoded = [vocab.encode(text) for text in test_texts] # ? 
+test_padded = pad_sequences(test_encoded, max_len ) # ? 
+
+
+
+X_train = torch.LongTensor(train_padded) # ? 
+y_train = torch.LongTensor(train_labels) #? 
+X_test = torch.LongTensor(test_padded) #? 
+Y_test = torch.LongTensor(test_labels) # ?
+
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+print(f"Device : {device}")
 
 
 

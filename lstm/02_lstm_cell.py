@@ -17,6 +17,7 @@ class LSTMCell(nn.Module):
         gates = self.W(combined) # batch, 4*hidden_size
 
         # splitting into 4 gates 
+        # basically istead of 4 lienar layers we just use one and split since its all concatenation 
         forget_gate, input_gate, output_gate, candidate = gates.chunk(4, dim=1)
 
         # activations 
@@ -24,6 +25,8 @@ class LSTMCell(nn.Module):
         i_t = torch.sigmoid(input_gate) # 0 to 1: how much to add 
         o_t = torch.sigmoid(output_gate) # 0 to 1 : how much to output 
         C_tilde = torch.tanh(candidate) # -1 to 1: candidate new info 
+        # c_tilde is the new info that needs to be added 
+        # i_t is HOW MUCH of the new info to add 
 
 
         # update cell state (long term memory)

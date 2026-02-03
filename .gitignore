@@ -1,5 +1,9 @@
 venv
 .env
-*/data/*
+data/
+**/data/
 *__pycache__
 checkpoints/*.pt
+*.tar.gz
+*.gz
+*-ubyte

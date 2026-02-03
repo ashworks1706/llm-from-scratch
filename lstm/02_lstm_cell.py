@@ -53,7 +53,30 @@ h_new , C_new = lstm_cell(x,h,C)
 
 
 
-
+# Does lstm suffer from vanishing gradient ?
+# No, LSTMs are designed to mitigate the vanishing gradient problem through their 
+# gating mechanisms, which help maintain long-term dependencies in the data.
+# However, they can still be affected by it in very deep networks or with very 
+# long sequences, but generally, they perform much better than traditional RNNs 
+# in this regard.
+#
+# why not use residual connections in lstm?
+# While residual connections can be beneficial in deep networks to help with gradient flow, LSTMs already have 
+# mechanisms (like gates) that help manage information flow over time. Adding residual connections could
+# complicate the architecture without significant benefits, but it can be experimented 
+# with in specific scenarios.
+#
+# Can we use batch normalization in LSTMs?
+# Yes, batch normalization can be applied to LSTMs, but it is less common than in 
+# feedforward networks. It can help stabilize training and improve convergence, but care
+# must be taken to apply it correctly, typically on the inputs to the LSTM or on the 
+# outputs of the LSTM layers.
+#
+# What are some alternatives to LSTMs for sequence modeling?
+# Alternatives to LSTMs include Gated Recurrent Units (GRUs), Transformer models -> that do use residual connections extensively, 
+# Temporal Convolutional Networks (TCNs), and simple RNNs with attention mechanisms. 
+# Each has its own advantages and trade-offs depending on the specific application 
+# and dataset.
 
 
 

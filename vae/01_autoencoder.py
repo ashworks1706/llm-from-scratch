@@ -6,6 +6,24 @@
 # encoder decoder are nothing but weight matrix or linear layer 
 
 
+# where are autoencoders used ?
+# they are used for dimensionality reduction, denoising, anomaly detection,
+# image compression, feature learning, generative modeling, etc.
+# Stable diffusion -> autoencoders are used to compress images into latent space for efficient processing
+# by reducing the dimensionality of the data while preserving important features.
+# LLMs -> autoencoders can be used to learn compact representations of text data,
+# which can be useful for tasks like text generation, translation, and summarization.
+# GANs -> autoencoders can be used as part of the generator or discriminator networks,
+# helping to learn better feature representations and improve the quality of generated samples.
+#
+#
+# are autoencoders generative models ?
+# Autoencoders are not inherently generative models, but certain types of autoencoders,
+# such as Variational Autoencoders (VAEs), are designed to be generative.
+# Standard autoencoders learn to compress and reconstruct data, but they do not learn
+# a probabilistic model of the data distribution.
+# In contrast, VAEs learn a latent space that allows for sampling and generating new data points
+# by sampling from the learned latent distribution.
 
 
 import torch 

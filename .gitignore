@@ -1,5 +1,5 @@
 venv
 .env
-data/*
+*/data/*
 *__pycache__
 checkpoints/*.pt

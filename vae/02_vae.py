@@ -10,6 +10,14 @@
 # so then we get cloud of points around mean '3'
 # we also get overlapping distributiosn that gives us conttinious smooth space 
 
+import torch 
+import torch.nn as nn 
+import torch.nn.functional as F
+from torchvision import datasets, transforms 
+from torch.utils.data import DataLoader 
+import matplotlib.pyplot as plt 
+import numpy as np 
+
 
 # So the main architecture for autoencoder and VAE is :
 # AE :
@@ -29,14 +37,6 @@
 #
 # So high KL gies us soooth latent space but poor Reconstruction for too much noise
 # low KL weight, vice versa
-import torch 
-import torch.nn as nn 
-import torch.nn.functional as F
-from torchvision import datasets, transforms 
-from torch.utils.data import DataLoader 
-import matplotlib.pyplot as plt 
-import numpy as np 
-
 
 class Encoder(nn.Module):
     def __init__(self, input_dim=784, hidden_dim=512, latent_dim=32):

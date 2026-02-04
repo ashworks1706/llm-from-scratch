@@ -85,47 +85,32 @@ class VAE(nn.Module):
     def reparameterize(self, mu, logvar):
         # z = mean + std * epsilon where epsilon is (N(0,1))
         # the poitn of getting mean and std here is to get the proability distribution NOT points, so that we FORM A CLOUD OF POINTS -> that is GENERATION 
-        std = torch.exp(0,5 * logvar)
-        eps = torch.randn_like(std)
-        z = mu + std * eps
-
-    def forward(self, x):
         # notice how we used sampling from both mean and std, now since we're generating something, we need to backpropagate 
         # and for that we need gradient, but sampling is random, so its not differentiable 
         # the solution to this is to move randomness outside parameters, like normal sampling from normal number,
         # and transform that deterministically by epsilon 
         # so we can technically then call epsilon the randomness (independent of mean and std)
         # so trasnform is deterministic thus, differentiable
+
+        std = torch.exp(0,5 * logvar)
+        eps = torch.randn_like(std)
+        z = mu + std * eps # adding noise (randomized sampling that will be consumed by KL divergence )
+        return z 
+
+    def forward(self, x):
+        mu, logvar = self.encoder(x)
+        z = self.reparameterize(mu,logvar)
+        x_recon = self.decoder(z)
+        return x_recon, mu, logvar 
+
+    def vae_loss(x, x_recon, mu, logvar, beta=1.0):
+        # there's no prebuilt loss fnctions for dense models like VAE, PPO or DPOs 
+        # thats what unsloth solves lol 
+        
         pass 
-
-
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = Autoencoder(latent_dim=32).to_device
-optimizer = torch.optim.Adam(model.parameters(),lr=0.001)
-
-def train_epoch(model, loader, optimizer, device):
-    total_loss= 0
-
-    for batch_idx, (data, _) in enumerate(loader): 
-        model.train()
-
-        optimizer.zero_grad()
-
-        recon, _ = model(data)
-
-        loss = F.mse_loss(recon, data)        
-
-        optimizer.step()
-
-        total_loss += loss.item()
-    return total_loss / len(loader)
-
-def train(model, loader,optimizer, device, epochs):
-    model.train()
-    total=0
-    correct=0
-
-    for epoch in range(epochs):
-
-
     
+
+
+
+
+   

@@ -21,11 +21,6 @@
 
 
 
-
-# total loss = Reconstruction loss + KL divergencel loss 
-# MSE pushes model to generate good images 
-# KL pushes model to stay within the latent distribution and not drift too far 
-
 # but why KL? well without KL, encoder can cheat, if we remove KL, each image gets 0 noise ie. 0 std, which means we just have a mean 
 # that measn back to original auto encoder 
 # so KL loss is neccessary for forcing the model to be centered around oriign, and add some noise if needed,
@@ -34,7 +29,13 @@
 #
 # So high KL gies us soooth latent space but poor Reconstruction for too much noise
 # low KL weight, vice versa
-
+import torch 
+import torch.nn as nn 
+import torch.nn.functional as F
+from torchvision import datasets, transforms 
+from torch.utils.data import DataLoader 
+import matplotlib.pyplot as plt 
+import numpy as np 
 
 
 class Encoder(nn.Module):
@@ -58,7 +59,7 @@ class Encoder(nn.Module):
 
         logvar = self.fc_logvar(x)
         
-        pass mu, logvar
+        return mu, logvar
 
 
 class Decoder(nn.Module):
@@ -106,11 +107,137 @@ class VAE(nn.Module):
     def vae_loss(x, x_recon, mu, logvar, beta=1.0):
         # there's no prebuilt loss fnctions for dense models like VAE, PPO or DPOs 
         # thats what unsloth solves lol 
+        recon_loss = F.mse_loss(x_recon, x, reduction='sum')
+
+        # basically KL(N(mean, std^2) || N(0,1))
+        kl_loss = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
+
+        # KL or shift loss + recon loss 
+        total_loss = recon_loss + beta * kl_loss 
         
-        pass 
-    
+        # total loss = Reconstruction loss + KL divergencel loss 
+        # MSE pushes model to generate good images 
+        # KL pushes model to stay within the latent distribution and not drift too far 
+        return total_loss, recon_loss, kl_loss 
+
+
+
+# getting data and setting shit up 
+
+transform = transforms.Compose([transforms.ToTensor()]) # ? 
+train_dataset= datasets.MNIST(root='./data', train=True, download=True, transform=transform)    
+test_dataset= datasets.MNIST(root='./data', train=False, download=True, transform=transform)    
+
+train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=128, shuffle=True)
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+model = VAE(latent_dim=32).to(device)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+def train_epoch(model, loader, optimizer, device, beta=1.0):
+    model.train()
+    total_loss =0 
+    total_recon =0
+    total_kl =0 
+    for data, _ in loader:
+        data = data.to(device)
+
+        optimizer.zero_grad()
+        
+        # output values 
+        recon, mu, logvar = model(data)
+        
+        # getting loss values out of the outputs 
+        loss, recon_loss, kl_loss = vae_loss(data, recon, mu, logvar, beta)
+
+        loss.backward()
+        optimizer.step()
+
+        total+=loss.item()
+        total_reco+=recon_loss.item()
+        total_kl+=kl_loss.item()
+
+
+    n = len(loader.dataset)
+    return total_loss/n, total_recon/n, total_kl/n
+
+
+
+num_epoch = 10
+
+
+
+for epoch in range(num_epoch):
+    loss,recon,kl = train_epoch(model, train_loader, optimizer, device, beta=1.0)
+    print(f"Epoch {epoch+1/num_epoch}, loss: {loss:.4f}, recon : {recon:.4f}, KL: {kl:.4f}")
 
 
 
 
-   
+model.eval()
+
+
+with torch.no_grad():
+    test_data = next(iter(test_loader))[0][:8].to(device)
+    recon,_,_ = model(test_data)
+
+
+fig,axes = plt.subplot(2,8,figsize=[12,3])
+
+for i in range(8):
+    axes[0, i].imshow(test_data[i].cpu().squeeze(), cmap='gray')
+    axes[0,i].axis('off')
+    axes[1,i].imshow(recon[i].cpu().squeeze(), cmap='gray')
+    axes[1,i].axis('off')
+
+
+axes[0,0].set_ylabel('Original',size=12)
+axes[1,0].set_ylabel('Reconstructed',size=12)
+plt.tight_layout()
+plt.savefig('vae.png')
+
+
+
+
+# we generate in eval mode only  (inference )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

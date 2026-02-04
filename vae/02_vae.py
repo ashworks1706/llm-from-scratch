@@ -51,6 +51,7 @@ class Encoder(nn.Module):
         x = F.relu(self.fc2(x))
 
 
+        # if this was autoencoder we couldve just passed it to fc and reutnred x 
         mu = self.fc_mu(x)
 
         logvar = self.fc_logvar(x)
@@ -70,7 +71,7 @@ class Decoder(nn.Module):
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = torch.sigmoid(self.fc3(x))
-        x = x.view(x.size(0),1,28,28)
+        x = x.view(x.size(0),1,28,28) # same as normal autoencoder 
         return x
 
 
@@ -95,8 +96,10 @@ class VAE(nn.Module):
         return z 
 
     def forward(self, x):
+        # the difference : 
         mu, logvar = self.encoder(x)
         z = self.reparameterize(mu,logvar)
+        # ##############################
         x_recon = self.decoder(z)
         return x_recon, mu, logvar 
 

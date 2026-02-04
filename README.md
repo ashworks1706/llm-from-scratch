@@ -1,6 +1,6 @@
 this repository is where i build machine learning models from scratch to deeply understand how they work. everything is implemented from the ground up with detailed notes explaining the math, intuition and design choices behind each component.
 
-the goal is complete ml engineering knowledge covering architectures, training pipelines, optimization techniques and deployment. i learn by coding not just reading papers.
+the goal is complete ml engineering knowledge covering architectures, training pipelines, optimization techniques and deployment.
 
 ## architectures
 
@@ -42,8 +42,3 @@ lstm implements recurrent networks for sequences including vanilla rnn, lstm cel
 
 vae covers variational autoencoders for generative modeling with latent spaces and generation of new samples.
 
-## status
-
-completed architectures and full training pipelines from pretraining through alignment. implemented parameter efficient methods and inference optimizations. built foundational knowledge of pytorch, cnns, rnns and generative models.
-
-everything coded by hand with educational comments explaining the why behind each decision. this is how i become a true ml engineer.

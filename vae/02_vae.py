@@ -42,8 +42,52 @@ class Encoder(nn.Module):
         super().__init__()
 
         self.fc1 = nn.Linear(input_dim, hidden_dim)
-        self.bn1 = nn.BatchNorm2d(hidden_dim)
-        self.fc2 = nn.Linear(hidden_dim, latent_dim)
+        self.fc2 = nn.Linear(hidden_dim, hidden_dim//2)
+
+        self.fc_mu = nn.Linear(hidden_dim //2, latent_dim)
+        self.fc_logvar = nn.Linear(hidden_dim//2, latent_dim)
+
+
+    def forward(self, x):
+        x = x.view(x.size(0), -1)
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+
+
+        mu = self.fc_mu(x)
+
+        logvar = self.fc_logvar(x)
+        
+        pass mu, logvar
+
+
+class Decoder(nn.Module):
+    def __init__(self, latent_dim = 32, hidden_dim = 512, output_dim = 784):
+        super().__init__()
+
+        self.fc1 = nn.Linear(latent_dim, hidden_dim // 2)
+        self.fc2 = nn.Linear(hidden_dim // 2 , output_dim)
+        self.fc3 = nn.Linear(hidden_dim, output_dim)
+
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = torch.sigmoid(self.fc3(x))
+        x = x.view(x.size(0),1,28,28)
+        return x
+
+
+class VAE(nn.Module):
+    def __init__(self, latent_dim):
+        self.encoder = Encoder(latent_dim)
+        self.decoder = Decoder(latent_dim)
+
+    def reparameterize(self, mu, logvar):
+        # z = mean + std * epsilon where epsilon is (N(0,1))
+        # the poitn of getting mean and std here is to get the proability distribution NOT points, so that we FORM A CLOUD OF POINTS -> that is GENERATION 
+        std = torch.exp(0,5 * logvar)
+        eps = torch.randn_like(std)
+        z = mu + std * eps
 
     def forward(self, x):
         # notice how we used sampling from both mean and std, now since we're generating something, we need to backpropagate 
@@ -51,28 +95,37 @@ class Encoder(nn.Module):
         # the solution to this is to move randomness outside parameters, like normal sampling from normal number,
         # and transform that deterministically by epsilon 
         # so we can technically then call epsilon the randomness (independent of mean and std)
-        # so trasnform is deterministic thus, differentiable 
+        # so trasnform is deterministic thus, differentiable
         pass 
 
 
-class Decoder(nn.Module):
-    def __init__(self, latent_dim, hidden_dim, output_dim):
-        super().__init__()
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+model = Autoencoder(latent_dim=32).to_device
+optimizer = torch.optim.Adam(model.parameters(),lr=0.001)
 
-        self.fc1 = nn.Linear(latent_dim, hidden_dim)
-        self.fc2 = nn.Linear(hidden_dim, output_dim)
-        self.bn1 = nn.BatchNorm2d(hidden_dim)
+def train_epoch(model, loader, optimizer, device):
+    total_loss= 0
 
-    def forward(self, x):
-        pass 
+    for batch_idx, (data, _) in enumerate(loader): 
+        model.train()
+
+        optimizer.zero_grad()
+
+        recon, _ = model(data)
+
+        loss = F.mse_loss(recon, data)        
+
+        optimizer.step()
+
+        total_loss += loss.item()
+    return total_loss / len(loader)
+
+def train(model, loader,optimizer, device, epochs):
+    model.train()
+    total=0
+    correct=0
+
+    for epoch in range(epochs):
 
 
-
-
-class AutoEncoder(nn.Module):
-    def __init__(self, input_dim, hidden_dim, latent_dim, output_dim):
-        self.encoder = Encoder(input_dim, hidden_dim, latent_dim)
-        self.decoder = Decoder(latent_dim, hidden_dim, output_dim)
-
-    def forward(self, x):
-        pass 
+    

@@ -41,7 +41,7 @@ class Encoder(nn.Module):
         
         self.fc1 = nn.Linear(input_dim, hidden_dim) 
         self.fc2 = nn.Linear(hidden_dim, hidden_dim // 2) # why divide by 2? 
-        # since in lstms, we reduce the dimension gradually and we want to reach latent dimension
+        # since in autoencoders, we reduce the dimension gradually and we want to reach latent dimension
         # so we reduce it by half each time, how many layers we need depends on the input and latent dimension
         # here we have 784 input and 32 latent, so we can do 784 -> 512 -> 256 -> 32
         self.fc3 = nn.Linear(hidden_dim // 2, latent_dim) 

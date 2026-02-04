@@ -27,14 +27,10 @@ import numpy as np
 # so we get single point in normal encoder but in encoder of VAE, we get mean and log variance (for numerical stability)
 
 
-
-
 # but why KL? well without KL, encoder can cheat, if we remove KL, each image gets 0 noise ie. 0 std, which means we just have a mean 
 # that measn back to original auto encoder 
 # so KL loss is neccessary for forcing the model to be centered around oriign, and add some noise if needed,
 # cllouds overlap that produces smooth space which can be samplpe anywehere 
-#
-#
 # So high KL gies us soooth latent space but poor Reconstruction for too much noise
 # low KL weight, vice versa
 

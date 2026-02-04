@@ -28,14 +28,30 @@
 # and transform that deterministically by epsilon 
 # so we can technically then call epsilon the randomness (independent of mean and std)
 # so trasnform is deterministic thus, differentiable 
+
+
+
+
+# total loss = Reconstruction loss + KL divergencel loss 
+# MSE pushes model to generate good images 
+# KL pushes model to stay within the latent distribution and not drift too far 
+
+# but why KL? well without KL, encoder can cheat, if we remove KL, each image gets 0 noise ie. 0 std, which means we just have a mean 
+# that measn back to original auto encoder 
+# so KL loss is neccessary for forcing the model to be centered around oriign, and add some noise if needed,
+# cllouds overlap that produces smooth space which can be samplpe anywehere 
 #
 #
-#
-#
-#
-#
-#
-#
+# So high KL gies us soooth latent space but poor Reconstruction for too much noise
+# low KL weight, vice versa
+
+
+
+
+
+
+
+
 
 
 

@@ -92,6 +92,30 @@ class Decoder(nn.Module):
 
 
 
+class VAE(nn.Module):
+    def __init__(self, latent_dim=32):
+        super().__init__()
+        self.encoder = Encoder(latent_dim=latent_dim)
+        self.decoder = Decoder(latent_dim=latent_dim)
+
+    def reparameterize(self, mu, logvar):
+        std = torch.exp(0.5 * logvar)
+        eps = torch.randn_like(std)
+        z= mu + std * eps
+        return z 
+
+    def forward(self, x):
+        mu, logvar = self.encoder(x)
+        z = self.reparameterize(mu,logvar)
+        x_recon = self.decoder(z)
+        return x_recon, mu, logvar
+
+def vae_loss(x, x_recon, mu, logvar):
+    recon_loss = F.binary_cross_entropy(x_recon, x, reduction='sum')
+    kl_loss = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
+    return recon_loss + kl_loss
+
+
 
 
 

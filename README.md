@@ -42,3 +42,10 @@ lstm implements recurrent networks for sequences including vanilla rnn, lstm cel
 
 vae covers variational autoencoders for generative modeling with latent spaces and generation of new samples.
 
+
+TODO - 
+[ ] Stable diffusion 
+[ ] DLoRA
+[ ] temporal attention 
+[ ] Mochi 1 (video generation)
+[ ] NeRF (3 model generation)

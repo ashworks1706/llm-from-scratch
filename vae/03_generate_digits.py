@@ -2,6 +2,14 @@
 # we can use them to randomly generate digits, like sampling random point from N(0,1 )
 # then decode to image, so then we get VAE trained on N(0,1) distribution 
 
+import torch 
+import torch.nn as nn 
+import torch.nn.functional as F 
+from torchvision import datasets, transforms 
+from torch.utils.data import DataLoader 
+import matplotlib.pyplot as plt 
+import numpy as np 
+
 # there lot of things we can do -
 # interpolation 
 # we pass two digits, 3 and 8, we get the point cloud of something thats a blend of 3 and 8 so its a smooth morphing from 3 to 8
@@ -50,6 +58,37 @@
 # within each flat region: linear and b/w region its non linear 
 # small changes in same ReLU region, decoder behaves linearly 
 
+
+class Encoder(nn.Module):
+    def __init__(self, input_dim=784, hidden_dim=512, latent_dim=32):
+        super().__init__()
+        self.fc1 = nn.Linear(input_dim, hidden_dim)
+        self.fc2 = nn.Linear(hidden_dim, hidden_dim // 2 )
+        self.fc_mu = nn.Linear(hidden_dim // 2, latent_dim)
+        self.fc_logvar = nn.Lienar(hidden_dim // 2, latent_dim)
+    def forward(self,x):
+        x = x.view(x.size(0), -1)
+        x = F.relu(self.fc1(x))
+        x= F.relu(self.fc2(x))
+        mu = self.fc_mu(x)
+        logvar = self.fc_logvar(x)
+
+        return mu, logvar
+
+class Decoder(nn.Module):
+    def __init__(self, latent_dim=32, hidden_dim=512, output_dim=784):
+        super().__init__()
+
+        self.fc1 = nn.Linear(latent_dim, hidden_dim //2 )
+        self.fc2 = nn.Linear(hidden_dim//2, hidden_dim)
+        self.fc3 = nn.Linear(hidden_dim, output_dim)
+
+    def forward(self, z):
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = torch.sigmoid(self.fc3(x))
+        x = x.view(x.size(0), 1 ,28, 28)
+        return x 
 
 
 

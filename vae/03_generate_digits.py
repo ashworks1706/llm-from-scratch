@@ -2,14 +2,12 @@
 # we can use them to randomly generate digits, like sampling random point from N(0,1 )
 # then decode to image, so then we get VAE trained on N(0,1) distribution 
 
-
 # there lot of things we can do -
 # interpolation 
 # we pass two digits, 3 and 8, we get the point cloud of something thats a blend of 3 and 8 so its a smooth morphing from 3 to 8
 # WHY DOES THIS WORK?
 # because latent space is CONTINOUS, path from z_a to z_b passes through valid regions, every point along the path decodes to somethign reasonable 
 # like walking from cat to dog in concept space 
-
 
 # Latent space arithmetic:
 # we can literally treat latent space as our own version of math 
@@ -19,13 +17,11 @@
 # we feed a image of 1 and feed a tilted digit of 7, then we get the vector so in latent space we subtract a new image of 9 from the precomputed vector 
 # so then we have a new tilted image of 9 
 
-
 # Conditional Generation:
 # if we want a certain digit from mnist dataset 
 # we can also just sample randomly from digits 
 # and on each sample we see wher ethe cluster of 7 is, we keep caulcuating the loss and getting close to it 
 # then we finally generate what we want 
-
 
 # exploring dimensions 
 # dims encode properties like roundness, vertical vs horizontal etc 
@@ -44,8 +40,6 @@
 # within each flat region: linear and b/w region its non linear 
 # small changes in same ReLU region, decoder behaves linearly 
 
-
-
 # why do dimensions encode separate concepts?
 # ebcause training's objective is to push distanglement, which encourages independence, each dimension has its own std and mean, 
 # penalized seperaeltey, decoder learns to use each dimension independently 
@@ -54,7 +48,15 @@
 # better disentangleemtn is brought by higher KL weight so it doesnt drift far in phase of trying to be perfect 
 
 
-# 
+
+# arithmetic fails when the dimensions are too entangled, non linear relationship complexity and extra polation 
+# Interpolation refers to generating new data by blending or traversing between two or more existing points in the latent space
+# Extrapolation involves generating data by moving outside the boundaries of the trained latent data points.
+
+
+
+
+
 
 
 

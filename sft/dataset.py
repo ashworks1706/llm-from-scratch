@@ -14,7 +14,8 @@ class SFTDataset(Dataset):
     # 3. This teaches the model: "given instruction, generate this response"
     
     def __init__(self, data_path, max_seq_len, tokenizer_name="cl100k_base"):
-       self.max_seq_len = max_seq_len
+
+        self.max_seq_len = max_seq_len
         
         # We use tiktoken for Llama3 models (same as pretraining)
         self.tokenizer = tiktoken.get_encoding(tokenizer_name)

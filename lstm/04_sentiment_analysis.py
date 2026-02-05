@@ -52,7 +52,7 @@ class Vocabulary:
         # Counter has a method most_common() that returns a list of the n most common elements and their counts from the most common to the least.
         most_common = word_counts.most_common(self.max_vocab_size - 2)
         
-        for idx, (word,_) in enumerate(most_common start=2): 
+        for idx, (word,_) in enumerate(most_common, start=2): 
             # start=2 because we have reserved 0 and 1 for <PAD> and <UNK>
             # idx, (word,_) unpacks the tuple returned by most_common
             # for example : 

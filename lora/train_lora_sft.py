@@ -16,7 +16,12 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from llama3.model import Llama
 from utils.config import Config
 from inject_lora import inject_lora_to_model, count_parameters, save_lora_adapters
+
+
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'sft'))
+
+
+
 from dataset import SFTDataset, SFTDataPreprocessor
 
 
@@ -142,14 +147,14 @@ if __name__ == "__main__":
     # 4. anyone can load your adapters into base model
     
     # example:
-     trainer = LoRASFTTrainer(
+    trainer = LoRASFTTrainer(
          config,
          train_dataset_path="../sft/sft_data.json",
          pretrained_checkpoint="../pretraining/checkpoints/llama3_epoch_10.pt",
          lora_rank=16,    # typical for instruction following
          lora_alpha=32    # scaling factor
-     )
-     trainer.train()
+    )
+    trainer.train()
     
     print("LoRA SFT training script ready!")
     print("Memory usage: ~10% of full fine-tuning")

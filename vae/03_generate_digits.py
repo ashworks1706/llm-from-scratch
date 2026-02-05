@@ -65,7 +65,7 @@ class Encoder(nn.Module):
         self.fc1 = nn.Linear(input_dim, hidden_dim)
         self.fc2 = nn.Linear(hidden_dim, hidden_dim // 2 )
         self.fc_mu = nn.Linear(hidden_dim // 2, latent_dim)
-        self.fc_logvar = nn.Lienar(hidden_dim // 2, latent_dim)
+        self.fc_logvar = nn.Linear(hidden_dim // 2, latent_dim)
     def forward(self,x):
         x = x.view(x.size(0), -1)
         x = F.relu(self.fc1(x))
@@ -84,7 +84,7 @@ class Decoder(nn.Module):
         self.fc3 = nn.Linear(hidden_dim, output_dim)
 
     def forward(self, z):
-        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc1(z))
         x = F.relu(self.fc2(x))
         x = torch.sigmoid(self.fc3(x))
         x = x.view(x.size(0), 1 ,28, 28)
@@ -114,6 +114,188 @@ def vae_loss(x, x_recon, mu, logvar):
     recon_loss = F.binary_cross_entropy(x_recon, x, reduction='sum')
     kl_loss = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
     return recon_loss + kl_loss
+
+
+# load data
+transform = transforms.Compose([transforms.ToTensor()])
+train_dataset = datasets.MNIST(root='./data', train=True, download=True, transform=transform)
+test_dataset = datasets.MNIST(root='./data', train=False, download=True, transform=transform)
+
+train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=128, shuffle=False)
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+model = VAE(latent_dim=32).to(device)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+# train
+print("Training VAE...")
+for epoch in range(5):
+    model.train()
+    total_loss = 0
+    for data, _ in train_loader:
+        data = data.to(device)
+        optimizer.zero_grad()
+        recon, mu, logvar = model(data)
+        loss = vae_loss(data, recon, mu, logvar)
+        loss.backward()
+        optimizer.step()
+        total_loss += loss.item()
+    print(f"Epoch {epoch+1}, Loss: {total_loss/len(train_loader.dataset):.4f}")
+
+# 1. random generation
+print("\n1. Random Generation")
+model.eval()
+with torch.no_grad():
+    z_random = torch.randn(16, 32).to(device)
+    generated = model.decoder(z_random)
+
+fig, axes = plt.subplots(4, 4, figsize=(6, 6))
+for i in range(16):
+    axes[i//4, i%4].imshow(generated[i].cpu().squeeze(), cmap='gray')
+    axes[i//4, i%4].axis('off')
+plt.suptitle('Random Generation')
+plt.tight_layout()
+plt.savefig('generation_random.png')
+print("Saved random generation")
+
+# 2. interpolation
+print("\n2. Interpolation between digits")
+test_images, test_labels = next(iter(test_loader))
+test_images = test_images.to(device)
+
+idx_3 = (test_labels == 3).nonzero()[0].item()
+idx_8 = (test_labels == 8).nonzero()[0].item()
+
+img_3 = test_images[idx_3:idx_3+1]
+img_8 = test_images[idx_8:idx_8+1]
+
+model.eval()
+with torch.no_grad():
+    mu_3, _ = model.encoder(img_3)
+    mu_8, _ = model.encoder(img_8)
+    
+    alphas = torch.linspace(0, 1, 10)
+    interpolated = []
+    
+    for alpha in alphas:
+        z_interp = (1 - alpha) * mu_3 + alpha * mu_8
+        img_interp = model.decoder(z_interp)
+        interpolated.append(img_interp)
+
+fig, axes = plt.subplots(1, 10, figsize=(15, 2))
+for i, img in enumerate(interpolated):
+    axes[i].imshow(img.cpu().squeeze(), cmap='gray')
+    axes[i].set_title(f'α={alphas[i]:.1f}')
+    axes[i].axis('off')
+plt.suptitle('Interpolation: 3 → 8')
+plt.tight_layout()
+plt.savefig('generation_interpolation.png')
+print("Saved interpolation")
+
+# 3. latent arithmetic
+print("\n3. Latent Arithmetic")
+with torch.no_grad():
+    idx_7s = (test_labels == 7).nonzero()[:10]
+    imgs_7 = test_images[idx_7s.squeeze()]
+    
+    mus_7, _ = model.encoder(imgs_7)
+    
+    z_thick = mus_7[0]
+    z_thin = mus_7[-1]
+    
+    thickness_vec = z_thick - z_thin
+    
+    img_3 = test_images[idx_3:idx_3+1]
+    mu_3, _ = model.encoder(img_3)
+    
+    z_thinner = mu_3 - 0.5 * thickness_vec
+    z_normal = mu_3
+    z_thicker = mu_3 + 0.5 * thickness_vec
+    
+    img_thinner = model.decoder(z_thinner.unsqueeze(0))
+    img_normal = model.decoder(z_normal.unsqueeze(0))
+    img_thicker = model.decoder(z_thicker.unsqueeze(0))
+
+fig, axes = plt.subplots(1, 3, figsize=(8, 3))
+axes[0].imshow(img_thinner.cpu().squeeze(), cmap='gray')
+axes[0].set_title('Thinner')
+axes[0].axis('off')
+axes[1].imshow(img_normal.cpu().squeeze(), cmap='gray')
+axes[1].set_title('Original')
+axes[1].axis('off')
+axes[2].imshow(img_thicker.cpu().squeeze(), cmap='gray')
+axes[2].set_title('Thicker')
+axes[2].axis('off')
+plt.suptitle('Latent Arithmetic: Thickness Transfer')
+plt.tight_layout()
+plt.savefig('generation_arithmetic.png')
+print("Saved latent arithmetic")
+
+# 4. conditional generation
+print("\n4. Conditional Generation")
+model.eval()
+with torch.no_grad():
+    digit_centers = {}
+    
+    for digit in range(10):
+        idx = (test_labels == digit).nonzero()[:100]
+        if len(idx) > 0:
+            imgs = test_images[idx.squeeze()]
+            mus, _ = model.encoder(imgs)
+            digit_centers[digit] = mus.mean(dim=0)
+    
+    fig, axes = plt.subplots(10, 5, figsize=(8, 16))
+    
+    for digit in range(10):
+        center = digit_centers[digit]
+        
+        for i in range(5):
+            z = center + 0.3 * torch.randn_like(center)
+            img = model.decoder(z.unsqueeze(0))
+            
+            axes[digit, i].imshow(img.cpu().squeeze(), cmap='gray')
+            axes[digit, i].axis('off')
+        
+        axes[digit, 0].set_ylabel(f'Digit {digit}', rotation=0, size=12, labelpad=30)
+    
+    plt.suptitle('Conditional Generation')
+    plt.tight_layout()
+    plt.savefig('generation_conditional.png')
+    print("Saved conditional generation")
+
+# 5. exploring dimensions
+print("\n5. Exploring Individual Dimensions")
+model.eval()
+with torch.no_grad():
+    idx_5 = (test_labels == 5).nonzero()[0].item()
+    img_5 = test_images[idx_5:idx_5+1]
+    mu_5, _ = model.encoder(img_5)
+    
+    fig, axes = plt.subplots(3, 7, figsize=(12, 6))
+    
+    for dim in range(3):
+        values = torch.linspace(-2, 2, 7)
+        
+        for i, val in enumerate(values):
+            z = mu_5.clone()
+            z[0, dim] = val
+            img = model.decoder(z)
+            
+            axes[dim, i].imshow(img.cpu().squeeze(), cmap='gray')
+            axes[dim, i].axis('off')
+            if dim == 0:
+                axes[dim, i].set_title(f'{val:.1f}')
+        
+        axes[dim, 0].set_ylabel(f'Dim {dim}', rotation=0, size=12, labelpad=30)
+    
+    plt.suptitle('Exploring Individual Dimensions')
+    plt.tight_layout()
+    plt.savefig('generation_dimensions.png')
+    print("Saved dimension exploration")
+
+print("\nVAE Generation Complete!")
+print("Demonstrated: random generation, interpolation, arithmetic, conditional, dimension exploration")
 
 
 

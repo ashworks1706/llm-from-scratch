@@ -8,6 +8,9 @@
 # WHY DOES THIS WORK?
 # because latent space is CONTINOUS, path from z_a to z_b passes through valid regions, every point along the path decodes to somethign reasonable 
 # like walking from cat to dog in concept space 
+# Interpolation refers to generating new data by blending or traversing between two or more existing points in the latent space
+# Extrapolation involves generating data by moving outside the boundaries of the trained latent data points.
+
 
 # Latent space arithmetic:
 # we can literally treat latent space as our own version of math 
@@ -16,7 +19,8 @@
 # for example:
 # we feed a image of 1 and feed a tilted digit of 7, then we get the vector so in latent space we subtract a new image of 9 from the precomputed vector 
 # so then we have a new tilted image of 9 
-
+# arithmetic fails when the dimensions are too entangled, non linear relationship complexity and extra polation 
+#
 # Conditional Generation:
 # if we want a certain digit from mnist dataset 
 # we can also just sample randomly from digits 
@@ -26,10 +30,16 @@
 # exploring dimensions 
 # dims encode properties like roundness, vertical vs horizontal etc 
 # each dimension learns a concept so we can do unsupervised kind of shit here 
-
 # load image -> encode ->> z 
 # so as we know that we can perform arithmetic, manipulate latent vectors, we might as well use it for photoshop or data augmentation, 
 # anomaly detection, etc 
+# why do dimensions encode separate concepts?
+# ebcause training's objective is to push distanglement, which encourages independence, each dimension has its own std and mean, 
+# penalized seperaeltey, decoder learns to use each dimension independently 
+
+# but disentanglement is NOT guaranteed because VAE naturally learns SOME disentanglement but not perfect, since dimension can be correlated
+# better disentangleemtn is brought by higher KL weight so it doesnt drift far in phase of trying to be perfect 
+
 
 # decoder is linear in small regions thats why latent space is R^d,
 # f(z) = image 
@@ -40,18 +50,7 @@
 # within each flat region: linear and b/w region its non linear 
 # small changes in same ReLU region, decoder behaves linearly 
 
-# why do dimensions encode separate concepts?
-# ebcause training's objective is to push distanglement, which encourages independence, each dimension has its own std and mean, 
-# penalized seperaeltey, decoder learns to use each dimension independently 
 
-# but disentanglement is NOT guaranteed because VAE naturally learns SOME disentanglement but not perfect, since dimension can be correlated
-# better disentangleemtn is brought by higher KL weight so it doesnt drift far in phase of trying to be perfect 
-
-
-
-# arithmetic fails when the dimensions are too entangled, non linear relationship complexity and extra polation 
-# Interpolation refers to generating new data by blending or traversing between two or more existing points in the latent space
-# Extrapolation involves generating data by moving outside the boundaries of the trained latent data points.
 
 
 

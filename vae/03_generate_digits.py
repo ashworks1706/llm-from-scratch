@@ -35,4 +35,55 @@
 # so as we know that we can perform arithmetic, manipulate latent vectors, we might as well use it for photoshop or data augmentation, 
 # anomaly detection, etc 
 
+# decoder is linear in small regions thats why latent space is R^d,
+# f(z) = image 
+# aroudn point z_0:
+# f(z) = f(z_0) + J * (z-z_0)
+# linear approximation in calculus 
+# that is, in a complex function, if we look at some specific jumbled line of the funcction, that function locally is a linear region based linear functioon 
+# within each flat region: linear and b/w region its non linear 
+# small changes in same ReLU region, decoder behaves linearly 
+
+
+
+# why do dimensions encode separate concepts?
+# ebcause training's objective is to push distanglement, which encourages independence, each dimension has its own std and mean, 
+# penalized seperaeltey, decoder learns to use each dimension independently 
+
+# but disentanglement is NOT guaranteed because VAE naturally learns SOME disentanglement but not perfect, since dimension can be correlated
+# better disentangleemtn is brought by higher KL weight so it doesnt drift far in phase of trying to be perfect 
+
+
 # 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

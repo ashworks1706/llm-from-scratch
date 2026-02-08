@@ -44,8 +44,14 @@ vae covers variational autoencoders for generative modeling with latent spaces a
 
 
 TODO - 
+[ ] tokenizers library 
+[ ] hugginface library 
+[ ] wandb library 
+[ ] einops library 
+[ ] trl library 
 [ ] Stable diffusion 
 [ ] DLoRA
 [ ] temporal attention 
 [ ] Mochi 1 (video generation)
 [ ] NeRF (3 model generation)
+

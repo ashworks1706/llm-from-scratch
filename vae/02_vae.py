@@ -99,7 +99,6 @@ class VAE(nn.Module):
         # the difference : 
         mu, logvar = self.encoder(x)
         z = self.reparameterize(mu,logvar)
-        # ##############################
         x_recon = self.decoder(z)
         return x_recon, mu, logvar 
 
@@ -120,6 +119,20 @@ class VAE(nn.Module):
         return total_loss, recon_loss, kl_loss 
 
 
+# This is exactly what happens in **Generative AI**. Once a Variational Autoencoder (VAE) is trained, the 
+# latent space is organized and smooth.
+
+# - **The Workflow:** You "throw away" the Encoder. You then feed the **Decoder** a random vector 
+# (a string of numbers) from the latent space.
+# - **The Result:** The Decoder "decompresses" that random noise into a brand-new, realistic image. 
+# This is how VAEs create synthetic data.
+
+# **In Stable Diffusion, the Decoder is often called the "VAE" in user interfaces.** When people say they are "
+# loading a VAE" into their software, they are usually loading a high-quality **Decoder** to make the 
+# final colors and details look better.
+
+# Decoder Only	Creating new images from noise/latents	Generator (or "The VAE" in Stable Diffusion)
+# Encoder Only	Turning images into searchable numbers	Feature Extractor / Embedder
 
 # getting data and setting shit up 
 

@@ -13,7 +13,7 @@ class Tokenizer:
         # tokenizers are TRAINED, such that they know a bit of fixed vocabulary for nouns, verbs, etc. 
         # we also add [PAD] tokens to fill up unknown or short form 'don"t' type words 
         # such as [BOS] which means begining of seq, [EOS] end of seq, [UNK] unkown words, [CLS] classification for bert token, [SEP] used by bert again to seperate sentences 
-        self.special_tokens = special_tokens or {"[PAD]", "[BOS]", "[EOS]", "[UNK]", "[CLS]", "[SEP]"}
+        self.special_tokens = special_tokens or {"[PAD]": 0 , "[UNK]": 1, "[BOS]": 2 , "[EOS]" : 3 }
 
         self.vocab = self.special_tokens.copy() if vocab is None else vocab 
         self.id_to_token = {v: k for k, v in self.vocab.items()}
@@ -45,7 +45,7 @@ class Tokenizer:
             if id in self.id_to_token:
                 token = self.id_to_token[id]
                 # skip special tokens if not needed 
-                if skip_spcial_token and token in ["[BOS]", "[EOS]", "[PAD]", "[UNK]"]
+                if skip_special_token and token in ["[BOS]", "[EOS]", "[PAD]", "[UNK]"]:
                     continue 
                 tokens.append(token)
 
@@ -68,7 +68,7 @@ class Tokenizer:
                 next_id+=1
 
         # now we do reverse mappng 
-        self.id_to_token = { v:k for k,v in self.vocab.item()} # this basicaly creates a reverse mapping from id to token for decoding 
+        self.id_to_token = { v:k for k,v in self.vocab.items()} # this basicaly creates a reverse mapping from id to token for decoding 
 
 
     def pad(self, ids_list, max_length=None, pad_id=0):
@@ -95,6 +95,37 @@ class Tokenizer:
         # where the first sequence has 3 real tokens and 2 pads, and the second sequence has 2 real tokens and 3 pads, and the masks indicate which are real tokens vs pads 
 
         return padded, masks 
+
+
+
+tokenizer = Tokenizer()
+
+texts = ["hello", "the", "dog", "in", "me", "will", "always", "be", "mine"]
+tokenizer.build_vocab(texts)
+
+print(tokenizer.vocab)
+
+print()
+
+print("hello")
+encoded = tokenizer.encode("hello")
+print(encoded)
+
+decoded = tokenizer.decode(encoded)
+print(decoded)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

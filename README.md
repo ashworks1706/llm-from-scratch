@@ -44,7 +44,6 @@ vae covers variational autoencoders for generative modeling with latent spaces a
 
 
 TODO - 
-[ ] tokenizers library 
 [ ] hugginface library 
 [ ] trl library 
 [ ] Create a chatbot expert in a specific field ros library, verilog 

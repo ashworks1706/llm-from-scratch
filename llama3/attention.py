@@ -27,7 +27,7 @@ class Attention(nn.Module):
 
     def repeat_v(self, x, n_rep):
         # this is helper function for GQA to repeat the key/value heads
-        # in standard MHA, every queue has its own key/value head
+        # in standard MLA, every queue has its own key/value head
         # but in GQA, multiple queues share the same key/value head
         # therefore, this functions job is to organize the queries into groups and assign one key/value head to each group
         # we do this by taking list of keys and physically repeating them to match the number of query heads

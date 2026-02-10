@@ -61,3 +61,11 @@ def apply_rotary_emb(x, freqs_cos, freqs_sin):
     # 2. Apply the formula: x_out = x * cos + x_rotated * sin
     # Note: The sign change is handled by the x_rotated construction
     return (x * cos) + (x_rotated * sin)
+
+# but what happens when we actually rotate our data? 
+# when we apply Rope, we are essentially encoding the position of each token into the vector itself by rotating 
+# it in a high-dimensional space.
+# the model learns to interpret these rotations as positional information, allowing it to understand the order 
+# of tokens and how they relate to each other in the sequence.
+# the rotation creates a unique representation for each position, and the model can learn to recognize these 
+# patterns during training, enabling it to generalize to longer sequences than it was trained on.

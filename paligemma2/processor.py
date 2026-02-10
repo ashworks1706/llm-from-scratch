@@ -27,15 +27,6 @@ class PaliGemmaProcessor:
         self.image_std = torch.tensor([0.229, 0.224, 0.225]).view(3, 1, 1)
     
     def process_images(self, images):
-        """
-        Process PIL images or image paths.
-        
-        Args:
-            images: list of PIL Images or paths
-            
-        Returns:
-            pixel_values: (batch, 3, 224, 224)
-        """
         processed = []
         
         for img in images:
@@ -58,16 +49,7 @@ class PaliGemmaProcessor:
         return torch.stack(processed)
     
     def process_text(self, texts, add_image_token=True, image_token_id=256000):
-        """
-        Simple text processing (in practice would use proper tokenizer).
-        
-        Args:
-            texts: list of strings
-            add_image_token: whether to prepend image token
-            
-        Returns:
-            input_ids: (batch, seq_len)
-        """
+       
         # for now just showing the structure
         
         processed = []
@@ -91,16 +73,6 @@ class PaliGemmaProcessor:
         return torch.tensor(padded, dtype=torch.long)
     
     def __call__(self, images=None, text=None):
-        """
-        Process inputs for the model.
-        
-        Args:
-            images: list of PIL Images or paths
-            text: list of strings or single string
-            
-        Returns:
-            dict with pixel_values and input_ids
-        """
         output = {}
         
         if images is not None:

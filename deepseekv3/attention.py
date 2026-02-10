@@ -25,6 +25,11 @@ class MLA(nn.Module):
 
 
         # compression sizes
+        # dont get conufsed iwht LoRA finetuning, this is DIFFERENT!
+        # why is lora term used here? 
+        # LoRA is a technique for finetuning large language models by injecting low-rank matrices into the existing weights of the model.
+        # In DeepSeek, we are using a similar concept of low-rank matrices to compress the key and value representations into a smaller latent space. 
+        # The "lora_rank" here refers to the size of the latent vector that we are compressing into.
         self.kv_lora_rank = config.kv_lora_rank # size of latent vector
         self.q_lora_rank = config.q_lora_rank
 
@@ -113,6 +118,8 @@ class MLA(nn.Module):
         k_rope = self.w_up_rope(kv_latent).view(batch, -1, self.n_heads, self.rope_head_dim)
 
         # Decoupled RoPE -> we rotate only the position part
+        # but why decoupled? why not just rotate the whole vector like in Llama 3?
+        # because the latent vector is a compressed mix of meaning and position, rotating the whole thing would distort the meaning information.
         # we split k_rope so that we dont mess up the meaning
         # EQUATION: k_rope_rotated = RoPE(k_rope)
         k_rope = apply_rotary_emb(k_rope, freqs_cos, freqs_sin)

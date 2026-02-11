@@ -79,4 +79,7 @@ sampling_output = model.generate(
 print(tokenizer.decode(sampling_output[0], skip_special_tokens=True))
 
 
+# if temp = 0 
+# softmax becomes infinitely sharp, the highest logit becomes probabiltity 1 and rest 0, so it becomes ggreedy 
+# top_p=0.9 filters out low prob tokens "tail" of distribution, it ignores garbage 10% tokens
 

@@ -86,7 +86,13 @@ train_data_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, colla
 # , and it also creates attention masks to indicate which tokens are padding and which are not, so we need to use the collate_fn to ensure that our data is properly prepared for 
 # training our language model.
 
-
+# what is gradient accumulation anyway in ? 
+# gradient accumulation is a technique used to effectively increase the batch size during training without increasing the memory requirements of the model, it allows us to accumulate 
+# gradients over multiple steps before updating the model, which is useful when we have limited GPU memory
+# and cannot fit a large batch size in memory, by accumulating gradients over multiple steps, we can achieve an effective 
+# batch size that is larger than what our GPU memory can handle, without increasing the memory requirements of our 
+# model, since we are only processing a smaller batch size on each GPU at a time, and we are 
+# accumulating the gradients over multiple steps before updating the model.
 model,optimizer, train_data_loader = accelerator.prepare(model, optimizer, train_data_loader)
 
 print(f"Number of training steps: {len(train_data_loader) * 3}") # we have 3 epochs, so we multiply the number of batches in the train_data_loader by 3 to get the total number of training steps for 3 epochs
@@ -101,3 +107,6 @@ accelerator_with_accum = Accelerator(
     gradient_accumulation_steps=4, # this basically means that we will accumulate gradients over 4 steps before updating the model, so we will effectively have a batch size of 32 * 4 = 128, which is the effective batch size we want to achieve, without increasing the 
    # memory requirements of our model, since we are only processing 32 samples at a time on each GPU, and we are accumulating the gradients over 4 steps before updating the model
 )
+
+
+# we use accleratore.prepare() so it wraps the model in dataprallele, the wrapper adds extra layers, unwrapping gives us the clean modelt to save for inference

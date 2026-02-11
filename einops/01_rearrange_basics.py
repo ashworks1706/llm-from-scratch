@@ -1,15 +1,25 @@
-# rearrange for readable tensor reshaping
-# replacing cryptic view and permute chains
+# einops is like easy simplied macro for torch confusion operations 
+# its like a wrapper but not exactly and for math equations 
+import torch
+from einops import rearrange
 
-# topics to cover:
-# - basic rearrange syntax 'b h w c -> b (h w) c'
-# - splitting dimensions 'b (h w) -> b h w'
-# - merging dimensions 'b h w c -> b (h w c)'
-# - transposing 'b h w c -> b c h w'
-# - comparing to pytorch view, reshape, permute
-# - dimension names for clarity
-# - pattern matching for validation
-# - common mistakes and error messages
+# it has three main operations - 
+# rearrange -: reshape, transpose, split merge dimensions 
+# reduce : pool, aggregate along dimensions 
+# repeat :  broadcastt, expad dimensions 
+#
+# pattern syntax goes from left toright with parenthesis for merge split dimensions 
 
-# OBJECTIVE: rewrite confusing reshapes from attention.py using rearrange
-# see how code becomes self documenting
+
+
+
+# in pytorch, view() requires contiguous tensor, returns a view (shares memory)
+# reshape() works on non contiguous tensors, may copy 
+
+x = torch.arange(24).reshape(2,3,4)  # batch, height, width, channels 
+print(x.shape)
+# now we merge height and width into one dimension 
+
+flattened = rearrange(x, 'b h w -> b (h w)')
+print(flattened.shape)
+

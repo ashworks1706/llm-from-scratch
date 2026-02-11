@@ -94,3 +94,10 @@ print(f"Number of batches per epoch: {len(train_data_loader)}") # we can get the
 print(f"Effective batch size: {32 * accelerator.num_processes}") # effective batch size is the batch size multiplied by the number of processes (GPUs) being used for training, so we multiply our batch size of 32 by the number of processes to get the effective batch size, which is the total number of samples processed in parallel across all GPUs during training
 print(f"Local batch size: {32}") # local batch size is the batch size that each individual GPU processes, in this case we set our batch size to 32, so each GPU will process 32 samples in parallel during training, regardless of the number of GPUs being used, so the local batch size remains 32 even if we use multiple GPUs for training.
 
+
+
+accelerator_with_accum = Accelerator(
+    mixed_precision = 'fp16',
+    gradient_accumulation_steps=4, # this basically means that we will accumulate gradients over 4 steps before updating the model, so we will effectively have a batch size of 32 * 4 = 128, which is the effective batch size we want to achieve, without increasing the 
+   # memory requirements of our model, since we are only processing 32 samples at a time on each GPU, and we are accumulating the gradients over 4 steps before updating the model
+)

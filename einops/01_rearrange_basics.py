@@ -1,7 +1,7 @@
 # einops is like easy simplied macro for torch confusion operations 
 # its like a wrapper but not exactly and for math equations 
 import torch
-from einops import rearrange
+from einops import rearrange, reduce, repeat
 
 # it has three main operations - 
 # rearrange -: reshape, transpose, split merge dimensions 
@@ -59,3 +59,59 @@ images = torch.randn(2,4,4,3)
 
 
 # average pooling 
+pooled = reduce(images, 'b h w c -> b c', 'mean')
+print(pooled.shape)
+
+
+# global max 
+global_max = reduce(images, 'b h w c -> b c', 'max')
+print(global_max.shape)
+
+
+sum = reduce(images, 'b h w c -> b', 'sum')
+print(sum.shape)
+
+
+embeddings = torch.randn(1,4,8)
+print(embeddings.shape)
+batch_size =3 
+# broadcast to batch 
+# broadcasting means automatically expanding dimensions 
+# to match the shape of another tensor during operations. 
+# it allows for operations between tensors of different shapes without explicitly copying data, 
+# making it memory efficient and computationally efficient.
+# a mechanism that allows element-wise operations on tensors with different shapes by 
+# automatically expanding (stretching) the smaller tensor to match the larger one 
+# without copying data
+expanded = repeat(embeddings, '1 n d -> b n d', b = batch_size)
+
+print(expanded.shape)
+
+# create positional embeddings 
+
+positional_embeddings = torch.randn(4,8)
+print(positional_embeddings.shape)
+
+# repeat for batch and add to token embeddings 
+positional_embeddings_expanded = repeat(positional_embeddings, 'n d -> b n d', b=batch_size)
+print(positional_embeddings_expanded.shape)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

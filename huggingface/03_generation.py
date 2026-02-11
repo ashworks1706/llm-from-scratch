@@ -21,9 +21,62 @@
 # diverse outputs, but it can also produce less coherent responses if not tuned properly.
 
 
+from transformers import AutoTokenizer, AutoModelForCausalLM
+import torch 
 
 
+model = AutoModelForCausalLM.from_pretrained("gpt2")
+tokenizer = AutoTokenizer.from_pretrained("gpt2")
+model.eval()
 
+prompt = "Once upon a time"
+input_ids = tokenizer(prompt, return_tensors="pt").input_ids 
+
+# Greedy decoding
+greedy_output = model.generate(
+    input_ids, 
+    max_length=50, 
+    do_sample=False, 
+    temperature=1.0,
+    num_beams=1 # this is the default value for greedy decoding, 
+    # it means we are only keeping the top 1 candidate at each step
+)
+print(tokenizer.decode(greedy_output[0], skip_special_tokens=True))
+
+
+# Beam search decoding
+beam_output = model.generate(
+    input_ids,
+    max_length=50,
+    do_sample=False,
+    num_beams=5, # this means we are keeping the top 5 candidates at each step
+    early_stopping=True # this means we will stop generating when we reach the end of the sequence
+)
+print(tokenizer.decode(beam_output[0], skip_special_tokens=True))
+
+# Sampling decoding
+sampling_output = model.generate(
+    input_ids,
+    max_length=50,
+    do_sample=True, # this means we are sampling from the distribution of next words
+    temperature=0.7, # this controls the randomness of the sampling, lower values make it more deterministic, higher values make it more random
+    top_k=50, # this means we are only considering the top 50 most probable next words for sampling
+    top_p=0 # this means we are not using nucleus sampling, we are only using top-k sampling
+
+)
+
+# diff b/w top k sample vs top p sample 
+# top-k sampling limits the number of candidates to a fixed K, while nucleus sampling limits the candidates based on a 
+# cumulative probability threshold p. 
+# top-k sampling: we only consider the top K most probable next words and sample from them. This means that if K 
+# is set to 50, we will only look at the 50 most likely next words and randomly select one of them based on their 
+# probabilities.
+# nucleus sampling (top-p): we consider the smallest set of words whose cumulative probability exceeds a certain threshold 
+# pand sample from that 
+# set. For example, if p is set to 0.9, we will look at the next words in order of their probabilities and keep adding 
+# them to our candidate set until the cumulative probability of those words exceeds 0.9. Then we will randomly sample 
+# from that set of words.
+print(tokenizer.decode(sampling_output[0], skip_special_tokens=True))
 
 
 

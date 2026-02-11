@@ -44,7 +44,6 @@ vae covers variational autoencoders for generative modeling with latent spaces a
 
 
 TODO - 
-[ ] hugginface library 
 
 [ ] trl library
 

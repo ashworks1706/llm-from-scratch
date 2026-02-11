@@ -6,6 +6,4 @@ datasets provides efficient loading and processing of ml datasets. covers stream
 
 accelerate handles distributed training and mixed precision automatically. covers multi gpu training, gradient accumulation, model sharding and fp16 training. essential for scaling beyond single gpu experiments.
 
-hub enables model sharing and version control. covers uploading models, downloading checkpoints, managing repos and authentication. needed for collaborating and using community models.
-
 together these form the complete workflow from loading data to training to sharing your model with the world.

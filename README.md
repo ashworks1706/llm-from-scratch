@@ -46,13 +46,11 @@ vae covers variational autoencoders for generative modeling with latent spaces a
 TODO - 
 [ ] hugginface library 
 
-[ ] trl library 
+[ ] trl library
 
-[ ] deep seek r1
+[ ] wandb library 
 
-[ ] PPO
-
-[ ] GRPO
+[ ] einops library 
 
 [ ] Create a chatbot expert in a specific field ros library, verilog 
 
@@ -60,9 +58,11 @@ TODO -
 
 [ ] Process documents with verilog circuits, flowcharts
 
-[ ] wandb library 
+[ ] deep seek r1
 
-[ ] einops library 
+[ ] PPO
+
+[ ] GRPO
 
 [ ] Stable diffusion 
 

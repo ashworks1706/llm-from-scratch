@@ -1,16 +1,23 @@
-# distributed training and mixed precision with accelerate
-# scaling training across multiple gpus without changing code
+# this is part of distrbuted training, how coudl u use more gpus instead of ur one single broke ass laptop gpu ?
 
-# topics to cover:
-# - Accelerator class initialization
-# - accelerator.prepare() for model, optimizer, dataloader
-# - automatic device placement
-# - gradient accumulation steps
-# - mixed precision (fp16/bf16) training
-# - distributed data parallel (DDP)
-# - gradient checkpointing for memory efficiency
-# - accelerator.backward() vs loss.backward()
-# - saving and loading distributed checkpoints
+# thats hwy we use Accelerate 
 
-# OBJECTIVE: take single gpu training code and make it multi gpu ready
-# understand what accelerate does behind the scenes
+# we work with device management, distributed data parallele, mixed precision, gradient accumulation, gradient checkpointing 
+
+
+
+# we DONT call .to(device ) in acclerated at all 
+
+# gradinet checkpointing isj ust trade compute for memory, we dont store activatisn during forward pass 
+# and we recompute during backward ppass, useful for very large models
+
+
+
+
+
+
+
+
+
+
+

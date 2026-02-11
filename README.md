@@ -51,8 +51,6 @@ TODO -
 
 [ ] Process documents with verilog circuits, flowcharts
 
-[ ] deep seek r1
-
 [ ] PPO
 
 [ ] GRPO

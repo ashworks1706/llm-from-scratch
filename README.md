@@ -59,9 +59,3 @@ TODO -
 
 [ ] DLoRA
 
-[ ] temporal attention 
-
-[ ] Mochi 1 (video generation)
-
-[ ] NeRF (3 model generation)
-

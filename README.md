@@ -22,7 +22,7 @@ pretraining trains models on massive text corpora to predict next tokens. this i
 
 sft does supervised finetuning on instruction response pairs to teach models to follow instructions and have conversations. only computes loss on responses not instructions.
 
-rl implements direct preference optimization to align models with human preferences using chosen vs rejected response pairs. simpler and more stable than ppo.
+rl implements direct preference optimization to align models with human preferences using chosen vs rejected response pairs. simpler and more stable.
 
 distillation compresses a large teacher model into a smaller student by training on soft probability distributions rather than hard labels.
 
@@ -45,15 +45,15 @@ vae covers variational autoencoders for generative modeling with latent spaces a
 
 TODO - 
 
+[ ] PPO
+
+[ ] GRPO
+
 [ ] Create a chatbot expert in a specific field ros library, verilog 
 
 [ ] Align a chatbot to be a good teacher
 
 [ ] Process documents with verilog circuits, flowcharts
-
-[ ] PPO
-
-[ ] GRPO
 
 [ ] Stable diffusion 
 

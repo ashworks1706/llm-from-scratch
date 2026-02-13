@@ -7,3 +7,6 @@ checkpoints/*.pt
 *.tar.gz
 *.gz
 *-ubyte
+*.pt
+*.safetensors
+*.bin

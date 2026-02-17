@@ -3,6 +3,9 @@
 # if we process token by token, we have to feed entire pre-sentence for computing attention
 # we observed that the key and value vectors for a specific token at a specific position NEVER change.
 # which is why it might be better to just cache previously keys and values for computing further attention on given more input
+# for example, if we have a sentence of 100 tokens, and we process it token by token, then for the 100th token, we need to compute attention with all previous 99 tokens.
+# if we cache the keys and values for those 99 tokens, then we can just retrieve them from the cache instead of recomputing them every time, which is much more efficient.
+
 
 import torch
 import torch.nn as nn 

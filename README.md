@@ -45,6 +45,10 @@ vae covers variational autoencoders for generative modeling with latent spaces a
 
 TODO - 
 
+[ ] VQ vae
+
+[ ] discrete vae
+
 [ ] Stable diffusion 
 
 [ ] DLoRA

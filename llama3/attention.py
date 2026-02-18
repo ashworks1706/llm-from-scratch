@@ -45,7 +45,7 @@ class Attention(nn.Module):
         x = x[:,:,:,None,:] # add a new dimension for repeating
 
         x = x.expand(batch_size, seq_len, n_kv_heads, n_rep, head_dim) # expand to repeat
-        # by expanding, we are not actually copying the data, we are just creating a new view of the same data with the new shape, which is memory efficient
+        # by expanding,
 
         return x.reshape(batch_size, seq_len, n_kv_heads * n_rep, head_dim) # reshape to combine repeated heads
 

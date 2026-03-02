@@ -112,6 +112,7 @@ class VAE(nn.Module):
 
         # KL or shift loss + recon loss 
         total_loss = recon_loss + beta * kl_loss 
+        # our loss.backward comes from the mse loss summation with KL loss 
         
         # total loss = Reconstruction loss + KL divergencel loss 
         # MSE pushes model to generate good images 

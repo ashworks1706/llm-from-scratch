@@ -45,9 +45,14 @@ vae covers variational autoencoders for generative modeling with latent spaces a
 
 TODO - 
 
+
+[ ] BERT
+
 [ ] VQ vae
 
 [ ] discrete vae
+
+[ ] embedding 
 
 [ ] Stable diffusion 
 

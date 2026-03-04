@@ -56,5 +56,11 @@ TODO -
 
 [ ] Stable diffusion 
 
+[ ] PPO 
+
+[ ] GRPO 
+
+[ ] GSPO
+
 [ ] DLoRA
 

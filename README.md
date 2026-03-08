@@ -48,10 +48,6 @@ TODO -
 
 [ ] BERT
 
-[ ] VQ vae
-
-[ ] discrete vae
-
 [ ] embedding 
 
 [ ] Stable diffusion 

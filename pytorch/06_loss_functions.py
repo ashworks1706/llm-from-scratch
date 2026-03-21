@@ -88,7 +88,7 @@ print(f"Logits shape: {logits_batch.shape}")
 print(f"Targets: {targets_batch}")
 print(f"Batch CE loss: {loss:.4f}")
 
-# Minimizing cross-entropy = maximizing the likelihood of the correct class = reducing negative log likelihood
+# Minimizing cross-entropy = maximizing the likelihood of the correct class = reducing negative log likelihood 
  
  
      

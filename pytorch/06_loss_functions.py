@@ -353,7 +353,6 @@ print("\nUsed in RL (DQN) to prevent exploding gradients!")
 
      
 print("6. KL DIVERGENCE")
-print("="*50)
 
 # Formula: KL(P||Q) = Σ P(x) * log(P(x)/Q(x))
 # Use case: Matching distributions (distillation, VAEs, RL)

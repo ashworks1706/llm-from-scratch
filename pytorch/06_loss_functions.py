@@ -90,11 +90,12 @@ print(f"Batch CE loss: {loss:.4f}")
 
 # Minimizing cross-entropy = maximizing the likelihood of the correct class = reducing negative log likelihood  
  
-        
+ 
+         
         
 # why not MSE for classification ? 
 # Example: 3-class problem 
-logits = torch.tensor([[2.0, 1.0, 0.1]])  # Batch of 1
+logits = torch.tensor([[2.0, 1.0, 0.1]])  # Batch of 1 
 target_class = 0 
  
 # Convert to one-hot for MSE

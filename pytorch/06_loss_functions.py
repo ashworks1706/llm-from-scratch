@@ -90,7 +90,7 @@ print(f"Batch CE loss: {loss:.4f}")
 
 # Minimizing cross-entropy = maximizing the likelihood of the correct class = reducing negative log likelihood  
  
-  
+   
        
 # why not MSE for classification ? 
 # Example: 3-class problem

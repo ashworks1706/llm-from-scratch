@@ -147,7 +147,7 @@ print("Large gradient → strong learning signal!")
 # -log(P(y|p)) = -[y*log(p) + (1-y)*log(1-p)]
 # when target is 1 :   
 # predicting close to 1 -> low loss   
-# predicting closee to 0 -> hgih loss 
+# predicting closee to 0 -> hgih loss  
 
 logit = torch.tensor([2.0]) # raw score from model
 prob = torch.sigmoid(logit) # convert to probability : 0.88

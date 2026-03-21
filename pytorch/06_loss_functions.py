@@ -451,11 +451,6 @@ print("\nThe loss encourages:")
 print("  - Similar items (positive pairs) → close in embedding space")
 print("  - Different items (negatives) → far in embedding space")
 
-print("\nUsed in:")
-print("  - CLIP (match images with text)")
-print("  - SimCLR (self-supervised learning)")
-print("  - Sentence embeddings (similar sentences together)")
-
 print("LOSS FUNCTION QUICK REFERENCE")
 print("="*50)
 

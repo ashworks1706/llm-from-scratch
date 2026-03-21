@@ -134,7 +134,7 @@ print(f"Gradient: {wrong_logits.grad}")
 print("Large gradient → strong learning signal!")
  
  
-
+ 
  
 # binary cross entropy 
 # BCE is like two cross entropies combined 

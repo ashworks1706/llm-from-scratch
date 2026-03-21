@@ -352,7 +352,6 @@ print("\nUsed in RL (DQN) to prevent exploding gradients!")
 
 
      
-print("\n" + "="*50)
 print("6. KL DIVERGENCE")
 print("="*50)
 

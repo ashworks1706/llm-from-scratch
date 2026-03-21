@@ -143,7 +143,7 @@ print("Large gradient → strong learning signal!")
 # where y = true label (0 or 1), p = predicted probability (0 to 1)
 # here probability of seeing data is 
 # P(y|p) = p^y * (1-p)^(1-y)
-# we're maximizing this = minimize negative log 
+# we're maximizing this = minimize negative log  
 # -log(P(y|p)) = -[y*log(p) + (1-y)*log(1-p)] 
 # when target is 1 :   
 # predicting close to 1 -> low loss   

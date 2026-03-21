@@ -154,7 +154,7 @@ prob = torch.sigmoid(logit) # convert to probability : 0.88
 target = torch.tensor([1.0]) # actually is spam
 
 if target.item() == 1:
-    manual_bce = -torch.log(prob)
+    manual_bce = -torch.log(prob) 
 else:
     manual_bce = -torch.log(1-prob)
 

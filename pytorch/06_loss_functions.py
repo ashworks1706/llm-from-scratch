@@ -1,13 +1,3 @@
-# loss functions from scratch
-# measures how wrong the model predictions are
-
-# topics to cover:
-# - mean squared error (regression)
-# - cross entropy (classification)
-# - binary cross entropy
-# - why cross entropy for classification not mse
-# - numerical stability issues
-# - reduction methods (mean, sum, none)
 
 
 import torch 
@@ -98,7 +88,7 @@ print(f"Logits shape: {logits_batch.shape}")
 print(f"Targets: {targets_batch}")
 print(f"Batch CE loss: {loss:.4f}")
 
-
+# Minimizing cross-entropy = maximizing the likelihood of the correct class = reducing negative log likelihood
 
 
 
@@ -364,49 +354,49 @@ print("\nUsed in RL (DQN) to prevent exploding gradients!")
 
 
      
-     print("\n" + "="*50)
-     print("6. KL DIVERGENCE")
-     print("="*50)
-     
-     # Formula: KL(P||Q) = Σ P(x) * log(P(x)/Q(x))
-     # Use case: Matching distributions (distillation, VAEs, RL)
-     
-     # Example: Teacher-Student in distillation
-     teacher_probs = torch.tensor([0.7, 0.2, 0.1])
-     student_probs = torch.tensor([0.6, 0.3, 0.1])
-     
-     print(f"Teacher distribution (target): {teacher_probs}")
-     print(f"Student distribution (learned): {student_probs}")
-     
-     # Manual KL calculation
-     # KL expects log probabilities as input for student
-     student_log_probs = torch.log(student_probs)
-     kl_manual = torch.sum(teacher_probs * (torch.log(teacher_probs) - student_log_probs))
-     
-     print(f"\nManual KL divergence: {kl_manual.item():.4f}")
-     
-     # PyTorch KL (input needs to be log probabilities!)
-     kl_pytorch = F.kl_div(student_log_probs, teacher_probs, reduction='sum')
-     print(f"PyTorch KL divergence: {kl_pytorch.item():.4f}")
-     
-     # Perfect match should give 0
-     perfect_log = torch.log(teacher_probs)
-     kl_perfect = F.kl_div(perfect_log, teacher_probs, reduction='sum')
-     print(f"KL (teacher vs teacher): {kl_perfect.item():.6f} (≈ 0)")
-     
-     print("\n--- Step by step for first class ---")
-     p = teacher_probs[0].item()
-     q = student_probs[0].item()
-     print(f"P(class 0) = {p:.1f}")
-     print(f"Q(class 0) = {q:.1f}")
-     print(f"Contribution = P * log(P/Q) = {p:.1f} * log({p:.1f}/{q:.1f})")
-     print(f"             = {p:.1f} * {torch.log(torch.tensor(p/q)).item():.3f}")
-     print(f"             = {(p * torch.log(torch.tensor(p/q))).item():.4f}")
-     
-     print("\nYou used KL in:")
-     print("  - Distillation (match teacher's soft probabilities)")
-     print("  - DPO (stay close to reference model)")
-     print("  - VAE (match latent to prior distribution)")
+print("\n" + "="*50)
+print("6. KL DIVERGENCE")
+print("="*50)
+
+# Formula: KL(P||Q) = Σ P(x) * log(P(x)/Q(x))
+# Use case: Matching distributions (distillation, VAEs, RL)
+
+# Example: Teacher-Student in distillation
+teacher_probs = torch.tensor([0.7, 0.2, 0.1])
+student_probs = torch.tensor([0.6, 0.3, 0.1])
+
+print(f"Teacher distribution (target): {teacher_probs}")
+print(f"Student distribution (learned): {student_probs}")
+
+# Manual KL calculation
+# KL expects log probabilities as input for student
+student_log_probs = torch.log(student_probs)
+kl_manual = torch.sum(teacher_probs * (torch.log(teacher_probs) - student_log_probs))
+
+print(f"\nManual KL divergence: {kl_manual.item():.4f}")
+
+# PyTorch KL (input needs to be log probabilities!)
+kl_pytorch = F.kl_div(student_log_probs, teacher_probs, reduction='sum')
+print(f"PyTorch KL divergence: {kl_pytorch.item():.4f}")
+
+# Perfect match should give 0
+perfect_log = torch.log(teacher_probs)
+kl_perfect = F.kl_div(perfect_log, teacher_probs, reduction='sum')
+print(f"KL (teacher vs teacher): {kl_perfect.item():.6f} (≈ 0)")
+
+print("\n--- Step by step for first class ---")
+p = teacher_probs[0].item()
+q = student_probs[0].item()
+print(f"P(class 0) = {p:.1f}")
+print(f"Q(class 0) = {q:.1f}")
+print(f"Contribution = P * log(P/Q) = {p:.1f} * log({p:.1f}/{q:.1f})")
+print(f"             = {p:.1f} * {torch.log(torch.tensor(p/q)).item():.3f}")
+print(f"             = {(p * torch.log(torch.tensor(p/q))).item():.4f}")
+
+print("\nYou used KL in:")
+print("  - Distillation (match teacher's soft probabilities)")
+print("  - DPO (stay close to reference model)")
+print("  - VAE (match latent to prior distribution)")
 
 
 print("\n" + "="*50)

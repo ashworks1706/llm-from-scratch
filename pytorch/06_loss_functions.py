@@ -136,10 +136,10 @@ print("Large gradient → strong learning signal!")
  
    
   
-# binary cross entropy 
+# binary cross entropy  
 # BCE is like two cross entropies combined 
 #
-# b_c_e = - [y * log(p) + (1-y) * log(1-p)]
+# b_c_e = - [y * log(p) + (1-y) * log(1-p)] 
 # where y = true label (0 or 1), p = predicted probability (0 to 1)
 # here probability of seeing data is 
 # P(y|p) = p^y * (1-p)^(1-y)

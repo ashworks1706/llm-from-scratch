@@ -146,7 +146,7 @@ print("Large gradient → strong learning signal!")
 # we're maximizing this = minimize negative log 
 # -log(P(y|p)) = -[y*log(p) + (1-y)*log(1-p)]
 # when target is 1 :
-# predicting close to 1 -> low loss 
+# predicting close to 1 -> low loss   
 # predicting closee to 0 -> hgih loss 
 
 logit = torch.tensor([2.0]) # raw score from model

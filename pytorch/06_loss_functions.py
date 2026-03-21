@@ -175,13 +175,13 @@ target_ones = torch.ones(4)
 for p in test_probs:
     loss = -torch.log(p) 
     print(f"Prediction: {p:.2f} | Target: 1 | Loss: {loss:.4f}")
-
+ 
 print("\nNotice: Wrong confident prediction (0.1) has huge loss!")
 print("        Correct confident prediction (0.99) has tiny loss!")
 
 
 
-#
+# 
 #
 # Mean absolute error is basically MSE wihtout sequred 
 # The key difference between MSe and MAE

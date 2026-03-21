@@ -169,7 +169,6 @@ print(f"PyTorch BCE: {bce_loss.item():.4f}")
 bce_with_logits = F.binary_cross_entropy_with_logits(logit, target)
 print(f"BCE with logits: {bce_with_logits.item():.4f}")
 
-# Demonstrate the penalty
 print("\n--- Understanding the penalty ---")
 test_probs = torch.tensor([0.1, 0.5, 0.9, 0.99])
 target_ones = torch.ones(4)

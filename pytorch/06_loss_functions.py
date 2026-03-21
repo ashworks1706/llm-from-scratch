@@ -468,7 +468,7 @@ Contrastive      | Embeddings        | Self-supervised, CLIP
 
 print(summary)
 
-print("\n🎯 Your LLM uses:")
+print("\n Your LLM uses:")
 print("  - Cross Entropy: For next token prediction")
 print("  - KL Divergence: For distillation and DPO")
 

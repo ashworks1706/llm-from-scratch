@@ -41,9 +41,10 @@ import matplotlib.pyplot as plt
 
 # code 
 
-x = torch.tensor([10.0], requires_grad = true)
+x = torch.tensor([10.0], requires_grad = True)
 learning_rate = 0.2 
 history_manual = []
+loss = torch.tensor(0.0)
 
 for step in range(15):
     # forward pass 
@@ -51,16 +52,21 @@ for step in range(15):
     # backward pass 
     loss.backward()
 
-    history_manual.append((step, x.item(), loss.item(), x.grad.item())
+    grad = x.grad
+    if grad is None:
+        raise RuntimeError("Gradient is None after backward().")
+
+    history_manual.append((step, x.item(), loss.item(), grad.item()))
 
     # manual update 
     with torch.no_grad():
         # move opposite to gradient, 
         # if gradient is positive (pointing uphill), subtract it 
-        x -= learning_rate * x.grad 
+        x -= learning_rate * grad 
 
     # zero out gradients 
-    x.grad.zero_()
+    if x.grad is not None:
+        x.grad.zero_()
 
     if step%3==0 or step <3:
         step_info=history_manual[-1]

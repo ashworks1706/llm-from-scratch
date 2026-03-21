@@ -452,7 +452,6 @@ print("  - Similar items (positive pairs) → close in embedding space")
 print("  - Different items (negatives) → far in embedding space")
 
 print("LOSS FUNCTION QUICK REFERENCE")
-print("="*50)
 
 summary = """
 Loss Function    | Task              | Key Use Case

@@ -158,11 +158,11 @@ if target.item() == 1:
 else:
     manual_bce = -torch.log(1-prob)
 
-
-# PyTorch BCE
+ 
+# PyTorch BCE 
 bce_loss = F.binary_cross_entropy(prob, target)
-print(f"PyTorch BCE: {bce_loss.item():.4f}")
-
+print(f"PyTorch BCE: {bce_loss.item():.4f}") 
+ 
 # More stable: BCE with logits (does sigmoid internally)
 bce_with_logits = F.binary_cross_entropy_with_logits(logit, target)
 print(f"BCE with logits: {bce_with_logits.item():.4f}")

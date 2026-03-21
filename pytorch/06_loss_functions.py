@@ -171,7 +171,7 @@ print(f"BCE with logits: {bce_with_logits.item():.4f}")
 print("\n--- Understanding the penalty ---")
 test_probs = torch.tensor([0.1, 0.5, 0.9, 0.99])
 target_ones = torch.ones(4)
-
+  
 for p in test_probs:
     loss = -torch.log(p)
     print(f"Prediction: {p:.2f} | Target: 1 | Loss: {loss:.4f}")

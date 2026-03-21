@@ -276,7 +276,6 @@ print("  - You want equal penalty for all error magnitudes")
 
 
 print("5. HUBER LOSS (Smooth L1)")
-print("="*50)
 
 # Formula: MSE for small errors, MAE for large errors
 # Use case: Reinforcement learning, regression with some outliers

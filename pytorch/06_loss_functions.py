@@ -258,7 +258,7 @@ print("  - You want equal penalty for all error magnitudes")
 # Huber = 1.0 * (10 - 0.5*1.0) = 9.5
 # Compare: MSE would be 10² = 100!
 
-# large errors get clipped gradient, prevents exploring gradients in RL
+# large errors get clipped gradient, prevents exploding gradients in RL
 
 # Example: RL value function
 # predicted_reward = 5.0
@@ -275,7 +275,6 @@ print("  - You want equal penalty for all error magnitudes")
 # - When you need stability for large errors
 
 
-print("\n" + "="*50)
 print("5. HUBER LOSS (Smooth L1)")
 print("="*50)
 

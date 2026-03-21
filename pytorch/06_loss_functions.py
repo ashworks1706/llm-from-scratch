@@ -173,7 +173,7 @@ test_probs = torch.tensor([0.1, 0.5, 0.9, 0.99])
 target_ones = torch.ones(4)
   
 for p in test_probs:
-    loss = -torch.log(p)
+    loss = -torch.log(p) 
     print(f"Prediction: {p:.2f} | Target: 1 | Loss: {loss:.4f}")
 
 print("\nNotice: Wrong confident prediction (0.1) has huge loss!")

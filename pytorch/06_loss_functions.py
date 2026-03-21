@@ -131,7 +131,7 @@ print(f"Wrong prediction logits: {wrong_logits}")
 print(f"Correct target: {correct_target}") 
 print(f"Loss: {loss.item():.4f}") 
 print(f"Gradient: {wrong_logits.grad}") 
-print("Large gradient → strong learning signal!")
+print("Large gradient → strong learning signal!") 
   
   
    

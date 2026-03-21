@@ -177,7 +177,12 @@ for step in range(15):
 
     loss = x**2
     loss.backward()
-    history_sgd.append((step, x.item(), loss.item(), x.grad.item()))
+
+    grad = x.grad
+    if grad is None:
+        raise RuntimeError("Gradient is None after backward().")
+
+    history_momentum.append((step, x.item(), loss.item(), grad.item()))
     optimizer_momentum.step() # internally maintains velocity state, first few steps: velocity builds up 
 
     if step%3==0 or step<3:
@@ -242,9 +247,9 @@ print(f"\n✓ Converged to x = {x.item():.6f}")
 #
 
 x = torch.tensor([10.0], requires_grad=True)
-optimizer_adam = torch.optim.ADAM([x], lr=0.5)
+optimizer_adam = torch.optim.Adam([x], lr=0.5)
 
-history_adm = []
+history_adam = []
 
 for step in range(15):
     optimizer_adam.zero_grad()
@@ -252,14 +257,16 @@ for step in range(15):
     loss = x**2
     loss.backward()
 
-    state = optimizer_adam.state[x]
+    grad = x.grad
+    if grad is None:
+        raise RuntimeError("Gradient is None after backward().")
 
     optimizer_adam.step()
 
-    history_adm.append((step, x.item(), loss.item(), x.grad.item()))
+    history_adam.append((step, x.item(), loss.item(), grad.item()))
 
     if step%3==0 or step<3:
-        step_info = history_adm[-1]
+        step_info = history_adam[-1]
         print(f"Step {step_info[0]:2d}: x={step_info[1]:7.4f}, loss={step_info[2]:8.4f}, grad={step_info[3]:7.4f}")
 
 
@@ -290,8 +297,12 @@ for step in range(15):
     optimizer_adamw.zero_grad()
     loss = x ** 2
     loss.backward()
+
+    grad = x.grad
+    if grad is None:
+        raise RuntimeError("Gradient is None after backward().")
     
-    history_adamw.append((step, x.item(), loss.item(), x.grad.item() if step < 14 else 0))
+    history_adamw.append((step, x.item(), loss.item(), grad.item()))
     
     # Weight decay pulls x toward 0 even without gradient!
     # This is regularization - prevents weights from growing too large

@@ -116,7 +116,7 @@ print(f"CE loss:   {ce_loss:.4f}")
 print("\nWhy CE is better:")
 print("  1. MSE treats all errors equally")
 print("  2. CE penalizes confident wrong predictions heavily")
-print("  3. CE has better gradient properties")
+print("  3. CE has better gradient properties") 
 print("  4. CE matches the probabilistic interpretation")
 
 # Demonstration

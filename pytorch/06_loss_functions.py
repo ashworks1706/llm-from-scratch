@@ -396,7 +396,6 @@ print("  - VAE (match latent to prior distribution)")
 
 
 print("8. CONTRASTIVE LOSS (InfoNCE)")
-print("="*50)
 
 # Formula: L = -log(exp(sim(x, x+)/τ) / Σ exp(sim(x, xi)/τ))
 # Use case: Self-supervised learning, CLIP, sentence embeddings

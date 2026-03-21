@@ -204,9 +204,7 @@ print("        Correct confident prediction (0.99) has tiny loss!")
 # - Outlier: $50M mansion
 # - MAE won't let mansion dominate training!
 
-print("\n" + "="*50)
 print("4. MEAN ABSOLUTE ERROR (MAE / L1)")
-print("="*50)
 
 # Formula: MAE = mean(|pred - target|)
 # Use case: Regression when you don't want outliers to dominate

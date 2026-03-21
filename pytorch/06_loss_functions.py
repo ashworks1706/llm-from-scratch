@@ -158,7 +158,7 @@ if target.item() == 1:
 else:
     manual_bce = -torch.log(1-prob)
 
- 
+  
 # PyTorch BCE 
 bce_loss = F.binary_cross_entropy(prob, target)
 print(f"PyTorch BCE: {bce_loss.item():.4f}") 

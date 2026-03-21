@@ -1,14 +1,3 @@
-# automatic differentiation - the magic behind backpropagation
-# pytorch automatically computes gradients using computational graphs
-
-# topics to cover:
-# - what is autograd and why it matters
-# - requires_grad flag
-# - backward() method
-# - computational graph construction
-# - gradient accumulation
-# - detach() and no_grad()
-# - manual gradient computation vs autograd
 
 # the role of autograd is to caclulcate all gradients using chain rule  for the loss function
 
@@ -40,7 +29,21 @@
  #   loss = y²
   #  y = w*x + b
     
-  #  Question: How does loss change when w changes?
+  #  Question: How does loss change 
+# In training, we use gradients to UPDATE weights:
+
+#     # Gradient descent update:
+#     w_new = w_old - learning_rate * w.grad
+    
+#     # If w.grad is positive (28), loss increases with w
+#     # So we DECREASE w to reduce loss!
+    
+#     # Example:
+#     w = 3.0
+#     learning_rate = 0.01
+#     w_new = 3.0 - 0.01 * 28 = 3.0 - 0.28 = 2.72
+    
+#     # New w is smallewhen w changes?
     
   #  Use chain rule:
   #  ∂loss/∂w = ∂loss/∂y * ∂y/∂w
@@ -94,28 +97,28 @@
 
 
     # Values:
-    x = 2, w = 3, b = 1
-    y = 7, loss = 49
+    # x = 2, w = 3, b = 1
+    # y = 7, loss = 49
     
     # Gradients (computed by backward()):
-    w.grad = 28   # If w increases by 0.1, loss increases by ~2.8
-    x.grad = 42   # If x increases by 0.1, loss increases by ~4.2
-    b.grad = 14   # If b increases by 0.1, loss increases by ~1.4
+    # w.grad = 28   # If w increases by 0.1, loss increases by ~2.8
+    # x.grad = 42   # If x increases by 0.1, loss increases by ~4.2
+    # b.grad = 14   # If b increases by 0.1, loss increases by ~1.4
 
-In training, we use gradients to UPDATE weights:
+# In training, we use gradients to UPDATE weights:
 
-    # Gradient descent update:
-    w_new = w_old - learning_rate * w.grad
+#     # Gradient descent update:
+#     w_new = w_old - learning_rate * w.grad
     
-    # If w.grad is positive (28), loss increases with w
-    # So we DECREASE w to reduce loss!
+#     # If w.grad is positive (28), loss increases with w
+#     # So we DECREASE w to reduce loss!
     
-    # Example:
-    w = 3.0
-    learning_rate = 0.01
-    w_new = 3.0 - 0.01 * 28 = 3.0 - 0.28 = 2.72
+#     # Example:
+#     w = 3.0
+#     learning_rate = 0.01
+#     w_new = 3.0 - 0.01 * 28 = 3.0 - 0.28 = 2.72
     
-    # New w is smaller, which should reduce loss!
+#     # New w is smaller, which should reduce loss!
 
 import torch
      

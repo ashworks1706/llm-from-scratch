@@ -175,7 +175,7 @@ print(f"My tanh {my_tanh(x)}")
 # Lower T → sharper (more confident)
 # Higher T → softer (less confident)
 
-# In your distvillation: T=5 made teacher's knowledge softer!
+# In your distillation: T=5 made teacher's knowledge softer!
 
 # When to use:
 # - Output layer for multi-class classification

@@ -1,5 +1,3 @@
-# implementing linear layer from scratch
-# the most fundamental building block of neural networks
 
 # this is how neural networks learn patterns 
 # W are learned parameters that capture relationships 

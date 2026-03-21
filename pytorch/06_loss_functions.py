@@ -33,6 +33,8 @@ print(f"my_mse {my_mse(pred,target)}")
 # logits = [2.0, 1.0, 0.1]  # Raw scores from model
 # target = 0  # Correct class is "cat"
 
+# Minimizing cross entropy is equivalent to minimizing KL divergence when H(P)
+# H(P) is fixed (i.e., targets are fixed).
 # Step 1: Convert logits to probabilities (softmax)
 # exp = [e^2.0, e^1.0, e^0.1] = [7.39, 2.72, 1.11]
 # sum = 7.39 + 2.72 + 1.11 = 11.22
@@ -178,7 +180,7 @@ for p in test_probs:
  
 print("\nNotice: Wrong confident prediction (0.1) has huge loss!")
 print("        Correct confident prediction (0.99) has tiny loss!")
-
+  
 
 
 # 

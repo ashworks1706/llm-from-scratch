@@ -395,7 +395,6 @@ print("  - DPO (stay close to reference model)")
 print("  - VAE (match latent to prior distribution)")
 
 
-print("\n" + "="*50)
 print("8. CONTRASTIVE LOSS (InfoNCE)")
 print("="*50)
 

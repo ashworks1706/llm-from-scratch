@@ -111,7 +111,7 @@ ce_loss = F.cross_entropy(logits, torch.tensor([target_class]))
 print(f"Predictions (softmax): {probs}")
 print(f"Target (one-hot):      {target_onehot}")
 print(f"\nMSE loss:  {mse_loss:.4f}") 
-print(f"CE loss:   {ce_loss:.4f}")   
+print(f"CE loss:   {ce_loss:.4f}")    
  
 print("\nWhy CE is better:") 
 print("  1. MSE treats all errors equally")   

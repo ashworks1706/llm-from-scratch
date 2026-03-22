@@ -321,7 +321,7 @@ print(f"\n✓ Converged to x = {x.item():.6f}")
 #   ├──────────────┼───────────┼────────┼─────────────────────┼───────────────────────────────────────────┤
 #   │ Adam         │ θ + m + v │ Medium │ lr (usually 0.001)  │ NLP, most DL problems, default choice     │
 #   ├──────────────┼───────────┼────────┼─────────────────────┼───────────────────────────────────────────┤
-#   │ AdamW        │ θ + m + v │ Medium │ lr, weight_decay    │ Transformers, LLMs (your Llama!)          │
+#   │ AdamW        │ θ + m + v │ Medium │ lr, weight_decay    │ Transformers, LLMs                        │
 #   └──────────────┴───────────┴────────┴─────────────────────┴───────────────────────────────────────────┘
 
 

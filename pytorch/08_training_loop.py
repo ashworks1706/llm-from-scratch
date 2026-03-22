@@ -1,6 +1,6 @@
 # complete training loop example
 
-# Load data, Define model, Compute loss, backpropagate, Update weight, Track progress, validate
+# Load data, Define model, Compute loss, backpropagate, optimizer, Track progress, validate
 # L D C B U T V 
 
 

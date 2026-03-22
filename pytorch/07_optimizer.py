@@ -263,7 +263,7 @@ for step in range(15):
 print(f"\n✓ Converged to x = {x.item():.6f}")
 
 # ADAMW - What normal LLM uses 
-# the weight decay issue with adam optimizers is that L2 regularization is applies weight decay to gradeint before adaptive scaling 
+# the weight decay issue with adam optimizers is that L2 regularization is applied weight decay to gradient before adaptive scaling 
 # in turn weight decay gets scaled differently per parameter, which is not true L2 reg 
 # this is why we use ADAMW for computing updates with Adam (no weight decay in gradient)
 # apply weight decay directly to weights:

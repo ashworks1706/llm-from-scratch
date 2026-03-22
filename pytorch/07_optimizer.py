@@ -151,9 +151,6 @@ print(f"\n✓ Same result as manual: x = {x.item():.6f}")
 # Even though gradient is decreasing, velocity keeps it going!
 # so with momentum, slower inititally but eventually converges faster 
 
-# code 
-#
-#
 
 # momentum adds inertia like a ball rolling downhill 
 # Update rule: v_t = β*v_{t-1} + g_t

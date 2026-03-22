@@ -136,8 +136,6 @@ print(f"\n✓ Same result as manual: x = {x.item():.6f}")
 # - v_t = velocity (accumulated gradient)
 
 # v_t = β * v_{t-1} + (1-β) * g_t
-#    = (1-β) * g_t + β * [(1-β) * g_{t-1} + β * v_{t-2}]
-#    = (1-β) * g_t + β(1-β) * g_{t-1} + β² * v_{t-2}
 #    = (1-β) * [g_t + β*g_{t-1} + β²*g_{t-2} + β³*g_{t-3} + ...]
 
 # Recent gradients weighted more, but ALL history contributes!

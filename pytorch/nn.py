@@ -115,5 +115,5 @@ train_loader = DataLoader(TensorDataset(x_train, y_train), batch_size=8, shuffle
 loss_fn = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
 
-avg_loss, accuracy = train_epoch(model, train_loader, loss_fn, optimizer, device, epoch=10)
+avg_loss, accuracy = train_epoch(model, train_loader, loss_fn, optimizer, device, epoch=100)
 print(f"avg_loss={avg_loss:.4f}, accuracy={accuracy:.4f}")

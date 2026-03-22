@@ -1,6 +1,6 @@
 # complete training loop example
 
-# Load data, Model, loss, backpropagate, optimizer, l, validate
+# Load data, Model, loss, backpropagate, optimizer, lo, validate
 # D M L B O L V 
 
 

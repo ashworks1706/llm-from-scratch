@@ -69,4 +69,4 @@ pytorch_linear = nn.Linear(4, 2)
 pytorch_output = pytorch_linear(x)
 print(f"\nPyTorch Linear output:\n{pytorch_output}")
 
-# difference between convoluitonal layer and linear layer is that in CNN layers, you treat input as three dimensions and use receptive fields to understand the data and learn it, whereas linera layers treat intput as 1d and pass whole input to each independent neuron that has its own weights 
+# difference between convoluitonal layer and linear layer is that in CNN layers, you treat input as three dimensions and use receptive fields to understand the data and learn it, whereas linera layers treat intput as 1d and pass whole input to each independent neuron that has its own weights while cnns have shared weights 

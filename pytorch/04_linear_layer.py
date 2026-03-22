@@ -68,3 +68,5 @@ pytorch_linear = nn.Linear(4, 2)
 # embedding? linear(in,512) etc 
 pytorch_output = pytorch_linear(x)
 print(f"\nPyTorch Linear output:\n{pytorch_output}")
+
+# difference between convoluitonal layer and linear layer is that 

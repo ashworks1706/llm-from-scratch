@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn 
 import torch.nn.functional as F 
+from torch.utils.data import DataLoader, TensorDataset
 
 
 class TwoLayerNet(nn.Module):
@@ -90,7 +91,7 @@ def train_epoch(model, train_loader, loss_fn, optimizer, device, epoch):
         data = data.to(device)
         targets = targets.to(device)
         preds = model(data)
-        loss = loss_fn(predictions, targets)
+        loss = loss_fn(preds, targets)
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
@@ -104,4 +105,15 @@ def train_epoch(model, train_loader, loss_fn, optimizer, device, epoch):
     accuracy = correct/ total
     return avg_loss, accuracy
 
-train_epoch()
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = model.to(device)
+
+x_train = torch.randn(32, 2)
+y_train = torch.randint(0, 2, (32,))
+train_loader = DataLoader(TensorDataset(x_train, y_train), batch_size=8, shuffle=True)
+
+loss_fn = nn.CrossEntropyLoss()
+optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
+
+avg_loss, accuracy = train_epoch(model, train_loader, loss_fn, optimizer, device, epoch=1)
+print(f"avg_loss={avg_loss:.4f}, accuracy={accuracy:.4f}")

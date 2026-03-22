@@ -97,11 +97,6 @@ print(f"  Loss decreased from 100 → {loss.item():.6f}")
 # the noise acts as regularization (what is regularization? to prevent overfitting in algorithms) 
 # the trade off is that updates are a bit vague, need more total updates to converge but stil lfaster 
 
-# code 
-#
-#
-
-
 x = torch.tensor([10.0], requires_grad=True)
 optimizer_sgd = torch.optim.SGD([x], lr=0.2)
 

@@ -103,3 +103,5 @@ def train_epoch(model, train_loader, loss_fn, optimizer, device, epoch):
     avg_loss = total_loss / len(train_loader)
     accuracy = correct/ total
     return avg_loss, accuracy
+
+train_epoch()

@@ -70,3 +70,4 @@ pytorch_output = pytorch_linear(x)
 print(f"\nPyTorch Linear output:\n{pytorch_output}")
 
 # difference between convoluitonal layer and linear layer is that in CNN layers, you treat input as three dimensions and use receptive fields to understand the data and learn it, whereas linera layers treat intput as 1d and pass whole input to each independent neuron that has its own weights while cnns have shared weights 
+# fully connected layers are generally avoided for early visual processing because they treat images as flat vectors, destroying spatial information and creating far too many parameters, which leads to massive memory requirements and poor generalization. They are typically used at the end of a CNN to perform final classification using the features extracted by the convolutional layers

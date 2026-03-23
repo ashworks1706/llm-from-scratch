@@ -42,7 +42,8 @@
 
 
 # Overlapping pooling : we aim to retain more information over the kernel stride 
-# Stochastic pooling : instaedo of max or average, randomly sample based on activations then randomly pick one value wiht htose probabilities, high values more likely to be picked, used for regularization 
+# Stochastic pooling : instaedo of max or average, randomly sample based on activations then randomly pick one value wiht htose probabilities, high values 
+# more likely to be picked, used for regularization 
 # Mixed pooling: randomly vary pool size and stride during training, adds randomness = regularization 
 #
 #

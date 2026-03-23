@@ -6,7 +6,7 @@
 
 # max pooling takes max value in each local region, why max? becasuse if a feature is detected, keep it
 # exact position doesn't matter, just that it exists, strong activates = important features 
-# out_size = (input_size - kernelsize) / stride + 1 
+# out_size = (input_size - kernelsize + 2p) / stride + 1 
 
 
 # average pooling is just taking average values in each regions,

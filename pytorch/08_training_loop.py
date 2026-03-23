@@ -220,7 +220,6 @@ scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
     mode='min',          # Minimize validation loss
     factor=0.5,          # Multiply lr by 0.5
     patience=5,          # Wait 5 epochs before reducing
-    verbose=True         # Print when lr changes
 )
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

@@ -1,5 +1,3 @@
-# convolutional operations from scratch
-# the core operation that makes cnns work for images
 
 # regular neural networks flatten out the images in the layers
 # which results in way too many parameters, and it loses spatial structures ( treats nearby pixels same as for pixels)

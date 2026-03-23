@@ -57,7 +57,8 @@ import torch.nn.funtional as F
 # Can't vanish!
 
 
-# Batch normalization (often shortened to BatchNorm) is a technique used in deep learning to make training faster and more stable
+# Batch normalization (often shortened to BatchNorm) is a technique used in deep learning to make training faster 
+# and more stable
 # Training vs. Inference: During training, BatchNorm uses the statistics of the current batch. During 
 # inference (prediction), it uses a moving average of the mean and variance calculated during the 
 # entire training process to ensure consistent results.

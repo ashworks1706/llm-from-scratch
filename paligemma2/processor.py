@@ -6,19 +6,7 @@ import numpy as np
 
 
 class PaliGemmaProcessor:
-    """
-    Processes images and text for PaliGemma model.
-    
-    Image processing:
-    - Resize to 224x224
-    - Normalize with ImageNet stats
-    - Convert to tensor
-    
-    Text processing:
-    - Tokenize text (simplified - would use real tokenizer in practice)
-    - Add image tokens where needed
-    """
-    
+       
     def __init__(self, image_size=224):
         self.image_size = image_size
         

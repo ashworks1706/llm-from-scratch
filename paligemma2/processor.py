@@ -27,7 +27,7 @@ class PaliGemmaProcessor:
         self.image_std = torch.tensor([0.229, 0.224, 0.225]).view(3, 1, 1)
     
     def process_images(self, images):
-        processed = []
+            processed = []
         
         for img in images:
             # load if path

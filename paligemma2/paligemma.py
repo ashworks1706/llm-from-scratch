@@ -29,16 +29,12 @@ class PaliGemma(nn.Module):
         kv_cache_list=None,
         start_pos=0
     ):
-        # process image if provided
-        if pixel_values is not None:
-            # vision encoder: (batch, 3, H, W) → (batch, num_patches, vision_dim)
-            vision_outputs = self.vision_tower(pixel_values)
-            
-            # project to text space: (batch, num_patches, vision_dim) → (batch, num_patches, text_dim)
-            image_features = self.multi_modal_projector(vision_outputs)
-        else:
-            image_features = None
+        # vision encoder: (batch, 3, H, W) → (batch, num_patches, vision_dim)
+        vision_outputs = self.vision_tower(pixel_values)
         
+        # project to text space: (batch, num_patches, vision_dim) → (batch, num_patches, text_dim)
+        image_features = self.multi_modal_projector(vision_outputs)
+    
         # process text
         if input_ids is not None:
             # get text embeddings

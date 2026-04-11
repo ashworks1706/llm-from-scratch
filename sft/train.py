@@ -79,7 +79,7 @@ class SFTTrainer:
         
         # loss_mask: Mask for loss calculation, shape (batch_size, seq_len)
         # 0 = ignore (instruction tokens)
-        # = calculate loss (response tokens)
+        # 1 = calculate loss (response tokens)
         
         # Move data to GPU/CPU
         inputs = inputs.to(self.device)

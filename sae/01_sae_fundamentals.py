@@ -11,7 +11,7 @@
 
 # we basically want to represent that dense activation vector x by Σ_i z_i f_i where only a 
 # few z_i are non zero (sparse)
-#
+
 # why sparse? 
 # beacuse sparse forces the model to represent the vector with K neurons only, and so it forces the model 
 # to represent concept X for example with only best possible K neurons, so that its separted from billions of tangeled mess 

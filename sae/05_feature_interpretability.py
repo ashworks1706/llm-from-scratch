@@ -1,4 +1,3 @@
-# LEARNING OBJECTIVES:
 # - Retrieve top-activating tokens/contexts for each latent feature.
 # - Cluster examples per feature to separate semantic vs syntactic behavior.
 # - Build human-readable feature cards with positive and negative trigger examples.

@@ -1,5 +1,3 @@
-# feature dictionary and health diagnostics
-#
 # LEARNING OBJECTIVES:
 # - Compute feature firing rates and identify dead, rare, and saturated features.
 # - Measure decoder vector norms and detect duplicated or highly correlated features.

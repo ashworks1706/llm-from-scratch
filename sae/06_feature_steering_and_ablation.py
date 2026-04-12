@@ -1,5 +1,3 @@
-# feature steering and causal interventions
-#
 # LEARNING OBJECTIVES:
 # - Implement feature ablation (zeroing selected latents) during forward passes.
 # - Implement feature steering (adding/scaling selected latent activations).

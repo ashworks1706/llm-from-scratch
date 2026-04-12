@@ -1,6 +1,3 @@
-# sparse objectives and regularization
-#
-# LEARNING OBJECTIVES:
 # - Implement reconstruction loss choices (MSE, normalized MSE) for activation reconstruction.
 # - Implement L1 sparsity penalty on latent activations and tune lambda tradeoffs.
 # - Understand top-k / hard sparsity alternatives and when they are more stable.

@@ -85,22 +85,37 @@ class Encoder(nn.Module):
 # so saes push towards parts based selecttive features, not just low rank compression 
 
 class Decoder(nn.Module):
-    def __init__(self, input_dim, latent_dim, out_dim):
+    def __init__(self, latent_dim, out_dim):
         super().__init__()
 
-        self.ffn1 = nn.Linear(input_dim, latent_dim)
-        self.relu = nn.ReLU()
+        self.ffn1 = nn.Linear(latent_dim, out_dim)
 
     def forward(self, x):
-        # get activation input
+        # get latent input
         x = self.ffn1(x)
-        x = self.relu(self.ffn2(x))
         return x 
 
 
 
 
+class SAE(nn.Module):
+    def __init__(self, input_dim, latent_dim, output_dim):
+        super().__init__()
+        self.encoder = Encoder(input_dim, latent_dim)
+        self.decoder = Decoder(latent_dim, out_dim)
 
+    def forward(self, x):
+        z = self.encoder(x)
+        z = self.decoder(z)
+        return z 
+# usually 
+
+class SAE_Model:
+    def __init__(self):
+        self.loss_fn = nn.MSELoss()
+        self.model = SAE()
+        self.gamma = nn.Parameter()
+        self.optimizer = torch.optim.AdamW()
 
 
 

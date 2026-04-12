@@ -67,6 +67,7 @@ import torch
 import torch.nn.functional as F 
 import torch.nn as nn 
 class Encoder(nn.Module):
+    # expands
     def __init__(self, input_dim, latent_dim ):
         super().__init__()
         self.ffn1 = nn.Linear(input_dim, latent_dim) # this si basically Wx+b 
@@ -85,6 +86,7 @@ class Encoder(nn.Module):
 # so saes push towards parts based selecttive features, not just low rank compression 
 
 class Decoder(nn.Module):
+    # compresses back 
     def __init__(self, latent_dim, out_dim):
         super().__init__()
 
@@ -108,12 +110,12 @@ class SAE(nn.Module):
         z = self.encoder(x)
         z = self.decoder(z)
         return z 
-# usually 
+# usually d= 768 then k is 4d or 16d so 3072 or 12288
 
 class SAE_Model:
-    def __init__(self):
+    def __init__(self, input_dim, latent_dim, output_dim):
         self.loss_fn = nn.MSELoss()
-        self.model = SAE()
+        self.model = SAE(input_dim, latent_dim, output_dim)
         self.gamma = nn.Parameter()
         self.optimizer = torch.optim.AdamW()
 

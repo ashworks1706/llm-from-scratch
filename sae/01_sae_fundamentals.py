@@ -34,4 +34,4 @@
 # the recon loss ||x-x_i||^2_2 measures how well the decoder recons the activation vector x 
 # the sparsity loss penalizes the hidden lalyer activations z 
 # beta controls how much to focus on sparsity or reconstruction 
-#  
+# 

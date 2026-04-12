@@ -52,6 +52,8 @@
 # i.e z = ReLU(f(u))
 #
 
+# the decoder recons that input basically by w_dec z + b_dec where W_dec ∈ R^{d×m}, b_dec ∈ R^d
+# each column of w_dec is a LEARED FEAURE DIRECTION in input space
 import torch 
 import torch.nn.functional as F 
 import torch.nn as nn 
@@ -59,19 +61,17 @@ class Encoder(nn.Module):
     def __init__(self, input_dim, latent_dim, out_dim):
         super().__init__()
 
-        self.ffn1 = nn.Linear(input_dim, latent_dim)
+        self.ffn1 = nn.Linear(input_dim, latent_dim) # this si basically Wx+b 
         self.ffn2 = nn.Linear(latent_dim, out_dim)
 
         self.relu = nn.ReLU()
 
     def forward(self, x):
-        # get activation input 
-        
-        
+        # get activation input
+        x = self.ffn1(x)
 
 
 
-# th
 
 
 

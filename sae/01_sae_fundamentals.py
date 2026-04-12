@@ -67,21 +67,16 @@ import torch
 import torch.nn.functional as F 
 import torch.nn as nn 
 class Encoder(nn.Module):
-    def __init__(self, input_dim, latent_dim, out_dim):
+    def __init__(self, input_dim, latent_dim ):
         super().__init__()
-
-
         self.ffn1 = nn.Linear(input_dim, latent_dim) # this si basically Wx+b 
-        self.ffn2 = nn.Linear(latent_dim, out_dim)
-
         self.relu = nn.ReLU()
 
     def forward(self, x):
         # get activation input
         # batchidx, dimension 
-        x = self.ffn1(x)
-        x = self.relu(self.ffn2(x))
-        return x # batchidx, 
+        x = self.relu(self.ffn1(x))
+        return x # batchidx, k  
 
 
 
@@ -91,8 +86,6 @@ class Decoder(nn.Module):
         super().__init__()
 
         self.ffn1 = nn.Linear(input_dim, latent_dim)
-        self.ffn2 = nn.Linear(latent_dim, out_dim)
-
         self.relu = nn.ReLU()
 
     def forward(self, x):

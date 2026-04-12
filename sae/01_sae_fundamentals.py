@@ -41,4 +41,10 @@
 # decreasing lambda the model doesnt focuses much on sparsity and uses more active neurons thus making features more policmantic, the model 
 # takes a lot of neurosn to represent a cocnept making it more tangled 
 
+# the main dimensiosn we deal with are input dim (activation size) and latnet dim (# of learned feaures, often m>d)
 
+
+
+# what encoder does is, it maps activation to laten dimension 
+# i.e u = W_enc + b_enc where W_enc ∈ R^{m×d}, b_enc ∈ R^m
+# then we apply non linearity - ReLU to get the latent code 

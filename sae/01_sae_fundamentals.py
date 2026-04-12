@@ -59,6 +59,9 @@
 # without sparsity, model is dense again and not representable, sparsity acs as the contraint that makes representation useful 
 # same as sparse coding = min_z ||x-Dz||_2^2 + \lambda||z||_1 
 # sae adds an encoder that predictst z quickly (amortized infernece)
+#
+#
+# we dont actually 
 import torch 
 import torch.nn.functional as F 
 import torch.nn as nn 
@@ -74,6 +77,27 @@ class Encoder(nn.Module):
     def forward(self, x):
         # get activation input
         x = self.ffn1(x)
+        x = self.relu(self.ffn2(x))
+        return x 
+
+
+
+
+class Decoder(nn.Module):
+    def __init__(self, input_dim, latent_dim, out_dim):
+        super().__init__()
+
+        self.ffn1 = nn.Linear(input_dim, latent_dim)
+        self.ffn2 = nn.Linear(latent_dim, out_dim)
+
+        self.relu = nn.ReLU()
+
+    def forward(self, x):
+        # get activation input
+        x = self.ffn1(x)
+        x = self.relu(self.ffn2(x))
+        return x 
+
 
 
 

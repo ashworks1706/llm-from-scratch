@@ -54,6 +54,9 @@
 
 # the decoder recons that input basically by w_dec z + b_dec where W_dec ∈ R^{d×m}, b_dec ∈ R^d
 # each column of w_dec is a LEARED FEAURE DIRECTION in input space
+
+# the loss function is like L_rec= ||x-x_hat||_2^2  + \lambda L_sparse(L_sparse = ||z||_1 = Σ_i |z_i| -> surrogative objectie )
+
 import torch 
 import torch.nn.functional as F 
 import torch.nn as nn 

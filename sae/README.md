@@ -11,9 +11,7 @@ the core flow in this folder is:
 5. interpret features with example activations and token triggers
 6. try steering or ablation experiments to test if features are causal
 
-`01_sae_fundamentals.py` starts with encoder/decoder intuition and baseline objectives.
-
-`02_sparse_objectives.py` focuses on enforcing sparsity and preventing feature collapse.
+`01_sae_fundamentals.py` starts with encoder/decoder intuition and baseline objectives. focuses on enforcing sparsity and preventing feature collapse.
 
 `03_train_sae_on_activations.py` lays out the training loop over cached model activations.
 

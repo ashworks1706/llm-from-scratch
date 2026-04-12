@@ -67,6 +67,7 @@ class Encoder(nn.Module):
     def forward(self, x):
         # get activation input 
         
+        
 
 
 

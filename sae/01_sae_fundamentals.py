@@ -57,7 +57,8 @@
 
 # the loss function is like L_rec= ||x-x_hat||_2^2  + \lambda L_sparse(L_sparse = ||z||_1 = Σ_i |z_i| -> surrogative objectie )
 # without sparsity, model is dense again and not representable, sparsity acs as the contraint that makes representation useful 
-# same as sparse coding = min_z ||x-Dz||_2^2 + \lambda||z||_!
+# same as sparse coding = min_z ||x-Dz||_2^2 + \lambda||z||_1 
+# sae adds an encoder that predictst z quickly (amortized infernece)
 import torch 
 import torch.nn.functional as F 
 import torch.nn as nn 

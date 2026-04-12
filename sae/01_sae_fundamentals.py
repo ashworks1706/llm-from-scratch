@@ -41,10 +41,33 @@
 # decreasing lambda the model doesnt focuses much on sparsity and uses more active neurons thus making features more policmantic, the model 
 # takes a lot of neurosn to represent a cocnept making it more tangled 
 
-# the main dimensiosn we deal with are input dim (activation size) and latnet dim (# of learned feaures, often m>d)
+# the main dimensiosn we deal with are input dim (activation size) and latnet dim 
+# (# of learned feaures, often m>d)
 
 
 
 # what encoder does is, it maps activation to laten dimension 
 # i.e u = W_enc + b_enc where W_enc ∈ R^{m×d}, b_enc ∈ R^m
 # then we apply non linearity - ReLU to get the latent code 
+# i.e z = ReLU(f(u))
+#
+
+import torch 
+import torch.nn.functional as F 
+import torch.nn as nn 
+class Encoder(nn.Module):
+    def __init__(self, input_dim, latent_dim, out_dim):
+        super().__init__()
+
+        self.ffn1 = nn.Linear(input_dim, latent_dim)
+        self.ffn2 = nn.Linear(latent_dim, out_dim)
+
+        self.relu = nn.ReLU()
+
+    def forward(self, x):
+        # get activation input 
+        
+
+
+
+# th

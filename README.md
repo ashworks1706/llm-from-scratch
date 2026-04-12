@@ -42,15 +42,13 @@ lstm implements recurrent networks for sequences including vanilla rnn, lstm cel
 
 vae covers variational autoencoders for generative modeling with latent spaces and generation of new samples.
 
+sae covers sparse autoencoders for mechanistic interpretability with latent space. 
 
 TODO - 
-
 
 [ ] embedding 
 
 [ ] Stable diffusion 
-
-[ ] VAEs
 
 [ ] PPO 
 
@@ -61,3 +59,5 @@ TODO -
 [ ] DLoRA
 
 [ ] SAEs 
+
+[ ] PCA, t-SNE, UMAP

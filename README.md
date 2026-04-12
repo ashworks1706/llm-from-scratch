@@ -61,3 +61,5 @@ TODO -
 [ ] SAEs 
 
 [ ] PCA, t-SNE, UMAP
+
+[ ] add dat 494 assignemnts to repo [resnet, cam, gradcam, cvae,  dvae, vqvae, gpt2, sae]

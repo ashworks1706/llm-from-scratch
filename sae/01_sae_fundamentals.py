@@ -80,6 +80,9 @@ class Encoder(nn.Module):
 
 
 
+# theres also a thought that u can remove sparsity and use linear AE, but the then the linear 
+# AE tends toward PCA like subspace behavior, like not the feature level disentanglement we want for interpretability
+# so saes push towards parts based selecttive features, not just low rank compression 
 
 class Decoder(nn.Module):
     def __init__(self, input_dim, latent_dim, out_dim):

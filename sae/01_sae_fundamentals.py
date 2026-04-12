@@ -20,7 +20,7 @@
 
 # "monosemanticity" means model features that rerepsent features from a single specific concept or meaning rather than many unrelated ones 
 # "policmanticity" meanas model features / neurons that represent a lot of unrelated concepts simultanously (superposition)
- 
+
 # like in VAEs, we pass input image, model performs latent representation frrom encoder then passes it decoder and decoder learns to 
 # reconstruct original image, and so that z vector in between is our latent rerepsentation 
 # in SAEs, we do not pass input image, the input image has been already processed by model's dense layer, instead we pass a series of activation vectors or those already 

@@ -35,5 +35,3 @@
 # the sparsity loss penalizes the hidden lalyer activations z 
 # beta controls how much to focus on sparsity or reconstruction 
 #  
-
-

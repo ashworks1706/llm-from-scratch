@@ -61,7 +61,8 @@
 # sae adds an encoder that predictst z quickly (amortized infernece)
 #
 #
-# we dont actually 
+# we dont actually trian sae parallely, we train transformers and keep collecting activations, then we use that 
+# to train SAEs
 import torch 
 import torch.nn.functional as F 
 import torch.nn as nn 

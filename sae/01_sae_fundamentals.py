@@ -33,5 +33,12 @@
 # the recon loss for SAEs is L1 loss (MSE or sometimes top k) + \lambda (Sparsity penalty [KL for SAE])  
 # the recon loss ||x-x_i||^2_2 measures how well the decoder recons the activation vector x 
 # the sparsity loss penalizes the hidden lalyer activations z 
-# beta controls how much to focus on sparsity or reconstruction 
-# 
+
+
+# lambda  controls how much to focus on sparsity or reconstruction 
+# increasing the lambda (hyperparameter) the model is forced to use fewer active neurons thus making features more monosemantic, the model 
+# only keeps most essential high level patterns 
+# decreasing lambda the model doesnt focuses much on sparsity and uses more active neurons thus making features more policmantic, the model 
+# takes a lot of neurosn to represent a cocnept making it more tangled 
+
+

@@ -7,3 +7,6 @@
 # we know that z_i fires on pattern P 
 # so what if we force z_i down (ablation) or up (steering) and check if behavior X tied to P changes 
 # if yes then we can derive that z_i -> X concept is casually relevent
+
+
+# 

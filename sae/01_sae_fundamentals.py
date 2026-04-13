@@ -97,8 +97,6 @@ class Decoder(nn.Module):
         return x 
 
 
-
-
 class SAE(nn.Module):
     def __init__(self, input_dim, latent_dim, output_dim):
         super().__init__()

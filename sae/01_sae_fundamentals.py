@@ -76,9 +76,10 @@ class Encoder(nn.Module):
     def forward(self, x):
         # get activation input
         # batchidx, dimension 
-        z = self.relu(self.ffn1(x)) # batchidx, k  
+        u = self.ffn1(x) # batchidx, k 
+        z = self.relu(u) # batchidx, k  
 
-        return z  
+        return u,z 
 
 # theres also a thought that u can remove sparsity and use linear AE, but the then the linear 
 # AE tends toward PCA like subspace behavior, like not the feature level disentanglement we want for interpretability
@@ -107,61 +108,8 @@ class SAE(nn.Module):
 
     def forward(self, x):
         # batchidx, dimension 
-        z   = self.encoder(x)
+        u,z  = self.encoder(x)
         x_hat = self.decoder(z)
-        return x_hat   # batchidx, d
+        return u,z,x_hat   # batchidx, d
 # usually d= 768 then k is 4d or 16d so 3072 or 12288
-
-class SAE_Model:
-    def __init__(self, input_dim, latent_dim, output_dim, train_loader, test_loader):
-        self.loss_fn = nn.MSELoss()
-        self.model = SAE(input_dim, latent_dim, output_dim)
-        self.gamma = nn.Parameter(torch.tensor(0.5)) # this is the lambda tradeoff parameter for 
-        # sparsity vs recon loss, we make it learnable so that model can learn how much 
-        # to focus on sparsity vs recon 
-        self.gpt2tokenizer = AutoTokenizer.from_pretrained("gpt2")
-        self.gpt2model = AutoModelForCausalLM.from_pretrained("gpt2")
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.train_loader = train_loader
-        self.test_loader = test_loader
-        self.optimizer = torch.optim.AdamW(self.model.parameters(), lr = 0.001)
-
-    def train(self, epochs=100):
-        # freeze the gpt2 model and pass input text through it to get activations, 
-        # then train sae to reconstruct those activations on the fly  
-        self.model.train()
-        # the sparsity loss is just the L1 norm of the latent code z 
-        avgloss=0
-        for epoch in range(epochs):
-            for batch in self.train_loader:
-                # get input text and pass through gpt2 to get activations 
-                input_text = batch["text"]
-                inputs = self.gpt2tokenizer(input_text, return_tensors="pt").to(self.device)
-                with torch.no_grad():
-                    outputs = self.gpt2model(**inputs, output_hidden_states=True)
-                    activations = outputs.hidden_states[-1] # get last layer activations 
-
-                recon_activations = self.model(activations)
-
-                # compute losses 
-                recon_loss = self.loss_fn(recon_activations, activations)
-                # p=1 is L1 norm, p=2 is L2 norm 
-                sparsity_loss = torch.norm(self.model.encoder.ffn1.weight, p=1) # L1 norm of encoder weights as sparsity penalty 
-                loss = recon_loss + self.gamma * sparsity_loss
-
-                # backprop and optimize
-                self.optimizer.zero_grad()
-                loss.backward()
-                self.optimizer.step()
-
-                avgloss += loss.item()
-
-
-
-
-# - Implement reconstruction loss choices (MSE, normalized MSE) for activation reconstruction.
-# - Implement L1 sparsity penalty on latent activations and tune lambda tradeoffs.
-# - Understand top-k / hard sparsity alternatives and when they are more stable.
-# - Track dead-feature and always-on-feature failure modes.
-# - Build metrics for sparsity level, feature utilization, and reconstruction quality.
 

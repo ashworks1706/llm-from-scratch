@@ -28,4 +28,5 @@
 #  - consistent across prompts, not one-off.
 
 
-
+# we cannot jsut do normal testing, we need lots of testst to prove our hypothesis about the model's behavior 
+# 

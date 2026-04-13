@@ -76,8 +76,8 @@ class Encoder(nn.Module):
     def forward(self, x):
         # get activation input
         # batchidx, dimension 
-        u = self.ffn1(x) # batchidx, k 
-        z = self.relu(u) # batchidx, k  
+        u = self.ffn1(x) # batchidx, k where k is the latent dimension, which is often larger than input dimension d, so its an expansion not compression 
+        z = self.relu(u) # sparse latent usage 
 
         return u,z 
 

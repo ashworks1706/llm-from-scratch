@@ -57,7 +57,7 @@ def analyze_sae(sae_model, gpt2_model, tokenizer, dataloader, device, eps, max_b
             activations = activations.reshape(B * S, D)
 
             u, z, x_hat = sae_model(activations)
-            # remember u here is original activation of input, z is the output of encoder, x_hat is reconned activation of input 
+            # remember u here is pre-activationstate of original input x , z is the output of encoder, x_hat is reconned activation of input 
             active_count += (z > eps ).sum(0) # higher the more active neurons 
             z_sum+=z.sum(0) 
             z_active_sum += (z*(z>eps)).sum(0) 
@@ -100,11 +100,13 @@ def analyze_decoder_dictionary(sae_model):
     # decoder weights shape: (input_dim, latent_dim), columns are feature vectors
     feature_norms = torch.norm(decoder_weights, dim=0)
 
-    normalized = F.normalize(decoder_weights, dim=0)
-    cosine_sim = normalized.T @ normalized
+    normalized = f.normalize(decoder_weights, dim=0)
+    cosine_sim = normalized.t @ normalized # this tells us whetehr two features are similar in 
+    # direction, if we have many pairs with high cosine sim, we have duplicates, if all low, 
+    # we have diverse features 
 
-    print("Decoder feature norms: ", feature_norms)
-    print("Decoder feature cosine similarity: ", cosine_sim)
+    print("decoder feature norms: ", feature_norms)
+    print("decoder feature cosine similarity: ", cosine_sim)
     return feature_norms, cosine_sim 
 
 

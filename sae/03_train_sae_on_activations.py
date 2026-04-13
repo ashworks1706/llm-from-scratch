@@ -35,6 +35,8 @@ class SAE_Model:
         self.train_loader = train_loader
         self.test_loader = test_loader
         self.optimizer = torch.optim.AdamW(self.model.parameters(), lr = 0.001)
+        self.model.to(self.device)
+        self.gpt2model.to(self.device)
 
     def train(self, epochs=100):
          

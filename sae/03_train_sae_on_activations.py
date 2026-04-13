@@ -11,14 +11,16 @@
 
 # each token sate is a sample from layer's activation distribution 
 
-
+# recon term is for "dont lose information from original activation" and sparsity term is for "learn a sparse code that captures the essence of the activation"
+# reconstruct x using the smallest number of features 
+# \lambda=0 means only care about recon, \lambda=1 means only care about sparsity, we want to learn a balance between the two 
 
 
 import torch 
 import torch.nn.functional as F 
 import torch.nn as nn 
 from transformers import AutoTokenizer, AutoModelForCausalLM 
-import SAE from 01_sae_fundamentals
+from 01_sae_fundamentals import SAE
 
 class SAE_Model:
     def __init__(self, input_dim, latent_dim, output_dim, train_loader, test_loader):

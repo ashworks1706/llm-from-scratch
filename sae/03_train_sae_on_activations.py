@@ -58,3 +58,29 @@ class SAE_Model:
                     # activation vectors
                 u,z,x_hat = self.model(activations)
 
+                recon_loss = self.loss_fn(x_hat, activations)
+                sparsity_loss = torch.mean(torch.abs(z)) # L1 norm of latent code 
+                loss = recon_loss + self.gamma * sparsity_loss 
+                self.optimizer.zero_grad()
+                loss.backward()
+                self.optimizer.step()
+                avgloss += loss.item()
+        print(f"Epoch {epoch+1}/{epochs}, Loss: {avgloss/len(self.train_loader)}")
+
+    def evaluate(self):
+        self.model.eval()
+        avgloss=0
+        with torch.no_grad():
+            for batch in self.test_loader:
+                input_text = batch["text"]
+                inputs = self.gpt2tokenizer(input_text, return_tensors="pt").to(self.device)
+                outputs = self.gpt2model(**inputs, output_hidden_states=True)
+                activations = outputs.hidden_states[-1] 
+                B, S, D = activations.shape
+                activations = activations.view(B*S, D) 
+                u,z,x_hat = self.model(activations)
+                recon_loss = self.loss_fn(x_hat, activations)
+                sparsity_loss = torch.mean(torch.abs(z)) 
+                loss = recon_loss + self.gamma * sparsity_loss 
+                avgloss += loss.item()
+        print(f"Test Loss: {avgloss/len(self.test_loader)}")

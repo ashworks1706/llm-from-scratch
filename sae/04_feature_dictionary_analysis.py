@@ -28,6 +28,7 @@ import torch.nn.functional as F
 import torch.nn as nn 
 from transformers import AutoTokenizer, AutoModelForCausalLM 
 from 01_sae_fundamentals import SAE
+import matplotlib.pyplot as plt
 
 def analyze_sae(sae_model, gpt2_model, tokenizer, dataloader, device, eps, max_batches):
     sae_model.eval()
@@ -89,6 +90,29 @@ def report(firing_rate, mean_z, mean_z_when_active, u_mean, u_std, recon_mse, fe
     print(f"Top {top_k} dead features: {most_dead.indices}, firing rates: {most_dead.values}")
     print(f"Top {top_k} active features: {most_active.indices}, firing rates: {most_active.values}")
     print(f"Top {top_k} largest decoder norms: {largest_decoder_norms.indices}, norms: {largest_decoder_norms.values}")
+
+
+    plt.figure(figsize=(12, 6))
+    plt.subplot(2, 3, 1)
+    plt.hist(firing_rate.cpu().numpy(), bins=50)
+    plt.title("Firing Rate Distribution")
+    plt.subplot(2, 3, 2)
+    plt.hist(mean_z.cpu().numpy(), bins=50)
+    plt.title("Mean Activation Distribution")
+    plt.subplot(2, 3, 3)
+    plt.hist(mean_z_when_active.cpu().numpy(), bins=50)
+    plt.title("Mean Activation When Active Distribution")
+    plt.subplot(2, 3, 4)
+    plt.hist(u_mean.cpu().numpy(), bins=50)
+    plt.title("Pre-activation Mean Distribution")
+    plt.subplot(2, 3, 5)
+    plt.hist(u_std.cpu().numpy(), bins=50)
+    plt.title("Pre-activation Std Distribution")
+    plt.subplot(2, 3, 6)
+    plt.hist(feature_norms.cpu().numpy(), bins=50)
+    plt.title("Decoder Feature Norm Distribution")
+    plt.tight_layout()
+    plt.show()
 
 
 

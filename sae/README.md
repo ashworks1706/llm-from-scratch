@@ -17,7 +17,5 @@ the core flow in this folder is:
 
 `04_feature_dictionary_analysis.py` covers diagnostics like feature frequency, dead latents, and reconstruction quality.
 
-`05_feature_interpretability.py` covers how to map latent features back to human-readable behavior.
-
 `06_feature_steering_and_ablation.py` focuses on intervention experiments to validate that features matter causally.
 

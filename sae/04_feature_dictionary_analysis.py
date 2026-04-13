@@ -32,6 +32,7 @@ from 01_sae_fundamentals import SAE
 def analyze_sae(sae_model, gpt2_model, tokenizer, dataloader, device, eps, max_batches):
     sae_model.eval()
     gpt2_model.eval()
+    loss_fn = nn.MSELoss()
     eps = 1e-10
     for data in dataloader:
         batch_idx, seqlen, dim  = data
@@ -42,10 +43,20 @@ def analyze_sae(sae_model, gpt2_model, tokenizer, dataloader, device, eps, max_b
             logits = outputs.view(batch_idx*seqlen, dim )
             u, z, x_hat=  sae_model.encoder(logits)
             # remember u here is original activation of input, z is the output of encoder, x_hat is reconned activation of input 
-            active_count += (z > eps ).sum(0) 
-            z_sum+=z.sum(0)
-            z_active_sum += (z*(z>eps)).sum(0)
+            active_count += (z > eps ).sum(0) # higher the more active neurons 
+            z_sum+=z.sum(0) 
+            z_active_sum += (z*(z>eps)).sum(0) 
             u_sum +=u.sum(0)
+            u_sq_sum += (u**2).sum(0)
+            recon_se_sum += loss_fn(x_hat,x).sum()
+            recon_elem_count += x.numel()
+
+    firing_rate = active_count/ total_tokens 
+    mean_z = z_sum / total_tokens 
+    mean_z_when_active = z_active_sum / (active_count + eps)
+    u_mean = u_sum /total_tokens
+    u_std = math.sqrt(u_sq_sum / total_tokens - u_mean^2 + eps)
+    recon
 
 
 

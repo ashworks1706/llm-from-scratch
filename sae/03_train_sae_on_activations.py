@@ -4,29 +4,6 @@
 # choose layers/component, for each token position, extract x -> R^d, collect many xs across many prompts 
 # so training set is D ={x_n}_{n=1..N} where x_n is the activation vector for a particular token in a particular prompt 
 
-
-
-
-
-
-
-
-
-# - Implement reconstruction loss choices (MSE, normalized MSE) for activation reconstruction.
-# - Implement L1 sparsity penalty on latent activations and tune lambda tradeoffs.
-# - Understand top-k / hard sparsity alternatives and when they are more stable.
-# - Track dead-feature and always-on-feature failure modes.
-# - Build metrics for sparsity level, feature utilization, and reconstruction quality.
-
-
-
-# - Cache activations from a chosen transformer layer and stream them as a dataset.
-# - Build a training loop with optimizer, scheduler, logging, and checkpointing.
-# - Handle activation normalization / centering before feeding into SAE.
-# - Balance reconstruction and sparsity losses during optimization.
-# - Add basic stability guards: gradient clipping, NaN checks, and periodic eval.
-
-
 import torch 
 import torch.nn.functional as F 
 import torch.nn as nn 
@@ -60,22 +37,10 @@ class SAE_Model:
                 with torch.no_grad():
                     outputs = self.gpt2model(**inputs, output_hidden_states=True)
                     activations = outputs.hidden_states[-1] # get last layer activations 
-
+                    # batchsize x seq_len x hidden_dim 
+                    # reshape to X shape i.e Bxseqlen x hidden_dim 
+                    B, S, D = activations.shape
+                    activations = activations.view(B*S, D) # now we have a big batch of 
+                    # activation vectors
                 u,z,x_hat = self.model(activations)
-
-                # compute losses 
-                # recon_loss = self.loss_fn(x_hat, activations)
-                # p=1 is L1 norm, p=2 is L2 norm 
-                # sparsity_loss = torch.norm(self.model.encoder.ffn1.weight, p=1) # L1 norm of encoder weights as sparsity penalty 
-                loss = recon_loss + self.gamma * sparsity_loss
-
-                # backprop and optimize
-                self.optimizer.zero_grad()
-                loss.backward()
-                self.optimizer.step()
-
-                avgloss += loss.item()
-
-
-
 

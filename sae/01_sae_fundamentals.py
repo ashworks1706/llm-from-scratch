@@ -132,4 +132,5 @@ class SAE(nn.Module):
 
 
 # recon is usually LE//MSE 
-# sparsity i
+# sparsity is often L1 on latents 
+# total = recon + lambda * sparsity 

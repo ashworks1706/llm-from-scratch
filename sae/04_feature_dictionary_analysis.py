@@ -58,5 +58,37 @@ def analyze_sae(sae_model, gpt2_model, tokenizer, dataloader, device, eps, max_b
     u_std = math.sqrt(u_sq_sum / total_tokens - u_mean^2 + eps)
     recon_mse = recon_se_sum / recon_elem_count
 
+    print("Firing rate per feature: ", firing_rate)
+    print("Mean activation per feature: ", mean_z)
+    print("Mean activation when active per feature: ", mean_z_when_active)
+    print("Pre-activation mean per feature: ", u_mean)
+    print("Pre-activation std per feature: ", u_std)
+    print("Reconstruction MSE: ", recon_mse)
+    
+    feature_norms, cosine_sim = analyze_decoder_dictionary(sae_model)
 
-def analyze_decoder_dictionary()
+
+def analyze_decoder_dictionary(sae_model):
+    decoder_weights = sae_model.decoder.weight.data 
+    feature_norms = torch.norm(decoder_weights, dim=1) 
+    cosine_sim = F.cosine_similarity(decoder_weights.unsqueeze(1), decoder_weights.unsqueeze(0), dim=-1)
+    print("Decoder feature norms: ", feature_norms)
+    print("Decoder feature cosine similarity: ", cosine_sim)
+    return feature_norms, cosine_sim 
+
+
+def report(firing_rate, mean_z, mean_z_when_active, u_mean, u_std, recon_mse, feature_norms, cosine_sim):
+    # dead ration, saturated ratio, top 10 dead features, most active features, largest decoder norms
+    dead_ratio = (firing_rate < 0.01).float().mean()
+    saturated_ratio = (firing_rate > 0.5).float().mean()
+    top_k = e-10
+    most_dead = torch.topk(firing_rate, k=top_k, largest=False)
+    most_active = torch.topk(firing_rate, k=top_k, largest=True)
+    largest_decoder_norms = torch.topk(feature_norms, k=top_k, largest=True)
+    print(f"Dead ratio: {dead_ratio}, Saturated ratio: {saturated_ratio}")
+    print(f"Top {top_k} dead features: {most_dead.indices}, firing rates: {most_dead.values}")
+    print(f"Top {top_k} active features: {most_active.indices}, firing rates: {most_active.values}")
+    print(f"Top {top_k} largest decoder norms: {largest_decoder_norms.indices}, norms: {largest_decoder_norms.values}")
+
+
+

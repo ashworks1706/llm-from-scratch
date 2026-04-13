@@ -9,6 +9,8 @@
 # SAE is learning activation geometry that is why we flatten the input insead of learning sequential order 
 
 
+# each token sate is a sample from layer's activation distribution 
+
 
 
 

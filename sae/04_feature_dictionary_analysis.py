@@ -23,3 +23,29 @@
 
 
 
+import torch 
+import torch.nn.functional as F 
+import torch.nn as nn 
+from transformers import AutoTokenizer, AutoModelForCausalLM 
+from 01_sae_fundamentals import SAE
+
+def analyze_sae(sae_model, gpt2_model, tokenizer, dataloader, device, eps, max_batches):
+    sae_model.eval()
+    gpt2_model.eval()
+    eps = 1e-10
+    for data in dataloader:
+        batch_idx, seqlen, dim  = data
+        data = tokenizer(data)
+        with torch.no_grad():
+            logits = model(**inputs, output_hidden_states=True)
+            logits = outputs.hidden_states[:,:,-1]
+            logits = outputs.view(batch_idx*seqlen, dim )
+            u, z, x_hat=  sae_model.encoder(logits)
+            # remember u here is original activation of input, z is the output of encoder, x_hat is reconned activation of input 
+            active_count += (z > eps ).sum(0) 
+            z_sum+=z.sum(0)
+            z_active_sum += (z*(z>eps)).sum(0)
+            u_sum +=u.sum(0)
+
+
+

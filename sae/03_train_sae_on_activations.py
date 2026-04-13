@@ -65,7 +65,7 @@ class SAE_Model:
                 loss.backward()
                 self.optimizer.step()
                 avgloss += loss.item()
-        print(f"Epoch {epoch+1}/{epochs}, Loss: {avgloss/len(self.train_loader)}")
+            print(f"Epoch {epoch+1}/{epochs}, Loss: {avgloss/len(self.train_loader)}")
 
     def evaluate(self):
         self.model.eval()

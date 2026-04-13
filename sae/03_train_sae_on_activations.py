@@ -4,6 +4,14 @@
 # choose layers/component, for each token position, extract x -> R^d, collect many xs across many prompts 
 # so training set is D ={x_n}_{n=1..N} where x_n is the activation vector for a particular token in a particular prompt 
 
+
+
+# SAE is learning activation geometry that is why we flatten the input insead of learning sequential order 
+
+
+
+
+
 import torch 
 import torch.nn.functional as F 
 import torch.nn as nn 

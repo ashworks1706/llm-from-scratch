@@ -30,7 +30,6 @@
 # what does NOT count as evidence?
 # "feature z fires on pattern p so it causes behavior X " <- this is not valid because feature may jsut be reading out somethign antoher feature computed, so this is classic observer vs driverproblem, also transformers are highly stochastic and senstive to context
 # "when i multiply z by 1, behavior changes dramatically" <- we are likely pushign the model off manifold, so the issue is here model was never traiend on such acvtivatiosn  causing this rather than the claim 
-# <- we are likely pushign the model off manifold, so the issue is here model was never traiend on such acvtivatios causing this rather than the claim 
 #
 
 

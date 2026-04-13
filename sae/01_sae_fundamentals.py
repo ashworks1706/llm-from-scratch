@@ -89,12 +89,11 @@ class Decoder(nn.Module):
     # compresses back 
     def __init__(self, latent_dim, out_dim):
         super().__init__()
-
         self.ffn1 = nn.Linear(latent_dim, out_dim)
 
     def forward(self, x):
         # get latent input
-        x = self.ffn1(x)
+        x = self.ffn1(x) # or basically w_dec z + b_dec where each column of w_dec is a learned feature direction in input space 
         return x 
 
 
@@ -113,3 +112,24 @@ class SAE(nn.Module):
         return u,z,x_hat   # batchidx, d
 # usually d= 768 then k is 4d or 16d so 3072 or 12288
 
+
+# a good sae means the model reconstructs x_hat close to x 
+# sparse code (z) has only a few non zero entries, 
+# so that each feature is more monosemantic and less polisemantic, so that we can interpret each feature as representing a specific concept or meaning in the transformer's computations.
+
+
+
+# m is the number of features we want to learn, and d is the dimension of the activation vector we're trying to reconstruct 
+# the encoder maps the d dimensional activation vector to an m dimensional latent code, and the decoder maps that m dimensional latent code back to a d dimensional reconstruction of the original activation vector. 
+# the loss function combines the reconstruction loss (how well x_hat matches x) and the sparsity loss (how many non zero entries are in z) to encourage the model to learn a sparse representation of the activations. 
+
+
+# m>d does not mean compression, in standard VAE/AE, bottleneck means compression but in SAE latent>input(overcomplete), but sparse activation gives 
+# effective compression per sample (few active features) so it still compresses the information in a way that promotes interpretability by sparsity coding 
+
+
+# so rerpesentational capactiy is high, per ttoken usage is low, so this is cleaner disentanglement 
+
+
+# recon is usually LE//MSE 
+# sparsity i

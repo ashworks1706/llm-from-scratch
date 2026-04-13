@@ -27,36 +27,51 @@ import torch
 import torch.nn.functional as F 
 import torch.nn as nn 
 from transformers import AutoTokenizer, AutoModelForCausalLM 
-from 01_sae_fundamentals import SAE
 import matplotlib.pyplot as plt
 
 def analyze_sae(sae_model, gpt2_model, tokenizer, dataloader, device, eps, max_batches):
     sae_model.eval()
     gpt2_model.eval()
-    loss_fn = nn.MSELoss()
-    eps = 1e-10
-    for data in dataloader:
-        batch_idx, seqlen, dim  = data
-        data = tokenizer(data)
+    latent_dim = sae_model.encoder.ffn1.out_features
+
+    active_count = torch.zeros(latent_dim, device=device)
+    z_sum = torch.zeros(latent_dim, device=device)
+    z_active_sum = torch.zeros(latent_dim, device=device)
+    u_sum = torch.zeros(latent_dim, device=device)
+    u_sq_sum = torch.zeros(latent_dim, device=device)
+    recon_se_sum = torch.tensor(0.0, device=device)
+    recon_elem_count = 0
+    total_tokens = 0
+
+    for batch_idx, batch in enumerate(dataloader):
+        if max_batches is not None and batch_idx >= max_batches:
+            break
+
+        input_text = batch["text"]
+        inputs = tokenizer(input_text, return_tensors="pt", padding=True, truncation=True).to(device)
+
         with torch.no_grad():
-            logits = model(**inputs, output_hidden_states=True)
-            logits = outputs.hidden_states[:,:,-1]
-            logits = outputs.view(batch_idx*seqlen, dim )
-            u, z, x_hat=  sae_model.encoder(logits)
+            outputs = gpt2_model(**inputs, output_hidden_states=True)
+            activations = outputs.hidden_states[-1]
+            B, S, D = activations.shape
+            activations = activations.reshape(B * S, D)
+
+            u, z, x_hat = sae_model(activations)
             # remember u here is original activation of input, z is the output of encoder, x_hat is reconned activation of input 
             active_count += (z > eps ).sum(0) # higher the more active neurons 
             z_sum+=z.sum(0) 
             z_active_sum += (z*(z>eps)).sum(0) 
             u_sum +=u.sum(0)
             u_sq_sum += (u**2).sum(0)
-            recon_se_sum += loss_fn(x_hat,x).sum()
-            recon_elem_count += x.numel()
+            recon_se_sum += ((x_hat - activations) ** 2).sum()
+            recon_elem_count += activations.numel()
+            total_tokens += activations.shape[0]
 
     firing_rate = active_count/ total_tokens 
     mean_z = z_sum / total_tokens 
     mean_z_when_active = z_active_sum / (active_count + eps)
     u_mean = u_sum /total_tokens
-    u_std = math.sqrt(u_sq_sum / total_tokens - u_mean^2 + eps)
+    u_std = torch.sqrt(u_sq_sum / total_tokens - u_mean**2 + eps)
     recon_mse = recon_se_sum / recon_elem_count
 
     print("Firing rate per feature: ", firing_rate)
@@ -68,11 +83,26 @@ def analyze_sae(sae_model, gpt2_model, tokenizer, dataloader, device, eps, max_b
     
     feature_norms, cosine_sim = analyze_decoder_dictionary(sae_model)
 
+    return {
+        "firing_rate": firing_rate,
+        "mean_z": mean_z,
+        "mean_z_when_active": mean_z_when_active,
+        "u_mean": u_mean,
+        "u_std": u_std,
+        "recon_mse": recon_mse,
+        "feature_norms": feature_norms,
+        "cosine_sim": cosine_sim,
+    }
+
 
 def analyze_decoder_dictionary(sae_model):
-    decoder_weights = sae_model.decoder.weight.data 
-    feature_norms = torch.norm(decoder_weights, dim=1) 
-    cosine_sim = F.cosine_similarity(decoder_weights.unsqueeze(1), decoder_weights.unsqueeze(0), dim=-1)
+    decoder_weights = sae_model.decoder.ffn1.weight.data
+    # decoder weights shape: (input_dim, latent_dim), columns are feature vectors
+    feature_norms = torch.norm(decoder_weights, dim=0)
+
+    normalized = F.normalize(decoder_weights, dim=0)
+    cosine_sim = normalized.T @ normalized
+
     print("Decoder feature norms: ", feature_norms)
     print("Decoder feature cosine similarity: ", cosine_sim)
     return feature_norms, cosine_sim 
@@ -80,13 +110,14 @@ def analyze_decoder_dictionary(sae_model):
 
 def report(firing_rate, mean_z, mean_z_when_active, u_mean, u_std, recon_mse, feature_norms, cosine_sim):
     # dead ration, saturated ratio, top 10 dead features, most active features, largest decoder norms
-    dead_ratio = (firing_rate < 0.01).float().mean()
+    dead_ratio = (firing_rate < 1e-3).float().mean()
     saturated_ratio = (firing_rate > 0.5).float().mean()
-    top_k = e-10
+    top_k = min(10, firing_rate.numel())
     most_dead = torch.topk(firing_rate, k=top_k, largest=False)
     most_active = torch.topk(firing_rate, k=top_k, largest=True)
     largest_decoder_norms = torch.topk(feature_norms, k=top_k, largest=True)
     print(f"Dead ratio: {dead_ratio}, Saturated ratio: {saturated_ratio}")
+    print(f"Reconstruction MSE: {recon_mse}")
     print(f"Top {top_k} dead features: {most_dead.indices}, firing rates: {most_dead.values}")
     print(f"Top {top_k} active features: {most_active.indices}, firing rates: {most_active.values}")
     print(f"Top {top_k} largest decoder norms: {largest_decoder_norms.indices}, norms: {largest_decoder_norms.values}")
@@ -113,6 +144,5 @@ def report(firing_rate, mean_z, mean_z_when_active, u_mean, u_std, recon_mse, fe
     plt.title("Decoder Feature Norm Distribution")
     plt.tight_layout()
     plt.show()
-
 
 

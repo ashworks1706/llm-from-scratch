@@ -27,6 +27,9 @@
 #  - predictable directional change
 #  - consistent across prompts, not one-off.
 
+# what does NOT count as evidence?
+# "feature z fires on pattern p so it causes behavior X " <- this is not valid because feature may jsut be reading out somethign antoher feature computed, so this is classic observer vs driverproblem, also transformers are highly stochastic and senstive to context
+
 
 # we cannot jsut do normal testing, we need lots of testst to prove our hypothesis about the model's behavior 
 # Polysemnatic features : if a feature encodes multiple concepts, steering causes mixed effects 

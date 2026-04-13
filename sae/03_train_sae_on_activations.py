@@ -1,4 +1,6 @@
-
+# freeze the gpt2 model and pass input text through it to get activations, 
+# then train sae to reconstruct those activations on the fly 
+#
 # - Implement reconstruction loss choices (MSE, normalized MSE) for activation reconstruction.
 # - Implement L1 sparsity penalty on latent activations and tune lambda tradeoffs.
 # - Understand top-k / hard sparsity alternatives and when they are more stable.
@@ -35,8 +37,7 @@ class SAE_Model:
         self.optimizer = torch.optim.AdamW(self.model.parameters(), lr = 0.001)
 
     def train(self, epochs=100):
-        # freeze the gpt2 model and pass input text through it to get activations, 
-        # then train sae to reconstruct those activations on the fly  
+         
         self.model.train()
         # the sparsity loss is just the L1 norm of the latent code z 
         avgloss=0

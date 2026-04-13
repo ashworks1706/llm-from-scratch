@@ -113,11 +113,26 @@ class SAE(nn.Module):
 # usually d= 768 then k is 4d or 16d so 3072 or 12288
 
 class SAE_Model:
-    def __init__(self, input_dim, latent_dim, output_dim):
+    def __init__(self, input_dim, latent_dim, output_dim, train_loader, test_loader):
         self.loss_fn = nn.MSELoss()
         self.model = SAE(input_dim, latent_dim, output_dim)
         self.gamma = nn.Parameter()
-        self.optimizer = torch.optim.AdamW()
+        self.gpt2tokenizer = AutoTokenizer.from_pretrained("gpt2")
+        self.gpt2model = AutoModelForCausalLM.from_pretrained("gpt2")
+
+        self.device = "cuda" if torch.cuda.__is__available() else "cpu" 
+        self.optimizer = torch.optim.AdamW(model.parameters(), lr = 0.001)
+
+    def train(self, epochs=100):
+        self.model.train()
+        avgloss=0
+        for batch_idx, seq_len in train_loader:
+            
+            target = target.to(device)
+            ouput = self.model()
+
+
+
 
 
 

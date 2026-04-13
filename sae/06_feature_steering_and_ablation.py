@@ -30,7 +30,7 @@
 # what does NOT count as evidence?
 # "feature z fires on pattern p so it causes behavior X " <- this is not valid because feature may jsut be reading out somethign antoher feature computed, so this is classic observer vs driverproblem, also transformers are highly stochastic and senstive to context
 # "when i multiply z by 1, behavior changes dramatically" <- we are likely pushign the model off manifold, so the issue is here model was never traiend on such acvtivatiosn  causing this rather than the claim 
-#
+# "After intervention, prob of token incerased" <- not enough, we need to comapre against natural variance across runs prompts 
 
 
 # we cannot jsut do normal testing, we need lots of testst to prove our hypothesis about the model's behavior 

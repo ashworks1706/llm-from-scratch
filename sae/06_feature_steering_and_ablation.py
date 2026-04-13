@@ -31,4 +31,8 @@
 # we cannot jsut do normal testing, we need lots of testst to prove our hypothesis about the model's behavior 
 # Polysemnatic features : if a feature encodes multiple concepts, steering causes mixed effects 
 # <- this is also inspired from superposition behavior of transforemrs where there MLP can rerpesent many concepts in same dimension if viewed differently or itnerpreted differently 
-# 
+# Off-manifold risk : large "a" can push activations out of distribution and creat eweird outputs unrelated to true casual role 
+# so starting small and sweeping a is much better 
+
+
+

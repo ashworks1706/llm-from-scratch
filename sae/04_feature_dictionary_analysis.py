@@ -59,4 +59,4 @@ def analyze_sae(sae_model, gpt2_model, tokenizer, dataloader, device, eps, max_b
     recon_mse = recon_se_sum / recon_elem_count
 
 
-
+def analyze_decoder_dictionary()

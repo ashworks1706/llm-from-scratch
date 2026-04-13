@@ -56,7 +56,7 @@ def analyze_sae(sae_model, gpt2_model, tokenizer, dataloader, device, eps, max_b
     mean_z_when_active = z_active_sum / (active_count + eps)
     u_mean = u_sum /total_tokens
     u_std = math.sqrt(u_sq_sum / total_tokens - u_mean^2 + eps)
-    recon
+    recon_mse = recon_se_sum / recon_elem_count
 
 
 

@@ -1,6 +1,17 @@
 # freeze the gpt2 model and pass input text through it to get activations, 
 # then train sae to reconstruct those activations on the fly 
-#
+# we train on activation vectors: 
+# choose layers/component, for each token position, extract x -> R^d, collect many xs across many prompts 
+# so training set is D ={x_n}_{n=1..N} where x_n is the activation vector for a particular token in a particular prompt 
+
+
+
+
+
+
+
+
+
 # - Implement reconstruction loss choices (MSE, normalized MSE) for activation reconstruction.
 # - Implement L1 sparsity penalty on latent activations and tune lambda tradeoffs.
 # - Understand top-k / hard sparsity alternatives and when they are more stable.

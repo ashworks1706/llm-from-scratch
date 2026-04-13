@@ -15,7 +15,8 @@
 # we can also analyze recon quality slices by token position (early.mid.late) maybe prompt length buckets 
 
 
-
+# in transformers, each sequence is an independent context, we cannot flatten them together during training because it falsifies the positional 
+# encoding, but during analysis we can flatten all activations together to get better stats, since we are not using position for anything here
 
 # we need dead ration, median firing rate, mean recon loss, top k for most dead, most active, largest deocder norm 
 # then we can form histograms for firing rates, decoder norms, u and z distributions 

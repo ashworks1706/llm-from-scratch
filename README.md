@@ -56,6 +56,4 @@ TODO -
 
 [ ] PPO 
 
-[ ] GRPO 
-
-[ ] SAEs 
+[ ] GRPO s 

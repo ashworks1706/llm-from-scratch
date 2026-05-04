@@ -46,20 +46,16 @@ sae covers sparse autoencoders for mechanistic interpretability with latent spac
 
 TODO - 
 
-[ ] embedding 
+[ ] DQN
 
-[ ] Stable diffusion 
+[ ] REINFORCE
+
+[ ] SAC 
+
+[ ] DynaQ
 
 [ ] PPO 
 
 [ ] GRPO 
 
-[ ] GSPO
-
-[ ] DLoRA
-
 [ ] SAEs 
-
-[ ] PCA, t-SNE, UMAP
-
-[ ] add dat 494 assignemnts to repo [resnet, cvae,  dvae, vqvae, gpt2, interpretability : cam, gradcam,sae]

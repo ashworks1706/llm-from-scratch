@@ -10,3 +10,5 @@ checkpoints/*.pt
 *.pt
 *.safetensors
 *.bin
+ebt/
+dlm_causal_rewards/

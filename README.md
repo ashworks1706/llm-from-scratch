@@ -46,14 +46,15 @@ sae covers sparse autoencoders for mechanistic interpretability with latent spac
 
 TODO - 
 
+[ ] EBT/EBRM
+
+[ ] DLM
+
+[ ] JEPA
+
 [ ] DQN
 
 [ ] REINFORCE
 
 [ ] SAC 
 
-[ ] DynaQ
-
-[ ] PPO 
-
-[ ] GRPO s 

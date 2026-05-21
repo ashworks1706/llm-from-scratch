@@ -12,3 +12,4 @@ checkpoints/*.pt
 *.bin
 ebt/
 dlm_causal_rewards/
+**/hf_cache/

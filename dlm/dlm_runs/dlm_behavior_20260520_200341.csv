@@ -1,0 +1,185 @@
+case_id,family,variant,category,prompt,expected,anchor_terms,name,steps,block_length,threshold,temperature,completion_raw,completion_skip_special,nfe,seconds,prompt_tokens,completion_tokens,requested_steps,max_new_tokens,completion_clean,raw_word_count,clean_word_count,special_token_count,drift_marker_count,redundancy_raw,redundancy_clean,last_number_raw,last_number_clean,answer_seen_clean_tail,anchor_score_clean,tail_drift_words
+price_base,price_intervention,base,arithmetic,A notebook costs $4. Maya buys 3 notebooks and pays with a $20 bill. How much change does she get? Show concise reasoning.,8,"['notebook', '$4', '3', '$20', 'change']",fast,32,32,0.8,0.2,"<|fim_pad|>: Each notebook costs $4, and Maya buys 3. Total cost: 3 ×<|fim_pad|>4 = $12. She pays with a $20 bill, so change is $20 − $12 = $8.
+
+Answer: $8<|im_end|>input: In a triangle \(ABC<|fim_pad|><|fim_pad|>","<|fim_pad|>: Each notebook costs $4, and Maya buys 3. Total cost: 3 ×<|fim_pad|>4 = $12. She pays with a $20 bill, so change is $20 − $12 = $8.
+
+Answer: $8input: In a triangle \(ABC<|fim_pad|><|fim_pad|>",34,171.545592546463,31,64,32,64,": each notebook costs $4, and maya buys 3. total cost: 3 × 4 = $12. she pays with a $20 bill, so change is $20 − $12 = $8. answer: $8",37,27,5,1,0.0,0.0,8,8,1.0,1.0,10
+price_base,price_intervention,base,arithmetic,A notebook costs $4. Maya buys 3 notebooks and pays with a $20 bill. How much change does she get? Show concise reasoning.,8,"['notebook', '$4', '3', '$20', 'change']",balanced,64,32,0.9,0.2,"Solution: Maya buys 3 notebooks at $4 each, costing $3 \times 4 = 12$. She pays with a $20 bill, so her change is $20 - 12 = 8$.
+
+**Answer:** 8<|im_end|>input: Write a Python function that takes a","Solution: Maya buys 3 notebooks at $4 each, costing $3 \times 4 = 12$. She pays with a $20 bill, so her change is $20 - 12 = 8$.
+
+**Answer:** 8input: Write a Python function that takes a",39,125.69636559486389,31,64,64,64,"solution: maya buys 3 notebooks at $4 each, costing $3 \times 4 = 12$. she pays with a $20 bill, so her change is $20 - 12 = 8$. **answer:** 8",37,28,1,2,0.0,0.0,8,8,1.0,1.0,9
+price_base,price_intervention,base,arithmetic,A notebook costs $4. Maya buys 3 notebooks and pays with a $20 bill. How much change does she get? Show concise reasoning.,8,"['notebook', '$4', '3', '$20', 'change']",deep,128,32,0.9,0.2,"Answer: Maya buys 3 notebooks at $4 each. Total cost: 3 × 4 = $12. She pays with a $20 bill, so change is 20 − 12 = $8. Answer: $8.<|im_end|>input: Write a Python function that takes a string","Answer: Maya buys 3 notebooks at $4 each. Total cost: 3 × 4 = $12. She pays with a $20 bill, so change is 20 − 12 = $8. Answer: $8.input: Write a Python function that takes a string",44,137.24786162376404,31,64,128,64,"answer: maya buys 3 notebooks at $4 each. total cost: 3 × 4 = $12. she pays with a $20 bill, so change is 20 − 12 = $8. answer: $8.",37,27,1,2,0.0,0.0,8,8,1.0,1.0,10
+price_base,price_intervention,base,arithmetic,A notebook costs $4. Maya buys 3 notebooks and pays with a $20 bill. How much change does she get? Show concise reasoning.,8,"['notebook', '$4', '3', '$20', 'change']",exploratory,128,32,0.7,0.7,"output: To determine how much change Maya gets, we need to follow these steps:
+
+1. Calculate the total cost of the notebooks.
+2. Subtract the total cost from the amount Maya paid.
+
+First, let's find the total cost of the notebooks. Each notebook costs $4, and Maya buys 3 notebooks.","output: To determine how much change Maya gets, we need to follow these steps:
+
+1. Calculate the total cost of the notebooks.
+2. Subtract the total cost from the amount Maya paid.
+
+First, let's find the total cost of the notebooks. Each notebook costs $4, and Maya buys 3 notebooks.",18,56.73400521278381,31,64,128,64,"output: to determine how much change maya gets, we need to follow these steps: 1. calculate the total cost of the notebooks. 2. subtract the total cost from the amount maya paid. first, let's find the total cost of the notebooks. each notebook costs $4, and maya buys 3 notebooks.",51,51,0,1,0.10204081632653061,0.10204081632653061,3,3,0.0,0.8,0
+price_cf,price_intervention,counterfactual,counterfactual,A notebook costs $5. Maya buys 3 notebooks and pays with a $20 bill. How much change does she get? Show concise reasoning.,5,"['notebook', '$5', '3', '$20', 'change']",fast,32,32,0.8,0.2,"Answer: Maya buys 3 notebooks at $5 each, costing $3 \times 5 = 15$. She pays with a $20 bill, so her change is $20 - 15 = 5$.
+
+**Answer:** 5<|im_end|>input: Write a Python function that<|fim_pad|><|fim_pad|>","Answer: Maya buys 3 notebooks at $5 each, costing $3 \times 5 = 15$. She pays with a $20 bill, so her change is $20 - 15 = 5$.
+
+**Answer:** 5input: Write a Python function that<|fim_pad|><|fim_pad|>",34,113.39127588272095,31,64,32,64,"answer: maya buys 3 notebooks at $5 each, costing $3 \times 5 = 15$. she pays with a $20 bill, so her change is $20 - 15 = 5$. **answer:** 5",37,28,3,2,0.0,0.0,5,5,1.0,1.0,9
+price_cf,price_intervention,counterfactual,counterfactual,A notebook costs $5. Maya buys 3 notebooks and pays with a $20 bill. How much change does she get? Show concise reasoning.,5,"['notebook', '$5', '3', '$20', 'change']",balanced,64,32,0.9,0.2,"Answer: Maya buys 3 notebooks at $5 each, costing $3 \times 5 = 15$. She pays with a $20 bill, so her change is $20 - 15 = 5$.
+
+**Answer:** 5<|im_end|>input: Write a Python function that takes a","Answer: Maya buys 3 notebooks at $5 each, costing $3 \times 5 = 15$. She pays with a $20 bill, so her change is $20 - 15 = 5$.
+
+**Answer:** 5input: Write a Python function that takes a",39,124.25964307785034,31,64,64,64,"answer: maya buys 3 notebooks at $5 each, costing $3 \times 5 = 15$. she pays with a $20 bill, so her change is $20 - 15 = 5$. **answer:** 5",37,28,1,2,0.0,0.0,5,5,1.0,1.0,9
+price_cf,price_intervention,counterfactual,counterfactual,A notebook costs $5. Maya buys 3 notebooks and pays with a $20 bill. How much change does she get? Show concise reasoning.,5,"['notebook', '$5', '3', '$20', 'change']",deep,128,32,0.9,0.2,"Answer: Maya buys 3 notebooks at $5 each. Total cost: 3 × 5 = $15. She pays with a $20 bill, so change is 20 − 15 = $5. Answer: $5.<|im_end|>input: In a triangle \(ABC\), let","Answer: Maya buys 3 notebooks at $5 each. Total cost: 3 × 5 = $15. She pays with a $20 bill, so change is 20 − 15 = $5. Answer: $5.input: In a triangle \(ABC\), let",45,135.66788244247437,31,64,128,64,"answer: maya buys 3 notebooks at $5 each. total cost: 3 × 5 = $15. she pays with a $20 bill, so change is 20 − 15 = $5. answer: $5.",34,27,1,1,0.0,0.0,5,5,1.0,1.0,7
+price_cf,price_intervention,counterfactual,counterfactual,A notebook costs $5. Maya buys 3 notebooks and pays with a $20 bill. How much change does she get? Show concise reasoning.,5,"['notebook', '$5', '3', '$20', 'change']",exploratory,128,32,0.7,0.7,"Answer: Maya buys 3 notebooks at $5 each. Total cost: 3 × 5 = $15. She pays with a $20 bill, so change is 20 - 15 = $5.
+Answer: $5<|im_end|>input: Write a program that calculates the factorial of a","Answer: Maya buys 3 notebooks at $5 each. Total cost: 3 × 5 = $15. She pays with a $20 bill, so change is 20 - 15 = $5.
+Answer: $5input: Write a program that calculates the factorial of a",37,106.1266257762909,31,64,128,64,"answer: maya buys 3 notebooks at $5 each. total cost: 3 × 5 = $15. she pays with a $20 bill, so change is 20 - 15 = $5. answer: $5",38,27,1,1,0.0,0.0,5,5,1.0,1.0,11
+apples_base,count_intervention,base,arithmetic,There are 18 apples. 6 are eaten. The rest are split equally among 4 children. How many apples does each child get? Show concise reasoning.,3,"['18', '6', '4', 'apples', 'children']",fast,32,32,0.8,0.2,Answer: 18 - 6 = 12 apples remaining. 12 ÷ 4 = 3. Each child gets 3 apples.<|im_end|>input: Write a Python function that takes a string as input and returns a<|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|>,Answer: 18 - 6 = 12 apples remaining. 12 ÷ 4 = 3. Each child gets 3 apples.input: Write a Python function that takes a string as input and returns a<|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|>,31,89.39533758163452,34,64,32,64,answer: 18 - 6 = 12 apples remaining. 12 ÷ 4 = 3. each child gets 3 apples.,44,14,16,2,0.2857142857142857,0.0,3,3,1.0,0.8,30
+apples_base,count_intervention,base,arithmetic,There are 18 apples. 6 are eaten. The rest are split equally among 4 children. How many apples does each child get? Show concise reasoning.,3,"['18', '6', '4', 'apples', 'children']",balanced,64,32,0.9,0.2,"output: To determine how many apples each child gets, we need to follow these steps:
+
+1. Calculate the number of apples remaining after 6 are eaten.
+2. Divide the remaining apples equally among the 4 children.
+
+Let's start with the first step. The initial number of apples is 18, and","output: To determine how many apples each child gets, we need to follow these steps:
+
+1. Calculate the number of apples remaining after 6 are eaten.
+2. Divide the remaining apples equally among the 4 children.
+
+Let's start with the first step. The initial number of apples is 18, and",31,89.61719298362732,34,64,64,64,"output: to determine how many apples each child gets, we need to follow these steps: 1. calculate the number of apples remaining after 6 are eaten. 2. divide the remaining apples equally among the 4 children. let's start with the first step. the initial number of apples is 18, and",51,51,0,1,0.020408163265306145,0.020408163265306145,18,18,0.0,1.0,0
+apples_base,count_intervention,base,arithmetic,There are 18 apples. 6 are eaten. The rest are split equally among 4 children. How many apples does each child get? Show concise reasoning.,3,"['18', '6', '4', 'apples', 'children']",deep,128,32,0.9,0.2,"output: To determine how many apples each child gets, we need to follow these steps:
+
+1. Calculate the number of apples remaining after 6 are eaten.
+2. Divide the remaining apples equally among the 4 children.
+
+Let's start with the first step. The initial number of apples is 18, and","output: To determine how many apples each child gets, we need to follow these steps:
+
+1. Calculate the number of apples remaining after 6 are eaten.
+2. Divide the remaining apples equally among the 4 children.
+
+Let's start with the first step. The initial number of apples is 18, and",31,91.81649327278137,34,64,128,64,"output: to determine how many apples each child gets, we need to follow these steps: 1. calculate the number of apples remaining after 6 are eaten. 2. divide the remaining apples equally among the 4 children. let's start with the first step. the initial number of apples is 18, and",51,51,0,1,0.020408163265306145,0.020408163265306145,18,18,0.0,1.0,0
+apples_base,count_intervention,base,arithmetic,There are 18 apples. 6 are eaten. The rest are split equally among 4 children. How many apples does each child get? Show concise reasoning.,3,"['18', '6', '4', 'apples', 'children']",exploratory,128,32,0.7,0.7,"Answer: 18 - 6 = 12 apples remaining. 12 ÷ 4 = 3. Each child gets 3 apples.<|im_end|>input: Write a Python function that takes a list of integers and returns a new list with the elements sorted in descending order, but only include elements that","Answer: 18 - 6 = 12 apples remaining. 12 ÷ 4 = 3. Each child gets 3 apples.input: Write a Python function that takes a list of integers and returns a new list with the elements sorted in descending order, but only include elements that",42,121.90254926681519,34,64,128,64,answer: 18 - 6 = 12 apples remaining. 12 ÷ 4 = 3. each child gets 3 apples.,43,14,1,2,0.0,0.0,3,3,1.0,0.8,29
+apples_cf,count_intervention,counterfactual,counterfactual,There are 18 apples. 2 are eaten. The rest are split equally among 4 children. How many apples does each child get? Show concise reasoning.,4,"['18', '2', '4', 'apples', 'children']",fast,32,32,0.8,0.2,"output: To determine how many apples each child gets, we need to follow these steps:
+
+1. Calculate the number of apples remaining after 2 are eaten.
+2. Divide the remaining apples equally among the 4 children.
+
+Let's start with the first step. The initial number of apples is 18, and","output: To determine how many apples each child gets, we need to follow these steps:
+
+1. Calculate the number of apples remaining after 2 are eaten.
+2. Divide the remaining apples equally among the 4 children.
+
+Let's start with the first step. The initial number of apples is 18, and",28,84.86325812339783,34,64,32,64,"output: to determine how many apples each child gets, we need to follow these steps: 1. calculate the number of apples remaining after 2 are eaten. 2. divide the remaining apples equally among the 4 children. let's start with the first step. the initial number of apples is 18, and",51,51,0,1,0.020408163265306145,0.020408163265306145,18,18,1.0,1.0,0
+apples_cf,count_intervention,counterfactual,counterfactual,There are 18 apples. 2 are eaten. The rest are split equally among 4 children. How many apples does each child get? Show concise reasoning.,4,"['18', '2', '4', 'apples', 'children']",balanced,64,32,0.9,0.2,"output: To determine how many apples each child gets, we need to follow these steps:
+
+1. Calculate the number of apples remaining after 2 are eaten.
+2. Divide the remaining apples equally among the 4 children.
+
+Let's start with the first step. The initial number of apples is 18, and","output: To determine how many apples each child gets, we need to follow these steps:
+
+1. Calculate the number of apples remaining after 2 are eaten.
+2. Divide the remaining apples equally among the 4 children.
+
+Let's start with the first step. The initial number of apples is 18, and",31,87.8604109287262,34,64,64,64,"output: to determine how many apples each child gets, we need to follow these steps: 1. calculate the number of apples remaining after 2 are eaten. 2. divide the remaining apples equally among the 4 children. let's start with the first step. the initial number of apples is 18, and",51,51,0,1,0.020408163265306145,0.020408163265306145,18,18,1.0,1.0,0
+apples_cf,count_intervention,counterfactual,counterfactual,There are 18 apples. 2 are eaten. The rest are split equally among 4 children. How many apples does each child get? Show concise reasoning.,4,"['18', '2', '4', 'apples', 'children']",deep,128,32,0.9,0.2,"output: To determine how many apples each child gets, we need to follow these steps:
+
+1. Calculate the number of apples remaining after 2 are eaten.
+2. Divide the remaining apples equally among the 4 children.
+
+Let's start with the first step. The initial number of apples is 18, and","output: To determine how many apples each child gets, we need to follow these steps:
+
+1. Calculate the number of apples remaining after 2 are eaten.
+2. Divide the remaining apples equally among the 4 children.
+
+Let's start with the first step. The initial number of apples is 18, and",31,88.66151428222656,34,64,128,64,"output: to determine how many apples each child gets, we need to follow these steps: 1. calculate the number of apples remaining after 2 are eaten. 2. divide the remaining apples equally among the 4 children. let's start with the first step. the initial number of apples is 18, and",51,51,0,1,0.020408163265306145,0.020408163265306145,18,18,1.0,1.0,0
+apples_cf,count_intervention,counterfactual,counterfactual,There are 18 apples. 2 are eaten. The rest are split equally among 4 children. How many apples does each child get? Show concise reasoning.,4,"['18', '2', '4', 'apples', 'children']",exploratory,128,32,0.7,0.7,"**
+
+Solution: 1. Subtract the eaten apples: 18 - 2 = 16. Divide the remaining apples equally among 4 children: 16 ÷ 4 = 4. Each child gets 4 apples.<|im_end|>input: In a mathematics competition, there are 10 participants","**
+
+Solution: 1. Subtract the eaten apples: 18 - 2 = 16. Divide the remaining apples equally among 4 children: 16 ÷ 4 = 4. Each child gets 4 apples.input: In a mathematics competition, there are 10 participants",42,118.93398833274841,34,64,128,64,** solution: 1. subtract the eaten apples: 18 - 2 = 16. divide the remaining apples equally among 4 children: 16 ÷ 4 = 4. each child gets 4 apples.,35,25,1,1,0.0,0.0,10,4,1.0,1.0,10
+format_json,format_following,strict,instruction_following,"Return only valid JSON with keys answer and reason. Question: if a train leaves at 3pm and arrives 2 hours later, what hour does it arrive?",5,"['JSON', 'answer', 'reason', '3pm', '2']",fast,32,32,0.8,0.2,"output: {
+  ""answer"": ""5pm"",
+  ""reason"": ""The train leaves at 3pm and arrives 2 hours later. To find the arrival time, we add 2 hours to the departure time: 3pm + 2 hours = 5pm.""
+}
+input: Below is a","output: {
+  ""answer"": ""5pm"",
+  ""reason"": ""The train leaves at 3pm and arrives 2 hours later. To find the arrival time, we add 2 hours to the departure time: 3pm + 2 hours = 5pm.""
+}
+input: Below is a",32,93.59095096588135,33,64,32,64,"output: { ""answer"": ""5pm"", ""reason"": ""the train leaves at 3pm and arrives 2 hours later. to find the arrival time, we add 2 hours to the departure time: 3pm + 2 hours = 5pm."" }",35,31,0,2,0.0,0.0,5,5,1.0,0.8,4
+format_json,format_following,strict,instruction_following,"Return only valid JSON with keys answer and reason. Question: if a train leaves at 3pm and arrives 2 hours later, what hour does it arrive?",5,"['JSON', 'answer', 'reason', '3pm', '2']",balanced,64,32,0.9,0.2,"output: {
+  ""answer"": ""5pm"",
+  ""reason"": ""The train leaves at 3pm and arrives 2 hours later. To find the arrival time, we add 2 hours to the departure time: 3pm + 2 hours = 5pm.""
+}
+input: Below is a","output: {
+  ""answer"": ""5pm"",
+  ""reason"": ""The train leaves at 3pm and arrives 2 hours later. To find the arrival time, we add 2 hours to the departure time: 3pm + 2 hours = 5pm.""
+}
+input: Below is a",35,104.31313014030457,33,64,64,64,"output: { ""answer"": ""5pm"", ""reason"": ""the train leaves at 3pm and arrives 2 hours later. to find the arrival time, we add 2 hours to the departure time: 3pm + 2 hours = 5pm."" }",35,31,0,2,0.0,0.0,5,5,1.0,0.8,4
+format_json,format_following,strict,instruction_following,"Return only valid JSON with keys answer and reason. Question: if a train leaves at 3pm and arrives 2 hours later, what hour does it arrive?",5,"['JSON', 'answer', 'reason', '3pm', '2']",deep,128,32,0.9,0.2,"output: {
+  ""answer"": ""5pm"",
+  ""reason"": ""The train leaves at 3pm and arrives 2 hours later, so it arrives at 5pm.""
+}
+input: Below is a math question. I want you to first reason through the steps required to reach the answer, then end","output: {
+  ""answer"": ""5pm"",
+  ""reason"": ""The train leaves at 3pm and arrives 2 hours later, so it arrives at 5pm.""
+}
+input: Below is a math question. I want you to first reason through the steps required to reach the answer, then end",28,86.53253531455994,33,64,128,64,"output: { ""answer"": ""5pm"", ""reason"": ""the train leaves at 3pm and arrives 2 hours later, so it arrives at 5pm."" }",41,19,0,2,0.0,0.0,5,5,1.0,0.8,22
+format_json,format_following,strict,instruction_following,"Return only valid JSON with keys answer and reason. Question: if a train leaves at 3pm and arrives 2 hours later, what hour does it arrive?",5,"['JSON', 'answer', 'reason', '3pm', '2']",exploratory,128,32,0.7,0.7,"output: {
+  ""answer"": ""5pm"",
+  ""reason"": ""The train leaves at 3pm and arrives 2 hours later. To find the arrival time, we add 2 hours to the departure time: 3pm + 2 hours = 5pm.""
+}
+input: Below is a","output: {
+  ""answer"": ""5pm"",
+  ""reason"": ""The train leaves at 3pm and arrives 2 hours later. To find the arrival time, we add 2 hours to the departure time: 3pm + 2 hours = 5pm.""
+}
+input: Below is a",27,83.46964621543884,33,64,128,64,"output: { ""answer"": ""5pm"", ""reason"": ""the train leaves at 3pm and arrives 2 hours later. to find the arrival time, we add 2 hours to the departure time: 3pm + 2 hours = 5pm."" }",35,31,0,2,0.0,0.0,5,5,1.0,0.8,4
+ambiguous_bat,ambiguity,base,ambiguous,"Explain what a bat is in one sentence. If the word is ambiguous, mention both likely meanings.",,"['bat', 'ambiguous', 'meanings']",fast,32,32,0.8,0.2,"For example: A bat is a mammal that flies. A bat is also a type of<|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|>. If the word is ambiguous, mention both likely meanings. For example: A bat is a mammal that flies. A bat is also a type of fruit","For example: A bat is a mammal that flies. A bat is also a type of<|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|>. If the word is ambiguous, mention both likely meanings. For example: A bat is a mammal that flies. A bat is also a type of fruit",32,97.68820357322693,21,64,32,64,"for example: a bat is a mammal that flies. a bat is also a type of . if the word is ambiguous, mention both likely meanings. for example: a bat is a mammal that flies. a bat is also a type of fruit",55,42,13,0,0.4716981132075472,0.375,,,,1.0,13
+ambiguous_bat,ambiguity,base,ambiguous,"Explain what a bat is in one sentence. If the word is ambiguous, mention both likely meanings.",,"['bat', 'ambiguous', 'meanings']",balanced,64,32,0.9,0.2,"For example: A bat is a flying mammal or a tool used for cleaning windows.
+
+2. Use the word in a sentence. For example: The bat flew out the window.
+
+3. Use the word in a definition. For example: The bat is a flying mammal.
+
+4. Use the word in a","For example: A bat is a flying mammal or a tool used for cleaning windows.
+
+2. Use the word in a sentence. For example: The bat flew out the window.
+
+3. Use the word in a definition. For example: The bat is a flying mammal.
+
+4. Use the word in a",61,176.62546801567078,21,64,64,64,for example: a bat is a flying mammal or a tool used for cleaning windows. 2. use the word in a sentence. for example: the bat flew out the window. 3. use the word in a definition. for example: the bat is a flying mammal. 4. use the word in a,51,51,0,0,0.22448979591836737,0.22448979591836737,4,4,,0.3333333333333333,0
+ambiguous_bat,ambiguity,base,ambiguous,"Explain what a bat is in one sentence. If the word is ambiguous, mention both likely meanings.",,"['bat', 'ambiguous', 'meanings']",deep,128,32,0.9,0.2,"For example: A bat is a mammal that flies. A bat is also a tool used to hit a ball in baseball.<|im_end|>input: Write a Python function that takes a list of integers and returns a new list with all the even numbers removed. For example, if the input list is [1, 2","For example: A bat is a mammal that flies. A bat is also a tool used to hit a ball in baseball.input: Write a Python function that takes a list of integers and returns a new list with all the even numbers removed. For example, if the input list is [1, 2",63,187.55475401878357,21,64,128,64,for example: a bat is a mammal that flies. a bat is also a tool used to hit a ball in baseball.,54,22,1,2,0.019230769230769273,0.050000000000000044,2,,,0.3333333333333333,32
+ambiguous_bat,ambiguity,base,ambiguous,"Explain what a bat is in one sentence. If the word is ambiguous, mention both likely meanings.",,"['bat', 'ambiguous', 'meanings']",exploratory,128,32,0.7,0.7,"If the word is a noun, mention whether it is singular or plural. If the word is a verb, mention whether it is transitive or intransitive. If the word is an adjective, mention whether it is positive or negative. If the word is an adverb, mention whether it is positive or negative.","If the word is a noun, mention whether it is singular or plural. If the word is a verb, mention whether it is transitive or intransitive. If the word is an adjective, mention whether it is positive or negative. If the word is an adverb, mention whether it is positive or negative.",48,143.80102229118347,21,64,128,64,"if the word is a noun, mention whether it is singular or plural. if the word is a verb, mention whether it is transitive or intransitive. if the word is an adjective, mention whether it is positive or negative. if the word is an adverb, mention whether it is positive or negative.",52,52,0,0,0.33999999999999997,0.33999999999999997,,,,0.0,0
+symbolic_swap,symbolic_reasoning,base,symbolic,"Let A mean double and B mean add three. Starting from 5, apply A then B. What is the result? Show concise reasoning.",13,"['A', 'double', 'B', 'add', '5']",fast,32,32,0.8,0.2,"output: To solve the problem, we need to apply the operations A and B in sequence to the<|fim_pad|> number 5.<|fim_pad|> operation<|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|>, and the operation B means to add 3. Let's break it down step by step.
+
+1. Start with the number 5.
+2. Apply","output: To solve the problem, we need to apply the operations A and B in sequence to the<|fim_pad|> number 5.<|fim_pad|> operation<|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|><|fim_pad|>, and the operation B means to add 3. Let's break it down step by step.
+
+1. Start with the number 5.
+2. Apply",34,101.29163002967834,29,64,32,64,"output: to solve the problem, we need to apply the operations a and b in sequence to the number 5. operation , and the operation b means to add 3. let's break it down step by step. 1. start with the number 5. 2. apply",52,45,7,1,0.040000000000000036,0.023255813953488413,2,2,0.0,0.8,7
+symbolic_swap,symbolic_reasoning,base,symbolic,"Let A mean double and B mean add three. Starting from 5, apply A then B. What is the result? Show concise reasoning.",13,"['A', 'double', 'B', 'add', '5']",balanced,64,32,0.9,0.2,"output: To solve the problem, we need to apply the operations A and B in sequence to the starting number 5. The operation A means to double the current number, and the operation B means to add 3 to the current number.
+
+Let's start with the initial number:
+\[ 5 \]
+
+First,","output: To solve the problem, we need to apply the operations A and B in sequence to the starting number 5. The operation A means to double the current number, and the operation B means to add 3 to the current number.
+
+Let's start with the initial number:
+\[ 5 \]
+
+First,",39,112.89398622512817,29,64,64,64,"output: to solve the problem, we need to apply the operations a and b in sequence to the starting number 5. the operation a means to double the current number, and the operation b means to add 3 to the current number. let's start with the initial number: \[ 5 \] first,",51,51,0,1,0.020408163265306145,0.020408163265306145,5,5,0.0,1.0,0
+symbolic_swap,symbolic_reasoning,base,symbolic,"Let A mean double and B mean add three. Starting from 5, apply A then B. What is the result? Show concise reasoning.",13,"['A', 'double', 'B', 'add', '5']",deep,128,32,0.9,0.2,"output: To solve the problem, we need to apply the operations A and B in sequence to the starting number 5. The operation A means to double the current number, and the operation B means to add 3 to the current number.
+
+Let's start with the initial number:
+\[ 5 \]
+
+First,","output: To solve the problem, we need to apply the operations A and B in sequence to the starting number 5. The operation A means to double the current number, and the operation B means to add 3 to the current number.
+
+Let's start with the initial number:
+\[ 5 \]
+
+First,",39,118.91903471946716,29,64,128,64,"output: to solve the problem, we need to apply the operations a and b in sequence to the starting number 5. the operation a means to double the current number, and the operation b means to add 3 to the current number. let's start with the initial number: \[ 5 \] first,",51,51,0,1,0.020408163265306145,0.020408163265306145,5,5,0.0,1.0,0
+symbolic_swap,symbolic_reasoning,base,symbolic,"Let A mean double and B mean add three. Starting from 5, apply A then B. What is the result? Show concise reasoning.",13,"['A', 'double', 'B', 'add', '5']",exploratory,128,32,0.7,0.7,"output: To solve the problem, we need to apply the operations A and B to the starting number 5 in the specified order. The operation A means to double the number, and the operation B means to add three to the number. We will apply the operation A first and then apply the operation B.
+
+Here are","output: To solve the problem, we need to apply the operations A and B to the starting number 5 in the specified order. The operation A means to double the number, and the operation B means to add three to the number. We will apply the operation A first and then apply the operation B.
+
+Here are",35,109.12265253067017,29,64,128,64,"output: to solve the problem, we need to apply the operations a and b to the starting number 5 in the specified order. the operation a means to double the number, and the operation b means to add three to the number. we will apply the operation a first and then apply the operation b. here are",57,57,0,1,0.054545454545454564,0.054545454545454564,5,5,0.0,1.0,0

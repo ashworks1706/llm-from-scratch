@@ -1,11 +1,17 @@
-this folder contains optimizations for efficient inference. once a model is trained we need to serve it efficiently to handle many user requests with low latency and reasonable memory usage.
+this folder studies how trained language models are executed efficiently after training. the goal is to understand the complete path from loading weights and tokenizing a request to scheduling gpu work and streaming generated tokens.
 
-quantization reduces model size by converting weights from 16 bit floats to 8 bit integers. this gives 4x memory reduction with minimal quality loss, typically only 1 to 2 percent accuracy drop. the quantized linear layer stores weights as int8 but dequantizes on the fly during forward pass to avoid overflow issues from integer arithmetic.
+the existing python files introduce quantization, batched inference and paged kv cache ideas with pytorch. these implementations remain useful as readable references because they explain the operations without requiring manual memory management or custom kernels.
 
-the quantization process finds the range of weight values and maps them to the int8 range using a scale factor and zero point. temperature and zero point handle asymmetric ranges efficiently. the scale factor is stored alongside the quantized weights for dequantization during inference.
+the native folder continues the same learning path using rust for the host runtime and cuda for gpu kernels. rust owns model loading, tensor metadata, memory lifetimes, kv cache allocation, request state, scheduling and serving. cuda owns the performance critical operations where thread layout, shared memory, fusion and memory bandwidth need to be understood directly.
 
-batched inference processes multiple requests together to improve gpu utilization. variable length sequences are padded to the same length and attention masks prevent the model from attending to padding tokens. this is combined with causal masking for autoregressive generation.
+fundamentals covers model artifacts, tensor layouts, the cpu transformer forward pass, autoregressive generation and the difference between prompt prefill and token decode.
 
-paged attention manages kv cache memory efficiently by allocating it in fixed size blocks rather than contiguous chunks. this reduces fragmentation and allows dynamic allocation as sequences grow during generation. blocks can be shared across requests using beam search.
+gpu covers the cuda execution model, device memory, reductions, softmax, matrix multiplication, cublas, quantization and fused transformer kernels.
 
-these optimizations together enable deploying large language models in production with acceptable latency and cost. quantization reduces memory footprint, batching improves throughput, and efficient kv cache management handles long contexts.
+attention starts from a materialized correctness baseline before separating prefill attention, decode attention and flash attention principles. the model folders already explain the architecture variations, so these lessons focus on memory access and execution behavior instead of repeating the python model code.
+
+memory covers contiguous kv cache allocation, paged blocks, prefix reuse and kv cache quantization. runtime covers sampling, continuous batching, scheduling, cuda graphs and speculative decoding.
+
+serving covers async request handling, token streaming, performance metrics, reliability, backpressure and multi gpu execution.
+
+each numbered native source file contains learning objectives only. implementations should be added in order, validated against pytorch and benchmarked before moving to the next optimization.

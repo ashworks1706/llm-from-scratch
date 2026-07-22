@@ -36,7 +36,7 @@ data contains dataset and packing utilities for turning raw examples into effici
 
 lora is parameter efficient finetuning using low rank matrices. trains less than 1 percent of parameters by injecting small adapters into attention layers.
 
-inference folder has quantization to reduce model size to int8, batched inference for throughput, and efficient kv cache management.
+inference covers the complete execution path after training. the python files introduce quantization, batching and paged kv caches while the numbered native track uses rust and cuda to study model loading, gpu kernels, attention, memory management, scheduling, serving and multi gpu execution.
 
 efficiency is where lower level performance work belongs, especially rust implementations, kernels and attention optimizations in the language they are usually written in.
 

@@ -1,0 +1,127 @@
+[package]
+name = "inference"
+version = "0.1.0"
+edition = "2021"
+description = "LLM inference from scratch"
+publish = false
+
+[lib]
+path = "src/lib.rs"
+
+
+# --- fundamentals ---
+[[example]]
+name = "01_inference_execution"
+path = "fundamentals/01_inference_execution.rs"
+
+[[example]]
+name = "02_tensor_layouts_and_dtypes"
+path = "fundamentals/02_tensor_layouts_and_dtypes.rs"
+
+[[example]]
+name = "03_model_loading"
+path = "fundamentals/03_model_loading.rs"
+
+[[example]]
+name = "04_cpu_transformer_forward"
+path = "fundamentals/04_cpu_transformer_forward.rs"
+
+[[example]]
+name = "05_autoregressive_generation"
+path = "fundamentals/05_autoregressive_generation.rs"
+
+[[example]]
+name = "06_prefill_and_decode"
+path = "fundamentals/06_prefill_and_decode.rs"
+
+# --- gpu ---
+[[example]]
+name = "07_cuda_execution_model"
+path = "gpu/07_cuda_execution_model.rs"
+
+[[example]]
+name = "08_cuda_memory_management"
+path = "gpu/08_cuda_memory_management.rs"
+
+[[example]]
+name = "11_cublas_integration"
+path = "gpu/11_cublas_integration.rs"
+
+# --- memory ---
+[[example]]
+name = "18_contiguous_kv_cache"
+path = "memory/18_contiguous_kv_cache.rs"
+
+[[example]]
+name = "19_paged_kv_cache"
+path = "memory/19_paged_kv_cache.rs"
+
+[[example]]
+name = "20_prefix_caching"
+path = "memory/20_prefix_caching.rs"
+
+# --- runtime ---
+[[example]]
+name = "22_sampling_and_logits"
+path = "runtime/22_sampling_and_logits.rs"
+
+[[example]]
+name = "23_continuous_batching"
+path = "runtime/23_continuous_batching.rs"
+
+[[example]]
+name = "24_inference_scheduler"
+path = "runtime/24_inference_scheduler.rs"
+
+[[example]]
+name = "25_cuda_graphs"
+path = "runtime/25_cuda_graphs.rs"
+
+[[example]]
+name = "26_speculative_decoding"
+path = "runtime/26_speculative_decoding.rs"
+
+# --- serving ---
+[[example]]
+name = "27_inference_server"
+path = "serving/27_inference_server.rs"
+
+[[example]]
+name = "28_metrics_and_benchmarking"
+path = "serving/28_metrics_and_benchmarking.rs"
+
+[[example]]
+name = "29_multi_gpu_inference"
+path = "serving/29_multi_gpu_inference.rs"
+
+[[example]]
+name = "30_reliability_and_backpressure"
+path = "serving/30_reliability_and_backpressure.rs"
+
+[dependencies]
+anyhow = "1.0.104"
+axum = "0.8.9"
+bytemuck = "1.25.2"
+cudarc = { version = "0.19.8", features = ["driver", "nvrtc", "cublas", "cuda-version-from-build-system"], optional = true }
+half = "2.7.1"
+memmap2 = "0.9.11"
+rand = "0.10.2"
+rayon = "1.12.0"
+safetensors = "0.8.0"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"
+thiserror = "2.0.19"
+tokenizers = { version = "0.23.1", default-features = false, features = ["onig"] }
+tokio = { version = "1.53.1", features = ["full"] }
+tower-http = { version = "0.7.0", features = ["trace"] }
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
+
+# GPU lessons build by default (CUDA toolkit + NVIDIA GPU required).
+# On a CPU-only machine build with: cargo build --no-default-features
+[features]
+default = ["cuda"]
+cuda = ["dep:cudarc"]
+
+[dev-dependencies]
+criterion = "0.8.2"

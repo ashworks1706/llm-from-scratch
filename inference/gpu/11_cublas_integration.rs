@@ -8,3 +8,19 @@
 // - Compare custom matmul kernels against vendor implementations
 // - Understand algorithm selection in cuBLASLt
 // - Identify operations that should use libraries instead of custom kernels
+
+#![allow(unused)]
+
+use anyhow::Result;
+
+#[cfg(feature = "cuda")]
+use cudarc::{cublas, driver};
+
+fn main() -> Result<()> {
+    // 1. create and reuse a cuBLAS handle + workspace
+    // 2. run a linear layer as GEMM (mind layout, leading dims, transpose flags)
+    // 3. repeat across FP32 / FP16 / BF16
+    // 4. compare against a custom matmul kernel from the gpu lessons
+    // 5. note where cuBLASLt algorithm selection matters
+    Ok(())
+}

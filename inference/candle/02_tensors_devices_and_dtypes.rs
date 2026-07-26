@@ -7,3 +7,10 @@
 // - Understand contiguous layouts and when operations require them
 // - Avoid accidental host-device copies during generation
 // - Use framework tensors while still reasoning about their underlying memory cost
+
+#[allow(unused_imports)]
+use candle_core::{DType, Device, Tensor};
+
+fn main() -> anyhow::Result<()> {
+    Ok(())
+}

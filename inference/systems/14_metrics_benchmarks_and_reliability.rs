@@ -7,3 +7,11 @@
 // - Bound queues and apply backpressure before memory exhaustion
 // - Record structured logs, traces, errors and GPU memory diagnostics
 // - Test timeout, cancellation, out of memory and client disconnect behavior
+
+use anyhow::Result;
+#[allow(unused_imports)]
+use tracing::{info, instrument};
+
+fn main() -> Result<()> {
+    Ok(())
+}

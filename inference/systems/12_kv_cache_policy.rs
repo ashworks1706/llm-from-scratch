@@ -7,3 +7,11 @@
 // - Reuse immutable prompt prefixes only when model state is compatible
 // - Evict or reject work safely under memory pressure
 // - Explain cache policy tradeoffs without implementing a full paged-attention kernel
+
+use anyhow::Result;
+#[allow(unused_imports)]
+use std::collections::HashMap;
+
+fn main() -> Result<()> {
+    Ok(())
+}

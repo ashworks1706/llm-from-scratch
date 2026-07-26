@@ -7,3 +7,10 @@
 // - Compare end-to-end request metrics instead of only isolated kernel time
 // - Identify regressions caused by synchronization, copies or launch overhead
 // - Keep, revise or remove an extension based on measured evidence
+
+#[allow(unused_imports)]
+use {cudarc::driver::CudaContext, std::time::Instant};
+
+fn main() -> anyhow::Result<()> {
+    Ok(())
+}

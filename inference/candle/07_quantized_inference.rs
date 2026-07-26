@@ -7,3 +7,10 @@
 // - Understand weight-only quantization versus kv cache quantization
 // - Choose model formats based on hardware memory limits
 // - Record the accuracy and performance tradeoffs instead of assuming quantization helps
+
+#[allow(unused_imports)]
+use {candle_core::{DType, Device}, memmap2::Mmap};
+
+fn main() -> anyhow::Result<()> {
+    Ok(())
+}

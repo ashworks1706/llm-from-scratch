@@ -7,3 +7,21 @@
 # - Compare Triton indexing with CUDA thread and block indexing
 # - Compile and benchmark a small kernel against a PyTorch baseline
 # - Read Triton code in inference projects without treating it as a black box
+
+import torch
+
+
+def main() -> None:
+    try:
+        import triton
+        import triton.language as tl
+    except ModuleNotFoundError as error:
+        raise SystemExit("Install Triton first: pip install triton") from error
+
+    print("Lesson 21: Triton kernel basics")
+    print(f"Triton {triton.__version__} is ready; begin with one elementwise kernel.")
+    _ = tl
+
+
+if __name__ == "__main__":
+    main()

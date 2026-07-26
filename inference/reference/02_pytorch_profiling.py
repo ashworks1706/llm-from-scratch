@@ -7,3 +7,14 @@
 # - Compare eager execution with inference-oriented execution settings
 # - Export a trace that can be compared with Nsight timelines later
 # - Record a repeatable baseline for every model and prompt shape
+
+import torch
+
+
+def main() -> None:
+    print("Lesson 02 reference: PyTorch inference profiling")
+    print("Add a repeatable prefill/decode workload before enabling the profiler.")
+
+
+if __name__ == "__main__":
+    main()

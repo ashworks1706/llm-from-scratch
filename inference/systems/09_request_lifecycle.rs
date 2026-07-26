@@ -7,3 +7,11 @@
 // - Release resources exactly once when a request completes or disconnects
 // - Define clear cancellation, timeout and error transitions
 // - Make request ownership explicit before adding concurrent scheduling
+
+use anyhow::Result;
+#[allow(unused_imports)]
+use std::time::Instant;
+
+fn main() -> Result<()> {
+    Ok(())
+}

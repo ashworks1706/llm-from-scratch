@@ -10,4 +10,29 @@ gpu is a smaller cudarc and cuda track. it covers device memory, streams, cuBLAS
 
 triton is a small kernel literacy track. it teaches how to read and write a few modern GPU kernels in the Python-based Triton language so that production inference projects such as vLLM are easier to understand. it does not replace CUDA or the Rust runtime.
 
-the numbered rust and cuda files contain learning objectives only. implement one lesson at a time, benchmark it, write down what changed and compare it against the reference behavior before moving forward.
+each numbered lesson is registered as a runnable scaffold. it contains its learning objectives, the imports you will need, and a small entry point; it does not implement the lesson for you yet.
+
+run a lesson from this directory:
+
+```bash
+# pytorch reference
+python reference/01_pytorch_inference_baseline.py
+
+# candle lessons
+cargo run --example 01_inference_system
+
+# rust systems lessons
+cargo run --example 09_request_lifecycle
+
+# cudarc and cuda-host lessons
+cargo run --example 15_cudarc_runtime
+cargo run --example 17_custom_cuda_operation_host
+
+# NCCL concepts
+cargo run --example 20_nccl_and_multi_gpu
+
+# triton lessons
+python triton/21_triton_kernel_basics.py
+```
+
+the paired `.cu` files hold CUDA kernel experiments. their Rust host scaffolds load, validate, and benchmark them through cudarc. implement one lesson at a time, benchmark it, write down what changed, and compare it against the reference behavior before moving forward.

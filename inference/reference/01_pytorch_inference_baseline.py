@@ -7,3 +7,14 @@
 # - Implement a small sampling loop around model output
 # - Save deterministic inputs and expected outputs for Rust comparisons
 # - Use this file as the correctness oracle for Candle and cudarc experiments
+
+import torch
+
+
+def main() -> None:
+    print("Lesson 01 reference: PyTorch inference baseline")
+    print("Load a small decoder-only model and save deterministic outputs here.")
+
+
+if __name__ == "__main__":
+    main()

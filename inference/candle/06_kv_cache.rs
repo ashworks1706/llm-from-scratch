@@ -7,3 +7,10 @@
 // - Calculate cache memory from layers, kv heads, head dimensions and context length
 // - Track cache lifetime per request and release it when generation finishes
 // - Compare cache memory requirements for MHA, MQA and GQA models
+
+#[allow(unused_imports)]
+use candle_core::{Device, Tensor};
+
+fn main() -> anyhow::Result<()> {
+    Ok(())
+}

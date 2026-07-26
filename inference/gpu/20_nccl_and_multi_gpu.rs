@@ -8,3 +8,7 @@
 // - Study CUDA graphs, speculative decoding and disaggregated serving as advanced techniques
 // - Recognize when one GPU is the correct deployment choice
 // - Avoid implementing distributed execution before the single-GPU system is measurable
+
+fn main() -> anyhow::Result<()> {
+    Ok(())
+}

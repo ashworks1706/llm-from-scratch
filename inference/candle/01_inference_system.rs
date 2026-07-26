@@ -7,3 +7,10 @@
 // - Identify model weights, temporary tensors and persistent kv cache state
 // - Define the latency and throughput measurements that matter for serving
 // - Use Candle as the model execution layer instead of rebuilding a tensor framework
+
+#[allow(unused_imports)]
+use candle_core::{Device, Tensor};
+
+fn main() -> anyhow::Result<()> {
+    Ok(())
+}

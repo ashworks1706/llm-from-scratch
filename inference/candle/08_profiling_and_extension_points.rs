@@ -7,3 +7,10 @@
 // - Decide when a custom cudarc operation is justified
 // - Establish a baseline before making any low-level optimization
 // - Document measured regressions as carefully as measured speedups
+
+#[allow(unused_imports)]
+use {candle_core::Device, std::time::Instant};
+
+fn main() -> anyhow::Result<()> {
+    Ok(())
+}

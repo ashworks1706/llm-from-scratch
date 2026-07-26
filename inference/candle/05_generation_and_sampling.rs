@@ -7,3 +7,10 @@
 // - Stream decoded output without blocking the runtime loop
 // - Keep random number state deterministic per request
 // - Measure time to first token and inter-token latency for one request
+
+#[allow(unused_imports)]
+use {candle_core::Tensor, rand::rngs::StdRng, tokenizers::Tokenizer};
+
+fn main() -> anyhow::Result<()> {
+    Ok(())
+}

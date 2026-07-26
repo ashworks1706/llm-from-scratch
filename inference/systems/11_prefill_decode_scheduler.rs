@@ -7,3 +7,11 @@
 // - Apply token, memory and batch-size budgets per iteration
 // - Implement a simple fair scheduling policy before optimizing it
 // - Measure queue time, prefill time and decode time separately
+
+use anyhow::Result;
+#[allow(unused_imports)]
+use std::collections::VecDeque;
+
+fn main() -> Result<()> {
+    Ok(())
+}

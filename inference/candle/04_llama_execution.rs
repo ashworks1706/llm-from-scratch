@@ -7,3 +7,10 @@
 // - Understand MHA, MQA and GQA as model configuration choices
 // - Compare logits and generated output with the Python reference implementation
 // - Keep Candle model execution separate from request scheduling and serving
+
+#[allow(unused_imports)]
+use {candle_core::{Device, Tensor}, candle_transformers::models::llama};
+
+fn main() -> anyhow::Result<()> {
+    Ok(())
+}

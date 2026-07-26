@@ -1,5 +1,4 @@
-//! Shared building blocks for the inference lesson series.
+//! Shared building blocks for the practical inference lesson series.
 //!
-//! lessons can `use inference::...` instead of copy-pasting.
-//!
-//! This starts empty on purpose; grow it as the lessons introduce real code.
+//! Add reusable request, cache, benchmark and extension code here only after a
+//! lesson proves that the abstraction is needed.

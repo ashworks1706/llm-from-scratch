@@ -1,5 +1,5 @@
-gpu inference is mostly an exercise in moving less data, reusing memory and keeping the device busy.
+this is the selective low-level gpu track for when profiling shows that the Candle-based path needs a change. it is not a prerequisite for the systems course.
 
-these lessons use rust and cudarc for device discovery, allocations, streams and kernel launches. cuda source files are used for operations where thread layout, shared memory and fusion need to be studied directly.
+use cudarc to manage device buffers, streams, cuBLAS, NCCL and CUDA module launches from rust. use cuda only for a focused operation with a defined baseline and a benchmark that can prove whether the extension helps.
 
-simple kernels are implemented for learning and correctness. optimized matrix multiplication should eventually use cublas while custom kernels focus on transformer specific operations and fusion opportunities.
+the correct outcome of an extension lesson can be that the framework or a vendor library already performs better. understanding that result is part of inference engineering.

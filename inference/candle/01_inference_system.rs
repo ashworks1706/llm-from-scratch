@@ -22,7 +22,10 @@ fn main() -> Result<()> {
     // time per output token is latency , dominated by memory bandwidth
     // throughput is tokens per second
 
-    let device = Device::cuda_if_available(0)?;
+    // This first end-to-end reference stays on CPU: Candle's CUDA backend does
+    // not currently implement the BERT layer-norm operation used by MiniLM.
+    // The GPU lessons use CUDA directly through cudarc and supported operations.
+    let device = Device::Cpu;
 
     // Tensor::zeros creates a python equivalent shaped multidimensional array like np.zeros((1,4,8), dtype=np.float32) which looks like
     // [[[0. 0. 0. 0. 0. 0. 0. 0.]
@@ -36,13 +39,14 @@ fn main() -> Result<()> {
     // This downloads on the first run and reuses the Hugging Face cache afterward.
     let repository = Api::new()?.repo(Repo::new(MODEL_ID.to_owned(), RepoType::Model));
     let config_path = repository.get("config.json")?;
-    let tokenizer_path = repository.get("tokenizer.json")?;
+    let tokenizer_path = repository.get("tokenizer.json")?; // temp files 
     let weights_path = repository.get("model.safetensors")?;
 
     let config: BertConfig = serde_json::from_reader(File::open(config_path)?)?;
     let tokenizer = Tokenizer::from_file(tokenizer_path).map_err(Error::msg)?;
 
     // memory allocation (model weights, kv cache, tmp activations)
+    // mmaped is basically a way to map a file into memory so that we can access it as if it were an array in memory. it maps the file into the virtual address space of the process
     let weights = unsafe {
         VarBuilder::from_mmaped_safetensors(&[weights_path], DType::F32, &device)?
     };
@@ -64,7 +68,6 @@ fn main() -> Result<()> {
     // now we try to get transient activations generated during forward pass- --
     let token_type_ids = input_ids.zeros_like()?;
     let hidden_states = model.forward(&input_ids, &token_type_ids, None)?;
-
 
 
     println!("model: {MODEL_ID}");

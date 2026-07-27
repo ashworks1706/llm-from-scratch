@@ -11,7 +11,7 @@ path = "src/lib.rs"
 [dependencies]
 anyhow = "1.0.104"
 axum = "0.8.9"
-candle-core = { git = "https://github.com/huggingface/candle.git" }
+candle-core = { git = "https://github.com/huggingface/candle.git", features = ["cuda"] }
 candle-nn = { git = "https://github.com/huggingface/candle.git" }
 candle-transformers = { git = "https://github.com/huggingface/candle.git" }
 cudarc = { version = "0.19.8", features = ["driver", "nvrtc", "cublas", "cuda-version-from-build-system"] }

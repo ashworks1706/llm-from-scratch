@@ -66,6 +66,11 @@ fn main() -> anyhow::Result<()> {
     println!("Total model size: {} bytes", total_size);
 
     // lets look at how many shards this model has, and how many tensors are in each shard. This is important because when we load the model, we need to know how many shards there are and how many tensors are in each shard so that we can load them correctly.
+    // but what is sharding? Sharding is a technique used to split a large model into smaller pieces, called shards, so that they can be loaded into memory more efficiently. Each shard contains a subset of the model's parameters, and the shards can be loaded independently of each other. This allows us to load only the shards that we need for a particular inference task, rather than loading the entire model into memory at once.
+
+    // this time lets try loading the model in shards 
+
+    
 
     Ok(())
 }

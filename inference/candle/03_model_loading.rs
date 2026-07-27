@@ -7,8 +7,11 @@
 // - Understand model sharding and where a loader must handle multiple files
 
 #[allow(unused_imports)]
-use {candle_core::Device, hf_hub::api::sync::Api, safetensors::SafeTensors};
-
+use {
+    candle_core::Device,
+    hf_hub::api::sync::{Api, ApiBuilder},
+    safetensors::SafeTensors,
+};
 fn main() -> anyhow::Result<()> {
 
     let device = Device::cuda_if_available(0)?;
@@ -20,10 +23,12 @@ fn main() -> anyhow::Result<()> {
     // setup model and load weights into it
     // run a forward pass to validate the model is working
     // inspect the model architecture, tensor names, shapes and dtypes to understand how the model is structured
-    let api = Api::new();
+    let token = std::env::var("HF_TOKEN")?;
+    let api = ApiBuilder::new().with_token(Some(token)).build()?;
+
     let repo_id = "google/gemma-3-270m"; 
 
-    let repo = api?.repo(hf_hub::Repo::new(repo_id.to_owned(), hf_hub::RepoType::Model));
+    let repo = api.repo(hf_hub::Repo::new(repo_id.to_owned(), hf_hub::RepoType::Model));
 
     let config_path = repo.get("config.json")?;
     let weights_path = repo.get("model.safetensors")?;
@@ -46,6 +51,21 @@ fn main() -> anyhow::Result<()> {
         println!("Tensor {}: name: {}, shape: {:?}, dtype: {:?}", i, name, tensor.shape(), tensor.dtype());
     }
 
+
+    // Tensor 0: name: model.layers.4.mlp.up_proj.weight, shape: [2048, 640], dtype: BF16
+    // ....
+    // Tensor 233: name: model.layers.5.self_attn.k_norm.weight, shape: [256], dtype: BF16
+    // ....
+    // Tensor 234: name: model.layers.11.self_attn.q_proj.weight, shape: [1024, 640], dtype: BF16
+    // ....
+    // Tensor 235: name: model.layers.12.self_attn.q_proj.weight, shape: [1024, 640], dtype: BF16
+
+    // lets calculate total size of this model in bytes 
+
+    let total_size: usize = tensors.iter().map(|(_, tensor)| tensor.numel() * tensor.dtype().size()).sum();
+    println!("Total model size: {} bytes", total_size);
+
+    // lets look at how many shards this model has, and how many tensors are in each shard. This is important because when we load the model, we need to know how many shards there are and how many tensors are in each shard so that we can load them correctly.
 
     Ok(())
 }

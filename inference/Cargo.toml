@@ -92,3 +92,6 @@ path = "gpu/19_kernel_profiling.rs"
 [[example]]
 name = "20_nccl_and_multi_gpu"
 path = "gpu/20_nccl_and_multi_gpu.rs"
+[[example]]
+name = "25_speculative_decoding"
+path = "systems/25_speculative_decoding.rs"

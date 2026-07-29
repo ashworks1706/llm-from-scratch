@@ -1,16 +1,7 @@
-// Running a decoder-only Llama-style model with Candle
-//
-// LEARNING OBJECTIVES:
-// - Construct a supported Candle transformer model from configuration and weights
-// - Run prompt tokens through the decoder on CPU and CUDA
-// - Inspect embedding, normalization, attention and MLP tensor shapes
-// - Understand MHA, MQA and GQA as model configuration choices
-// - Compare logits and generated output with the Python reference implementation
-// - Keep Candle model execution separate from request scheduling and serving
-
 #[allow(unused_imports)]
 use {
     candle_core::{Device, Tensor, DType},
+    candle_nn::VarBuilder,
     candle_transformers::models::llama::{Cache, Llama, Config, LlamaConfig},
     hf_hub::api::sync::ApiBuilder,
     tokenizers::Tokenizer,
@@ -83,41 +74,41 @@ fn main() -> anyhow::Result<()> {
     println!("Tokenized prompt: {:?}", encoding.get_ids());
 
     // but we need input_tensors too since encoding right now is a TokenizerEncoding, which is not a Candle Tensor. We can convert it to a Tensor by using the from_slice method, which takes a slice of i64 and returns a Tensor.
-    let input_tensors = Tensor::from_slice(&encoding.get_ids(), (encoding.get_ids().len(),), DType::I64, device.clone());
+    let input_tensors = Tensor::from_slice(
+        encoding.get_ids(),
+        (1, encoding.get_ids().len()),
+        &device,
+    )?;
 
     // its rust, we need to prepare cache for the model, which will store the key-value pairs for the attention mechanism. 
     // The cache is a struct that contains a vector of tensors, one for each layer of the model. Each tensor has shape (batch_size, num_key_value_heads, seq_len, head_dim), where head_dim = hidden_size / num_attention_heads.
 
-    let mut cache = Cache::new(config.num_hidden_layers, config.num_key_value_heads, config.hidden_size / config.num_attention_heads, device.clone());
+    let mut cache = Cache::new(true, DType::F32, &config, &device)?;
 
     // now we can run the model on the prompt
 
-    let model = Llama::load(weights_path, config, device.clone())?;
+    let weights = unsafe {
+        VarBuilder::from_mmaped_safetensors(&[weights_path], DType::F32, &device)?
+    };
+    let model = Llama::load(weights, &config)?;
 
     // forward pass:
-    let logits = model.forward(&input_tensors, &mut cache)?;
+    let logits = model.forward(&input_tensors, 0, &mut cache)?;
 
-    // lets wait and inspect the logits shape, which should be (batch_size, seq_len, vocab_size)
+    // Candle's Llama forward pass selects the final sequence position internally, so these
+    // logits have shape (batch_size, vocab_size).
     println!("Logits shape: {:?}", logits.shape());
 
-    // model always outpust next token logits as last token in the sequence, so we can get the last token logits by slicing the logits tensor
-    let last_token_logits = logits.slice(1, logits.shape()[1] - 1, 1); 
-    // logits.slice takes 3 arguments: dim, start, end. It returns a new tensor that is a slice of the original tensor along the specified dimension from start to end (exclusive). In this case, we are slicing along the sequence length dimension (dim=1) from the last token index (logits.shape()[1] - 1) to the end (exclusive), which gives us the logits for the last token in the sequence
-    // so why is logits.shape()[1] - 1 the last token index? Because logits.shape()[1] is the sequence length, and the last token index is sequence length - 1, since indexing starts at 0. For example, if the sequence length is 5, the last token index is 4 (5 - 1).
-    // and why till the end? Because we want to get the logits for the last token only, so we slice from the last token index to the end (exclusive), which gives us a tensor of shape (batch_size, 1, vocab_size). We can then squeeze the second dimension to get a tensor of shape (batch_size, vocab_size).
-
-    println!("Last token logits shape: {:?}", last_token_logits.shape());
-
-    // now we can get the predicted token by taking the argmax of the last token logits along the vocab dimension (dim=2)
-    let predicted_token = last_token_logits.argmax(2);
+    // The only remaining non-batch dimension is the vocabulary dimension.
+    let predicted_token = logits.argmax(1)?;
 
     println!("Predicted token: {:?}", predicted_token);
 
     // lets decode it then 
 
-    let predicted_token_id = predicted_token.to_vec::<i64>()?[0]; // get the first element of the vector, which is the predicted token id
+    let predicted_token_id = predicted_token.to_scalar::<u32>()?;
 
-    let predicted_token_str = tokenizer.decode(vec![predicted_token_id], true).map_err(|e| anyhow::anyhow!("Decoding failed: {e}"))?;
+    let predicted_token_str = tokenizer.decode(&[predicted_token_id], true).map_err(|e| anyhow::anyhow!("Decoding failed: {e}"))?;
 
     println!("Predicted token string: {}", predicted_token_str);
     

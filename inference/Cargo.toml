@@ -93,5 +93,14 @@ path = "gpu/19_kernel_profiling.rs"
 name = "20_nccl_and_multi_gpu"
 path = "gpu/20_nccl_and_multi_gpu.rs"
 [[example]]
+name = "23_flash_attention_host"
+path = "gpu/23_flash_attention_host.rs"
+[[example]]
+name = "24_paged_attention_host"
+path = "gpu/24_paged_attention_host.rs"
+[[example]]
 name = "25_speculative_decoding"
 path = "systems/25_speculative_decoding.rs"
+[[example]]
+name = "26_quantized_attention_kernel_host"
+path = "gpu/26_quantized_attention_kernel_host.rs"

@@ -16,7 +16,7 @@ fn main() -> anyhow::Result<()> {
 
     let token = std::env::var("HF_TOKEN")?;
 
-    let device = Device::cuda_if_available(0)?;
+    let device = Device::Cpu;
 
 
     let api = ApiBuilder::new().with_token(Some(token)).build()?;
@@ -106,7 +106,7 @@ fn main() -> anyhow::Result<()> {
 
     // lets decode it then 
 
-    let predicted_token_id = predicted_token.to_scalar::<u32>()?;
+    let predicted_token_id = predicted_token.to_vec1::<u32>()?[0];
 
     let predicted_token_str = tokenizer.decode(&[predicted_token_id], true).map_err(|e| anyhow::anyhow!("Decoding failed: {e}"))?;
 

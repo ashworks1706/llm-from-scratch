@@ -12,5 +12,6 @@
 use {candle_core::Tensor, rand::rngs::StdRng, tokenizers::Tokenizer};
 
 fn main() -> anyhow::Result<()> {
+    
     Ok(())
 }

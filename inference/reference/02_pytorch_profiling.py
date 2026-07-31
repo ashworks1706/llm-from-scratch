@@ -12,7 +12,7 @@ import torch
 
 
 def main() -> None:
-    print("Lesson 02 reference: PyTorch inference profiling")
+    print("file 02 reference: PyTorch inference profiling")
     print("Add a repeatable prefill/decode workload before enabling the profiler.")
 
 

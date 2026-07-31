@@ -18,7 +18,7 @@ def main() -> None:
     except ModuleNotFoundError as error:
         raise SystemExit("Install Triton first: pip install triton") from error
 
-    print("Lesson 22: Triton fusion and attention")
+    print("file 22: Triton fusion and attention")
     print("Prototype one narrow fused operation, then measure it against PyTorch.")
     _ = (triton, tl)
 

@@ -16,7 +16,7 @@ fn main() -> anyhow::Result<()> {
 
     let token = std::env::var("HF_TOKEN")?;
 
-    // CPU is the baseline for this Llama lesson. With the Candle revision pinned in
+    // CPU is the baseline for this Llama file. With the Candle revision pinned in
     // this course, selecting CUDA reaches Llama's RMSNorm layer and returns
     // `no cuda implementation for rms-norm`. RMSNorm is an intentional GPU-extension
     // investigation point later in the course, not a statement that Llama is CPU-only.

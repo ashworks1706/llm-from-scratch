@@ -18,7 +18,7 @@ def main() -> None:
     except ModuleNotFoundError as error:
         raise SystemExit("Install Triton first: pip install triton") from error
 
-    print("Lesson 21: Triton kernel basics")
+    print("file 21: Triton kernel basics")
     print(f"Triton {triton.__version__} is ready; begin with one elementwise kernel.")
     _ = tl
 

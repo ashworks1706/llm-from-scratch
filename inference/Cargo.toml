@@ -2,7 +2,7 @@
 name = "inference"
 version = "0.1.0"
 edition = "2021"
-description = "Practical LLM inference engineering lessons in Rust"
+description = "Practical LLM inference engineering  in Rust"
 publish = false
 
 [lib]

@@ -24,7 +24,7 @@ fn main() -> Result<()> {
 
     // This first end-to-end reference stays on CPU: Candle's CUDA backend does
     // not currently implement the BERT layer-norm operation used by MiniLM.
-    // The GPU lessons use CUDA directly through cudarc and supported operations.
+    // The GPU  use CUDA directly through cudarc and supported operations.
     let device = Device::Cpu;
 
     // Tensor::zeros creates a python equivalent shaped multidimensional array like np.zeros((1,4,8), dtype=np.float32) which looks like

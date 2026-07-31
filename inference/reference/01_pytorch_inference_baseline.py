@@ -12,7 +12,7 @@ import torch
 
 
 def main() -> None:
-    print("Lesson 01 reference: PyTorch inference baseline")
+    print("file 01 reference: PyTorch inference baseline")
     print("Load a small decoder-only model and save deterministic outputs here.")
 
 

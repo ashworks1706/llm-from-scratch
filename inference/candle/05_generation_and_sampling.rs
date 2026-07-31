@@ -74,7 +74,6 @@ fn sample_token(logits: &[f32], config: &SamplingConfig, rng: &mut StdRng) -> u3
 }
 
 fn main() -> anyhow::Result<()> {
-    // The Candle revision pinned by this project has no CUDA RMSNorm implementation.
     let device = Device::Cpu;
     // Setup repo and API connection to the model.
     let repo_id = "TinyLlama/TinyLlama-1.1B-Chat-v1.0";

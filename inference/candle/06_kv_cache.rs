@@ -8,6 +8,7 @@ use {
     std::io::Write,
 };
 
+
 fn calculate_cache_bytes(
     num_layers: usize,
     num_kv_heads: usize,

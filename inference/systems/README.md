@@ -4,12 +4,14 @@ these  own request state, kv cache policy, scheduling, streaming, observability 
 
 the goal is not to copy a production runtime feature for feature. the goal is to build and explain a small correct system that demonstrates the same engineering decisions.
 
+file 28 adds prefix reuse across requests (a radix-cache style prompt cache), file 30 splits prefill and decode into separate worker roles instead of one scheduling loop, and file 31 covers mixture-of-experts serving: hand-implemented top-k routing, per-expert batching and why expert parallelism needs all-to-all communication instead of the tensor-parallel collectives in file 20.
+
 tech stack used in this folder:
 
 - tokio — the async runtime; request handling, streaming and scheduling all run as tasks inside it
 - axum — the http server framework for the openai-style api surface in file 13
 - tower-http — request tracing and logging middleware layered onto axum
 - tracing and tracing-subscriber — structured logs and spans for latency, queueing and lifecycle observability
-- candle-core and candle-transformers — the model and cache types the scheduler and request state wrap around; these  manage them, not reimplement them
+- candle-core and candle-transformers — the model and cache types the scheduler and request state wrap around; these  manage them, not reimplement them. file 31 additionally uses candle_transformers::models::mixtral as a real MoE model to route through
 - anyhow and thiserror — anyhow for `?` in the binaries, thiserror for a typed request and scheduling error enum
 - std::collections (VecDeque, HashMap) — queueing and cache bookkeeping structures behind the scheduling and kv cache policy 

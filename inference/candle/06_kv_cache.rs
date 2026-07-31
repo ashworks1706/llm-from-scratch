@@ -1,13 +1,3 @@
-// KV cache ownership during Candle generation
-//
-// LEARNING OBJECTIVES:
-// - Identify where the model stores key and value tensors for each layer
-// - Separate prompt prefill from single-token decode
-// - Reuse cache state instead of recomputing the prompt on every token
-// - Calculate cache memory from layers, kv heads, head dimensions and context length
-// - Track cache lifetime per request and release it when generation finishes
-// - Compare cache memory requirements for MHA, MQA and GQA models
-
 #[allow(unused_imports)]
 use {
     candle_core::{Device, Tensor, DType, IndexOp},
@@ -15,6 +5,7 @@ use {
     hf_hub::api::sync::ApiBuilder,
     candle_nn::VarBuilder,
     tokenizers::Tokenizer,
+    std::io::Write,
 };
 
 fn calculate_cache_bytes(
@@ -64,7 +55,40 @@ fn main() -> anyhow::Result<()> {
 
     let mut cache = Cache::new(true, DType::F32, &config, &device)?;
 
+    let prompt = "yo bro wassup?";
+
+    let tokens = tokenizer.encode(prompt, true).unwrap();
+
+    let mut input_ids = tokens.get_ids().to_vec();
+
+    let current_pos = input_ids.len();
     
+    // prefilling is compute bound while decoding is memory bound 
+    // prefillign spends time doing lot of compute to precompute the context beforehand so that we can generate one by one
+    // while decoding spends time by fetching saved memory from prefill step to predict next token
+    let prefill_tensor = Tensor::new(&input_ids[..], &device)?.unsqueeze(0)?; // we unsqueeze to remove the batch dim and get hte exact tensor sahpe we want
+
+    let logits = model.forward(&prefill_tensor, 0, &mut cache)?;
+
+    let next_token = logits.argmax(1)?.to_vec1::<u32>()?[0]; // cnadle's built in method to get max logit
+
+    input_ids.push(next_token);
+
+    println!("First token : {}", tokenizer.decode(&[next_token], false)
+        .map_err(|error| anyhow::anyhow!("token decoding failed: {error}"))?);
+
+    std::io::stdout().flush()?;
+
+    println!("Number of allocated layer sub-caches: {}", config.num_hidden_layers);
+    // layouts typically maps to [batch, num_kv_heads, current_sequence_length, head_dim]
+    println!("Layer 0 Key Cache Shape on Device : {:?}", (1, config.num_key_value_heads, current_pos, config.hidden_size / config.num_attention_heads));
+    println!("Layer 0 Storage Hardware Location : {:?}", device);
+
+
+
+
+
+
 
     Ok(())
 }

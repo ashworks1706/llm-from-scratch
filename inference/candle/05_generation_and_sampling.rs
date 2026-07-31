@@ -1,144 +1,175 @@
-#[allow(unused_imports)]
+// Autoregressive Llama generation with temperature, top-k, and top-p sampling.
 use {
-    candle_core::{Device, Tensor, DType, IndexOp},
-    candle_transformers::models::llama::{Cache, Llama, Config},
-    candle_transformers::generation::LogitsProcessor, // Low-level alternative, but we write custom logic below
+    candle_core::{DType, Device, Tensor},
+    candle_nn::VarBuilder,
+    candle_transformers::models::llama::{Cache, Config, Llama, LlamaConfig, LlamaEosToks},
     hf_hub::api::sync::ApiBuilder,
+    rand::{rngs::StdRng, RngExt, SeedableRng},
+    std::{io::Write, time::{Duration, Instant}},
     tokenizers::Tokenizer,
-    rand::{SeedableRng, Rng},
-    rand::rngs::StdRng,
-    std::io::Write,
-    std::time::Instant,
 };
 
 struct SamplingConfig {
-    temperature: f64,
+    temperature: f32,
     top_k: usize,
-    top_p: f64,
+    top_p: f32,
     seed: u64,
 }
-fn main() -> anyhow::Result<()> {
-    let device = Device::Cpu;
 
-    // setup repo and api connection to model
-    let repo_id = "TinyLlama/TinyLlama-1.1B-Chat-v1.0";
-    let api = ApiBuilder::new().build()?;
-    let repo = api.repo(hf_hub::Repo::new(repo_id.to_owned(), hf_hub::RepoType::Model))?;
-
-    // get model config and tokenizer from repo
-    let config: Config = repo.get("config.json")?;
-    let tokenizer = Tokenizer::from_file(repo.get("tokenizer.json")?.path())?;
-
-    let weights_path = vec![repo.get("model.safetensors")?];
-
-    let vb = unsafe { candle_nn::VarBuilder::from_mmaped_safetensors(weights_path, device)? };
-
-    let model = Llama::load(vb, &config)?;
-
-    let prompt = "Hey wass good";
-
-    let max_new_tokens = 20;
-
-    // now we need to identify when to stop generating tokens. We can do this by checking for the end-of-sequence token or a maximum token budget.
-
-    let eos_token_id = tokenizer.get_vocab().token_to_id("</s>").unwrap();
-
-    let sampling_config = SamplingConfig {
-        temperature: 0.7, // applies softmax scaling to logits before sampling by eq: logits / temperature, higher temperature means more randomness, lower temperature means more deterministic
-        top_k: 50, // gets k highest logits, eq: logits[i] = -inf for i not in top_k, higher top_k means more randomness, lower top_k means more deterministic
-        top_p: 0.9, // gets the smallest set of logits whose cumulative probability is >= top_p, eq: logits[i] = -inf for i not in top_p, higher top_p means more randomness, lower top_p means more deterministic
-        seed: 42, // seed for random number generator, used to make sampling deterministic per request
-    };
-
-    // now we need rng to sample from the logits, we can use a seeded random number generator to make sampling deterministic per request
-
-    let mut rng = StdRng::seed_from_u64(sampling_config.seed);
-
-    let tokens = tokenizer.encode(prompt, true).unwrap().get_ids().to_vec();
-    let prompt_len = tokens.len();
-
-
-    std::io::stdout().flush().unwrap();
-
-    let mut cache = Cache::new(&model, prompt_len, max_new_tokens)?;
-
-    let start_time = Instant::now();
-    let mut time_to_first_token = None;
-    let mut inter_token_latencies = Vec::new();
-    let mut step_start_time = Instant::now();
-
-    // now thta we have everything tokenized, 
-    // inference loop 
-    for index in 0..max_new_tokens{
-        // forward pass
-        // we only need to pass the last token for subsequent steps, as the model will use the cache to retrieve previous hidden states
-        let context_ids = if index == 0 { &input_ids[..] } else { &input_ids[input_ids.len() - 1..] }; 
-
-        let input_tensor = Tensor::new(context_ids, &[context_ids.len() as i64], DType::I64, device)?;
-
-        // forward pass through the model
-
-        let logits = model.forward(&input_tensor, &mut cache)?;
-
-        // get the last logits 
-
-        let last_logits = logits.i((0, logits.dim(1)? - 1))?;
-        let mut logits_vec: Vec<f32> = last_logits.to_vec1()?;
-
-        // apply temperature scaling to logits
-
-        if sampling.temperature > 0.0 {
-            for logit in logits_vec.iter_mut() {
-                *logit /= sampling.temperature as f32;
-            }
-        }
-
-        // if temp ==0 that means we want to do greedy sampling, so we can just take the argmax of the logits
-
-        if sampling.temperature == 0.0 {
-            logits_vec.iter().enumerate().max_by(|a, b| a.1.partial_cmp(b.1).unwrap()).map(|(i, _)| i).unwrap()
-            // this will give us the index of the max logit, which is the token id we want to sample
-            // a.1.partial_comp(b.1) means we are comparing the logits, and a.0 and b.0 are the indices of the logits, which correspond to the token ids
-        } else {
-            // now we apply softmax 
-            let max_logit = logits_vec.iter().cloned().fold(f32::NEG_INFINITY, f32::max);
-            let exps = logits_vec.iter().map(|&x| (x - max_logit).exp()).collect::<Vec<f32>>();
-            let sum_exps: f32 = exps.iter().sum();
-            let mut probs: Vec<f32> = exps.iter().map(|&x| x / sum_exps).collect();
-            // sort by descending by prob score
-            probs.sort_by(|a, b| b.partial_cmp(a).unwrap());
-
-            // applying top k sampling
-            if sampling.top_k > 0 && sampling.top_k < probs.len() {
-                probs.truncate(sampling.top_k);
-            }
-
-            // apply top p sampling
-            if sampling.top_p > 0.0 && sampling.top_p < 1.0 {
-                let mut cumulative_prob = 0.0;
-                let mut cutoff_index = probs.len();
-                for (i, (_, prob)) in probs.iter().enumerate() {
-                    cumulative_prob += prob;
-                    if cumulative_prob > sampling.top_p as f32 {
-                        cutoff_index = i + 1;
-                        break;
-                    }
-                }
-                probs.truncate(cutoff_index);
-            }
-
-
-            
-        }
-
-
+fn sample_token(logits: &[f32], config: &SamplingConfig, rng: &mut StdRng) -> u32 {
+    // if temp == 0 that means we want to do greedy sampling, so we can just take
+    // the argmax of the logits.
+    if config.temperature == 0.0 {
+        return logits
+            .iter()
+            .enumerate()
+            .max_by(|(_, left), (_, right)| left.total_cmp(right))
+            .map(|(id, _)| id as u32)
+            .expect("model vocabulary is non-empty");
     }
 
+    // Apply temperature scaling to logits, then softmax. Subtracting the maximum
+    // before exponentiation keeps the calculation numerically stable.
+    let max_logit = logits.iter().copied().fold(f32::NEG_INFINITY, f32::max);
+    let mut candidates: Vec<(usize, f32)> = logits
+        .iter()
+        .enumerate()
+        .map(|(id, &logit)| (id, ((logit / config.temperature) - max_logit).exp()))
+        .collect();
+    let normalization: f32 = candidates.iter().map(|(_, weight)| weight).sum();
+    for (_, weight) in &mut candidates {
+        *weight /= normalization;
+    }
 
+    // Sort by descending probability score before applying top-k and top-p.
+    candidates.sort_by(|(_, left), (_, right)| right.total_cmp(left));
+    // Applying top-k: retain only the k highest-probability token IDs.
+    if config.top_k > 0 {
+        candidates.truncate(config.top_k.min(candidates.len()));
+    }
+    // Applying top-p: retain the smallest prefix whose cumulative probability
+    // reaches top_p.
+    if config.top_p > 0.0 && config.top_p < 1.0 {
+        let mut cumulative = 0.0;
+        let cutoff = candidates
+            .iter()
+            .position(|(_, probability)| {
+                cumulative += probability;
+                cumulative >= config.top_p
+            })
+            .map_or(candidates.len(), |index| index + 1);
+        candidates.truncate(cutoff);
+    }
 
+    let filtered_sum: f32 = candidates.iter().map(|(_, probability)| probability).sum();
+    let threshold = rng.random_range(0.0..filtered_sum);
+    let mut cumulative = 0.0;
+    for (id, probability) in candidates {
+        cumulative += probability;
+        if threshold <= cumulative {
+            return id as u32;
+        }
+    }
+    unreachable!("sampling candidates are non-empty and have positive probability")
+}
 
+fn main() -> anyhow::Result<()> {
+    // The Candle revision pinned by this project has no CUDA RMSNorm implementation.
+    let device = Device::Cpu;
+    // Setup repo and API connection to the model.
+    let repo_id = "TinyLlama/TinyLlama-1.1B-Chat-v1.0";
+    let repo = ApiBuilder::new()
+        .build()?
+        .repo(hf_hub::Repo::new(repo_id.to_owned(), hf_hub::RepoType::Model));
 
+    // Get the model config, tokenizer, and weights from the repository.
+    let config_file = std::fs::File::open(repo.get("config.json")?)?;
+    let config_file: LlamaConfig = serde_json::from_reader(config_file)?;
+    let config: Config = config_file.into_config(false);
+    let tokenizer = Tokenizer::from_file(repo.get("tokenizer.json")?)
+        .map_err(|error| anyhow::anyhow!("tokenizer loading failed: {error}"))?;
+    let weights_path = repo.get("model.safetensors")?;
+    let weights = unsafe {
+        VarBuilder::from_mmaped_safetensors(&[weights_path], DType::F32, &device)?
+    };
+    let model = Llama::load(weights, &config)?;
 
+    let prompt = "Hey wass good";
+    let max_new_tokens = 20;
+    // Identify when to stop generation: an end-of-sequence token or a maximum
+    // token budget.
+    let sampling = SamplingConfig {
+        // Applies softmax scaling: logits / temperature. Higher values add randomness.
+        temperature: 0.7,
+        // Retains the k highest-probability tokens.
+        top_k: 50,
+        // Retains the smallest probability mass whose cumulative value reaches p.
+        top_p: 0.9,
+        // Makes sampling deterministic for this request.
+        seed: 42,
+    };
+    let eos_token_id = match config.eos_token_id.as_ref() {
+        Some(LlamaEosToks::Single(id)) => *id,
+        Some(LlamaEosToks::Multiple(ids)) => ids[0],
+        None => 2,
+    };
+    let mut input_ids = tokenizer.encode(prompt, true)
+        .map_err(|error| anyhow::anyhow!("tokenization failed: {error}"))?
+        .get_ids()
+        .to_vec();
+    let prompt_len = input_ids.len();
+    let mut cache = Cache::new(true, DType::F32, &config, &device)?;
+    // We use a seeded random-number generator to make sampling deterministic per request.
+    let mut rng = StdRng::seed_from_u64(sampling.seed);
+    let generation_started = Instant::now();
+    let mut first_token_time = None;
+    let mut inter_token_latencies = Vec::new();
+    let mut step_started = Instant::now();
 
+    print!("{prompt}");
+    std::io::stdout().flush()?;
+    // Now that everything is tokenized, begin the inference loop.
+    for step in 0..max_new_tokens {
+        // Prefill processes the whole prompt. Each decode iteration only feeds the last
+        // token because the cache already stores the preceding key/value states.
+        let context_ids = if step == 0 { &input_ids[..] } else { &input_ids[input_ids.len() - 1..] };
+        let input = Tensor::from_slice(context_ids, (1, context_ids.len()), &device)?;
+        let index_pos = if step == 0 { 0 } else { input_ids.len() - 1 };
+        // Forward pass through the model. Candle's Llama forward returns logits for
+        // the last sequence position, with shape (batch_size, vocab_size).
+        let logits = model.forward(&input, index_pos, &mut cache)?;
+        let logits = logits.to_vec2::<f32>()?;
+        let next_token_id = sample_token(&logits[0], &sampling, &mut rng);
+
+        let elapsed = step_started.elapsed();
+        if step == 0 {
+            first_token_time = Some(generation_started.elapsed());
+        } else {
+            inter_token_latencies.push(elapsed);
+        }
+        if next_token_id == eos_token_id {
+            break;
+        }
+
+        input_ids.push(next_token_id);
+        let fragment = tokenizer.decode(&[next_token_id], false)
+            .map_err(|error| anyhow::anyhow!("token decoding failed: {error}"))?;
+        print!("{fragment}");
+        std::io::stdout().flush()?;
+        step_started = Instant::now();
+    }
+    println!();
+
+    if let Some(ttft) = first_token_time {
+        println!("Time to first token: {ttft:.2?}");
+    }
+    let generated_tokens = input_ids.len() - prompt_len;
+    if !inter_token_latencies.is_empty() {
+        let total: Duration = inter_token_latencies.iter().sum();
+        let average = total.as_secs_f64() / inter_token_latencies.len() as f64;
+        println!("Average inter-token latency: {:.2?}", Duration::from_secs_f64(average));
+        println!("Generation throughput: {:.2} tokens/sec", 1.0 / average);
+    }
+    println!("Tokens generated: {generated_tokens}");
     Ok(())
 }

@@ -26,6 +26,27 @@ use {
 
 // in this, it observes that weight matrices are not uniform: certain channels process highly critical salient features in the activation distribution. it then applies a scale factor to protect those channels, while quantizing the rest of the matrix to int4 for a high speed kernel.
 
+fn calculate_kv_cache_bytes(
+    num_layers: usize,
+    num_kv_heads: usize,
+    head_dim: usize,
+    context_length: usize,
+    bytes_per_element: usize,
+) -> usize {
+    // Each token needs one key and one value entry for every layer and kv head.
+    2 * num_layers * num_kv_heads * head_dim * context_length * bytes_per_element
+}
+
+fn gguf_u32(content: &gguf_file::Content, key: &str) -> anyhow::Result<usize> {
+    content
+        .metadata
+        .get(key)
+        .ok_or_else(|| anyhow::anyhow!("GGUF metadata is missing {key}"))?
+        .to_u32()
+        .map(|value| value as usize)
+        .map_err(|error| anyhow::anyhow!("could not read GGUF metadata {key}: {error}"))
+}
+
 fn main() -> anyhow::Result<()> {
     let device = Device::Cpu;
     let api = ApiBuilder::new().build()?;
@@ -63,6 +84,36 @@ fn main() -> anyhow::Result<()> {
     // 3. use candle's gguf content reader to read the file metadata
     // 4. initialize candle's quantized llama model weights from that reader
     let gguf_container = gguf_file::Content::read(&mut gguf_file)?;
+
+    // gguf weight quantization only makes the stored weights smaller. the key and
+    // value tensors created during generation are a different memory pool.
+    let num_layers = gguf_u32(&gguf_container, "llama.block_count")?;
+    let num_kv_heads = gguf_u32(&gguf_container, "llama.attention.head_count_kv")?;
+    let hidden_size = gguf_u32(&gguf_container, "llama.embedding_length")?;
+    let num_attention_heads = gguf_u32(&gguf_container, "llama.attention.head_count")?;
+    let context_length = gguf_u32(&gguf_container, "llama.context_length")?;
+    let head_dim = hidden_size / num_attention_heads;
+    let fp32_kv_bytes = calculate_kv_cache_bytes(
+        num_layers,
+        num_kv_heads,
+        head_dim,
+        context_length,
+        4,
+    );
+    let int8_kv_bytes = calculate_kv_cache_bytes(
+        num_layers,
+        num_kv_heads,
+        head_dim,
+        context_length,
+        1,
+    );
+
+    println!("\n--- Weight-Only Quantization vs KV Cache Quantization ---");
+    println!("GGUF weights: Q4_K_M is approximately 4-bit on disk.");
+    println!("Runtime KV cache at {context_length} tokens (FP32): {:.2} MB", fp32_kv_bytes as f64 / 1_048_576.0);
+    println!("The same KV cache as INT8, if a runtime supports it: {:.2} MB", int8_kv_bytes as f64 / 1_048_576.0);
+    println!("so weight-only quantization does not automatically quantize the growing kv cache.");
+
     let mut model = ModelWeights::from_gguf(gguf_container, &mut gguf_file, &device)?;
 
     // now we do standard forward
@@ -125,6 +176,13 @@ fn main() -> anyhow::Result<()> {
     }
     println!();
 
+    // decoding the whole generated sequence after streaming is useful for checking
+    // quality, because the tokenizer can join subword pieces using its full context.
+    let completion = tokenizer.decode(&input_ids[prompt_len..], false)
+        .map_err(|error| anyhow::anyhow!("Completion decoding failed: {error}"))?;
+    println!("Generated completion: {completion:?}");
+
+    println!("\n--- Performance Tradeoff Assessment ---");
     if let Some(ttft) = time_to_first_token {
         println!("Time to First Token (TTFT): {ttft:.2?}");
     }
@@ -136,5 +194,10 @@ fn main() -> anyhow::Result<()> {
         println!("Generation Throughput Rate: {:.2} tokens/sec", 1.0 / average_latency);
     }
     println!("Tokens Generated Within Budget: {generated_tokens}");
+
+    // now lets run the same prompt, max tokens, sampler settings, and device with an FP16/BF16 baseline and compare both throughput and the generated completion quality.
+
+
+
     Ok(())
 }

@@ -95,8 +95,7 @@ fn main() -> anyhow::Result<()> {
     // 1. run loop till max tokens
     // 2. convert context ids to tensors
     // 3. pass input tensors to model forward loop
-    // 4. get logits
-    // 5. use candle sample function 
+    // 4. get logits and let candle sample the next token
     print!("{prompt}");
     std::io::stdout().flush()?;
     for index in 0..max_tokens {
@@ -137,14 +136,5 @@ fn main() -> anyhow::Result<()> {
         println!("Generation Throughput Rate: {:.2} tokens/sec", 1.0 / average_latency);
     }
     println!("Tokens Generated Within Budget: {generated_tokens}");
-
-    // Time to First Token (TTFT): 32.52s
-    // Average Inter-Token Latency: 4.62s/token
-    // Generation Throughput Rate: 0.22 tokens/sec
-    // Tokens Generated Within Budget: 20
-
-    // if u notice, this is way faster on my laptop than from previous files we've been running it on lol
-
-   
     Ok(())
 }

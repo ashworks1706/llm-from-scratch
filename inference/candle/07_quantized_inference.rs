@@ -266,5 +266,16 @@ fn main() -> anyhow::Result<()> {
         println!("Q4_K_M / FP16-BF16 throughput ratio: {:.2}x", baseline / quantized);
     }
 
+
+    // (FP16/BF16) RAM required: 2.20 GB
+    // (Q4_K_M) File Size on disk:  0.67 GB
+    // VRAM Savings Dividend:  69.60% reduction
+    // Runtime KV cache at 2048 tokens (FP32): 88.00 MB
+    // The same KV cache as INT8, if a runtime supports it: 22.00 MB
+    // Generated completion: "I'm happy for you, man! I'm happy for you! I'm so"
+    // Q4_K_M Time to First Token (TTFT): 31.96s
+    // Q4_K_M Generation Throughput Rate: 0.22 tokens/sec
+    // FP16/BF16 completion: ""
+    // FP16/BF16 Time to First Token (TTFT): 22.01s
     Ok(())
 }

@@ -1,13 +1,15 @@
 #[allow(unused_imports)]
 use {
-    candle_core::{Device, IndexOp, Tensor},
+    candle_core::{DType, Device, IndexOp, Tensor},
     candle_core::quantized::gguf_file,
+    candle_nn::VarBuilder,
     candle_transformers::{
         generation::{LogitsProcessor, Sampling},
+        models::llama::{Cache, Config, Llama, LlamaConfig},
         models::quantized_llama::ModelWeights,
     },
     hf_hub::api::sync::ApiBuilder,
-    std::{io::Write, time::{Duration, Instant}},
+    std::time::{Duration, Instant},
     tokenizers::Tokenizer,
 };
 
@@ -108,11 +110,8 @@ fn main() -> anyhow::Result<()> {
         1,
     );
 
-    println!("\n--- Weight-Only Quantization vs KV Cache Quantization ---");
-    println!("GGUF weights: Q4_K_M is approximately 4-bit on disk.");
     println!("Runtime KV cache at {context_length} tokens (FP32): {:.2} MB", fp32_kv_bytes as f64 / 1_048_576.0);
     println!("The same KV cache as INT8, if a runtime supports it: {:.2} MB", int8_kv_bytes as f64 / 1_048_576.0);
-    println!("so weight-only quantization does not automatically quantize the growing kv cache.");
 
     let mut model = ModelWeights::from_gguf(gguf_container, &mut gguf_file, &device)?;
 
@@ -147,8 +146,6 @@ fn main() -> anyhow::Result<()> {
     // 2. convert context ids to tensors
     // 3. pass input tensors to model forward loop
     // 4. get logits and let candle sample the next token
-    print!("{prompt}");
-    std::io::stdout().flush()?;
     for index in 0..max_tokens {
         // prefill sends the whole prompt. decode only sends the most recent token because the model already owns the earlier kv cache entries.
         let context_ids = if index == 0 { &input_ids[..] } else { &input_ids[input_ids.len() - 1..] };
@@ -168,13 +165,8 @@ fn main() -> anyhow::Result<()> {
         }
 
         input_ids.push(next_token);
-        let token_text = tokenizer.decode(&[next_token], false)
-            .map_err(|error| anyhow::anyhow!("Token decoding failed: {error}"))?;
-        print!("{token_text}");
-        std::io::stdout().flush()?;
         step_start_time = Instant::now();
     }
-    println!();
 
     // decoding the whole generated sequence after streaming is useful for checking
     // quality, because the tokenizer can join subword pieces using its full context.
@@ -182,22 +174,97 @@ fn main() -> anyhow::Result<()> {
         .map_err(|error| anyhow::anyhow!("Completion decoding failed: {error}"))?;
     println!("Generated completion: {completion:?}");
 
-    println!("\n--- Performance Tradeoff Assessment ---");
     if let Some(ttft) = time_to_first_token {
-        println!("Time to First Token (TTFT): {ttft:.2?}");
+        println!("Q4_K_M Time to First Token (TTFT): {ttft:.2?}");
     }
-    let generated_tokens = input_ids.len() - prompt_len;
-    if !token_latency.is_empty() {
+    let quantized_average_latency = if !token_latency.is_empty() {
         let total_latency: Duration = token_latency.iter().sum();
         let average_latency = total_latency.as_secs_f64() / token_latency.len() as f64;
-        println!("Average Inter-Token Latency: {:.2?}/token", Duration::from_secs_f64(average_latency));
-        println!("Generation Throughput Rate: {:.2} tokens/sec", 1.0 / average_latency);
-    }
-    println!("Tokens Generated Within Budget: {generated_tokens}");
+        println!("Q4_K_M Generation Throughput Rate: {:.2} tokens/sec", 1.0 / average_latency);
+        Some(average_latency)
+    } else {
+        None
+    };
 
     // now lets run the same prompt, max tokens, sampler settings, and device with an FP16/BF16 baseline and compare both throughput and the generated completion quality.
+    // this baseline uses the original safetensors checkpoint instead of quantized GGUF weights.
+    let baseline_config_path = base_repo.get("config.json")?;
+    let baseline_config_file = std::fs::File::open(baseline_config_path)?;
+    let baseline_llama_config: LlamaConfig = serde_json::from_reader(baseline_config_file)?;
+    let baseline_config: Config = baseline_llama_config.into_config(false);
+    let baseline_weights_path = base_repo.get("model.safetensors")?;
 
+    // f16 cuts the original weight and kv cache storage to 2 bytes per element.
+    // this still is not a perfectly identical hardware benchmark: the GGUF model has
+    // quantized matrix kernels, while the safetensors model uses regular candle layers.
+    let baseline_dtype = DType::F16;
+    let baseline_weights = unsafe {
+        VarBuilder::from_mmaped_safetensors(&[baseline_weights_path], baseline_dtype, &device)?
+    };
+    let baseline_model = Llama::load(baseline_weights, &baseline_config)?;
+    let mut baseline_cache = Cache::new(true, baseline_dtype, &baseline_config, &device)?;
+    let mut baseline_input_ids = tokenizer.encode(prompt, true)
+        .map_err(|error| anyhow::anyhow!("Baseline tokenization failed: {error}"))?
+        .get_ids()
+        .to_vec();
+    let baseline_prompt_len = baseline_input_ids.len();
+    let mut baseline_sampler = LogitsProcessor::from_sampling(42, Sampling::TopKThenTopP {
+        temperature: 0.7,
+        k: 50,
+        p: 0.9,
+    });
 
+    let baseline_start_time = Instant::now();
+    let mut baseline_time_to_first_token = None;
+    let mut baseline_token_latency = Vec::new();
+    let mut baseline_step_start_time = Instant::now();
+
+    for index in 0..max_tokens {
+        // exactly like quantized decode: prefill the prompt once, then send one token at a time.
+        let context_ids = if index == 0 {
+            &baseline_input_ids[..]
+        } else {
+            &baseline_input_ids[baseline_input_ids.len() - 1..]
+        };
+        let input_tensors = Tensor::from_slice(context_ids, (1, context_ids.len()), &device)?;
+        let index_pos = if index == 0 { 0 } else { baseline_input_ids.len() - 1 };
+        let logits = baseline_model.forward(&input_tensors, index_pos, &mut baseline_cache)?;
+        let next_token = baseline_sampler.sample(&logits.i(0)?)?;
+
+        let step_time = baseline_step_start_time.elapsed();
+        if index == 0 {
+            baseline_time_to_first_token = Some(baseline_start_time.elapsed());
+        } else {
+            baseline_token_latency.push(step_time);
+        }
+        if next_token == eos_token_id {
+            break;
+        }
+
+        baseline_input_ids.push(next_token);
+        baseline_step_start_time = Instant::now();
+    }
+
+    let baseline_completion = tokenizer.decode(&baseline_input_ids[baseline_prompt_len..], false)
+        .map_err(|error| anyhow::anyhow!("Baseline completion decoding failed: {error}"))?;
+    println!("FP16/BF16 completion: {baseline_completion:?}");
+    if let Some(ttft) = baseline_time_to_first_token {
+        println!("FP16/BF16 Time to First Token (TTFT): {ttft:.2?}");
+    }
+    let baseline_average_latency = if !baseline_token_latency.is_empty() {
+        let total_latency: Duration = baseline_token_latency.iter().sum();
+        let average_latency = total_latency.as_secs_f64() / baseline_token_latency.len() as f64;
+        println!("FP16/BF16 Average Inter-Token Latency: {:.2?}/token", Duration::from_secs_f64(average_latency));
+        println!("FP16/BF16 Generation Throughput Rate: {:.2} tokens/sec", 1.0 / average_latency);
+        Some(average_latency)
+    } else {
+        None
+    };
+    if let (Some(quantized), Some(baseline)) = (quantized_average_latency, baseline_average_latency) {
+        println!("Q4_K_M throughput: {:.2} tokens/sec", 1.0 / quantized);
+        println!("FP16/BF16 throughput: {:.2} tokens/sec", 1.0 / baseline);
+        println!("Q4_K_M / FP16-BF16 throughput ratio: {:.2}x", baseline / quantized);
+    }
 
     Ok(())
 }

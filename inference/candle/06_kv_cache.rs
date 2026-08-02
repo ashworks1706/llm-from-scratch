@@ -9,7 +9,7 @@ use {
 };
 
 
-fn calculate_cache_bytes(
+fn calculate(
     num_layers: usize,
     num_kv_heads: usize,
     head_dim: usize,
@@ -45,13 +45,13 @@ fn main() -> anyhow::Result<()> {
 
     let fp_16_bytes = 2; // 16 bit precision float weight size
 
-    let mha_bytes = calculate_cache_bytes(config.num_hidden_layers, config.num_attention_heads, config.hidden_size/ config.num_attention_heads, context_budget, fp_16_bytes);
+    let mha_bytes = calculate(config.num_hidden_layers, config.num_attention_heads, config.hidden_size/ config.num_attention_heads, context_budget, fp_16_bytes);
     println!("MHA Setup (32 Q-Heads / 32 KV-Heads): {:.2} MB", mha_bytes as f64 / 1_048_576.0);
 
-    let gqa_bytes = calculate_cache_bytes(config.num_hidden_layers, config.num_key_value_heads, config.hidden_size / config.num_attention_heads, context_budget, fp_16_bytes);
+    let gqa_bytes = calculate(config.num_hidden_layers, config.num_key_value_heads, config.hidden_size / config.num_attention_heads, context_budget, fp_16_bytes);
     println!("GQA Setup (32 Q-Heads / 4 KV-Heads) : {:.2} MB (TinyLlama Active Profile)", gqa_bytes as f64 / 1_048_576.0);
 
-    let mqa_bytes = calculate_cache_bytes(config.num_hidden_layers, 1, config.hidden_size / config.num_attention_heads, context_budget, fp_16_bytes); // mqa shares one same kv head
+    let mqa_bytes = calculate(config.num_hidden_layers, 1, config.hidden_size / config.num_attention_heads, context_budget, fp_16_bytes); // mqa shares one same kv head
     println!("MQA Setup (32 Q-Heads / 1 KV-Head)  : {:.2} MB", mqa_bytes as f64 / 1_048_576.0);
 
     let mut cache = Cache::new(true, DType::F32, &config, &device)?;

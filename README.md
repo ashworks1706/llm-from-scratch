@@ -76,10 +76,7 @@ TODO -
 
 [ ] JEPA
 
-[ ] kernels
-
 [ ] DQN
-
 
 [ ] REINFORCE
 

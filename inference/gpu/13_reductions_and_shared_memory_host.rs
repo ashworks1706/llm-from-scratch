@@ -1,4 +1,4 @@
-// Rust host scaffold for 27_gptq_awq_kv_quantization.cu.
+// Rust host scaffold for 13_reductions_and_shared_memory.cu.
 // Keep CUDA source in the paired .cu file and use this file to compile, load,
 // launch, validate, and benchmark it through cudarc.
 

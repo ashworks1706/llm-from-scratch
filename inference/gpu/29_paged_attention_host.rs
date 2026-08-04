@@ -1,4 +1,4 @@
-// Rust host scaffold for 26_quantized_attention_kernel.cu.
+// Rust host scaffold for 29_paged_attention.cu.
 // Keep CUDA source in the paired .cu file and use this file to compile, load,
 // launch, validate, and benchmark it through cudarc.
 

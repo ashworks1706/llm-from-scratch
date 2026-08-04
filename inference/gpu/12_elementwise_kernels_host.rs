@@ -1,4 +1,4 @@
-// Rust host scaffold for 29_sparse_attention.cu.
+// Rust host scaffold for 12_elementwise_kernels.cu.
 // Keep CUDA source in the paired .cu file and use this file to compile, load,
 // launch, validate, and benchmark it through cudarc.
 

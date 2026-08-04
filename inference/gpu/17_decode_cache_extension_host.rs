@@ -1,4 +1,4 @@
-// Rust host scaffold for 18_decode_cache_extension.cu.
+// Rust host scaffold for 17_decode_cache_extension.cu.
 // Keep the experiment behind a narrow interface so Candle remains the model path.
 
 #[allow(unused_imports)]

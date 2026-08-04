@@ -1,4 +1,4 @@
-// Rust host scaffold for 23_flash_attention.cu.
+// Rust host scaffold for 31_gptq_awq_kv_quantization.cu.
 // Keep CUDA source in the paired .cu file and use this file to compile, load,
 // launch, validate, and benchmark it through cudarc.
 

@@ -56,66 +56,86 @@ path = "candle/07_quantized_inference.rs"
 [[example]]
 name = "08_profiling_and_extension_points"
 path = "candle/08_profiling_and_extension_points.rs"
+# --- gpu ground-up track ---
 [[example]]
-name = "09_request_lifecycle"
-path = "systems/09_request_lifecycle.rs"
+name = "09_gpu_execution_model_host"
+path = "gpu/09_gpu_execution_model_host.rs"
 [[example]]
-name = "10_batching_and_streaming"
-path = "systems/10_batching_and_streaming.rs"
+name = "10_memory_hierarchy_and_transfers"
+path = "gpu/10_memory_hierarchy_and_transfers.rs"
 [[example]]
-name = "11_prefill_decode_scheduler"
-path = "systems/11_prefill_decode_scheduler.rs"
+name = "11_cudarc_runtime"
+path = "gpu/11_cudarc_runtime.rs"
 [[example]]
-name = "12_kv_cache_policy"
-path = "systems/12_kv_cache_policy.rs"
+name = "12_elementwise_kernels_host"
+path = "gpu/12_elementwise_kernels_host.rs"
 [[example]]
-name = "13_server_and_api"
-path = "systems/13_server_and_api.rs"
+name = "13_reductions_and_shared_memory_host"
+path = "gpu/13_reductions_and_shared_memory_host.rs"
 [[example]]
-name = "14_metrics_benchmarks_and_reliability"
-path = "systems/14_metrics_benchmarks_and_reliability.rs"
+name = "14_tiled_matmul_and_coalescing_host"
+path = "gpu/14_tiled_matmul_and_coalescing_host.rs"
 [[example]]
-name = "15_cudarc_runtime"
-path = "gpu/15_cudarc_runtime.rs"
+name = "15_cublas_integration"
+path = "gpu/15_cublas_integration.rs"
 [[example]]
-name = "16_cublas_integration"
-path = "gpu/16_cublas_integration.rs"
+name = "16_custom_cuda_operation_host"
+path = "gpu/16_custom_cuda_operation_host.rs"
 [[example]]
-name = "17_custom_cuda_operation_host"
-path = "gpu/17_custom_cuda_operation_host.rs"
+name = "17_decode_cache_extension_host"
+path = "gpu/17_decode_cache_extension_host.rs"
 [[example]]
-name = "18_decode_cache_extension_host"
-path = "gpu/18_decode_cache_extension_host.rs"
+name = "18_kernel_profiling"
+path = "gpu/18_kernel_profiling.rs"
 [[example]]
-name = "19_kernel_profiling"
-path = "gpu/19_kernel_profiling.rs"
+name = "19_nccl_and_multi_gpu"
+path = "gpu/19_nccl_and_multi_gpu.rs"
+
+# --- systems track ---
 [[example]]
-name = "20_nccl_and_multi_gpu"
-path = "gpu/20_nccl_and_multi_gpu.rs"
+name = "20_request_lifecycle"
+path = "systems/20_request_lifecycle.rs"
 [[example]]
-name = "23_flash_attention_host"
-path = "gpu/23_flash_attention_host.rs"
+name = "21_batching_and_streaming"
+path = "systems/21_batching_and_streaming.rs"
 [[example]]
-name = "24_paged_attention_host"
-path = "gpu/24_paged_attention_host.rs"
+name = "22_prefill_decode_scheduler"
+path = "systems/22_prefill_decode_scheduler.rs"
 [[example]]
-name = "25_speculative_decoding"
-path = "systems/25_speculative_decoding.rs"
+name = "23_kv_cache_policy"
+path = "systems/23_kv_cache_policy.rs"
 [[example]]
-name = "26_quantized_attention_kernel_host"
-path = "gpu/26_quantized_attention_kernel_host.rs"
+name = "24_server_and_api"
+path = "systems/24_server_and_api.rs"
 [[example]]
-name = "27_gptq_awq_kv_quantization_host"
-path = "gpu/27_gptq_awq_kv_quantization_host.rs"
+name = "25_metrics_benchmarks_and_reliability"
+path = "systems/25_metrics_benchmarks_and_reliability.rs"
+
+# --- advanced kernels and serving (triton 26-27 are python, not cargo examples) ---
 [[example]]
-name = "28_prefix_caching"
-path = "systems/28_prefix_caching.rs"
+name = "28_flash_attention_host"
+path = "gpu/28_flash_attention_host.rs"
 [[example]]
-name = "29_sparse_attention_host"
-path = "gpu/29_sparse_attention_host.rs"
+name = "29_paged_attention_host"
+path = "gpu/29_paged_attention_host.rs"
 [[example]]
-name = "30_disaggregated_serving"
-path = "systems/30_disaggregated_serving.rs"
+name = "30_quantized_attention_kernel_host"
+path = "gpu/30_quantized_attention_kernel_host.rs"
 [[example]]
-name = "31_moe_inference_serving"
-path = "systems/31_moe_inference_serving.rs"
+name = "31_gptq_awq_kv_quantization_host"
+path = "gpu/31_gptq_awq_kv_quantization_host.rs"
+[[example]]
+name = "32_sparse_attention_host"
+path = "gpu/32_sparse_attention_host.rs"
+[[example]]
+name = "33_speculative_decoding"
+path = "systems/33_speculative_decoding.rs"
+[[example]]
+name = "34_prefix_caching"
+path = "systems/34_prefix_caching.rs"
+[[example]]
+name = "35_disaggregated_serving"
+path = "systems/35_disaggregated_serving.rs"
+[[example]]
+name = "36_moe_inference_serving"
+path = "systems/36_moe_inference_serving.rs"

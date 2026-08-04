@@ -1,14 +1,16 @@
-this folder studies practical llm inference engineering in rust. the goal is not to rebuild an entire tensor framework or production runtime from scratch. the goal is to learn how real model execution becomes a reliable, measurable inference system.
+this folder studies practical llm inference engineering in rust. the goal is not to rebuild an entire tensor framework or production runtime from scratch. the goal is to learn how real model execution becomes a reliable, measurable inference system, and to learn gpu programming from the ground up along the way.
 
 the python and pytorch files in reference remain the mathematical, profiling and correctness references. they explain generation, quantization, batching and paged kv cache behavior without making rust or gpu details the first obstacle.
 
-candle is the main execution layer. it gives a rust native way to load model artifacts, run real transformer models on cpu or cuda, use quantized weights and inspect a mature framework. the candle  focus on integrating model execution correctly instead of recreating every tensor operation by hand.
+candle is the main execution layer. it gives a rust native way to load model artifacts, run real transformer models on cpu or cuda, use quantized weights and inspect a mature framework. the candle files focus on integrating model execution correctly instead of recreating every tensor operation by hand.
 
-systems contains the inference engineering work around the model: request state, prefill and decode scheduling, kv cache policy, continuous batching, streaming, metrics, overload handling, speculative decoding, prefix/radix caching, prefill-decode disaggregation and mixture-of-experts serving. this is the required path for becoming useful at inference infrastructure work.
+gpu is the ground-up cuda and cudarc track. it starts from the execution model (threads, blocks, warps), the memory hierarchy and the first hand-written kernels (elementwise, reductions, tiled matmul), then moves to the cudarc runtime, cuBLAS, targeted custom kernels, profiling and NCCL. this is where the low-level gpu skill is actually built, so it comes right after candle rather than being treated as an optional extension track. the later deep dives (flash attention, paged attention, a fused quantized attention kernel, GPTQ/AWQ/kv-cache quantization kernels, and sparse attention) build on those fundamentals.
 
-gpu is a smaller cudarc and cuda track. it covers device memory, streams, cuBLAS, targeted custom kernels, profiling, NCCL concepts, and, as a deliberate deep dive beyond the original scope, hand-written flash attention, paged attention, a fused quantized attention kernel, GPTQ/AWQ/kv-cache quantization kernels, and sparse (sliding-window/block-sparse) attention. writing these in raw CUDA is significantly harder than a targeted single-op kernel like RMSNorm or RoPE; that difficulty is the point of doing it here instead of in Triton or through a framework's tensor ops.
+systems contains the inference engineering work around the model: request state, prefill and decode scheduling, kv cache policy, continuous batching, streaming, metrics, overload handling, speculative decoding, prefix/radix caching, prefill-decode disaggregation and mixture-of-experts serving. this is the required path for becoming useful at inference infrastructure work. it wraps candle's model and cache types rather than reimplementing them.
 
 triton is a small kernel literacy track. it teaches how to read and write a few modern GPU kernels in the Python-based Triton language so that production inference projects such as vLLM are easier to understand. it does not replace CUDA or the Rust runtime.
+
+the intended order is candle (01-08), then the gpu ground-up track (09-19), then the systems track (20-25), then the advanced kernels and serving topics (26-36). the numbers are a suggested learning order, not a hard dependency between every file.
 
 each numbered file is registered as a runnable scaffold. it contains its learning objectives, the imports you will need, and a small entry point; it does not implement the file for you yet.
 
@@ -18,32 +20,43 @@ run a file from this directory:
 # pytorch reference
 python reference/01_pytorch_inference_baseline.py
 
-# candle 
+# candle
 cargo run --example 01_inference_system
 
-# rust systems 
-cargo run --example 09_request_lifecycle
-cargo run --example 25_speculative_decoding
-cargo run --example 28_prefix_caching
-cargo run --example 30_disaggregated_serving
-cargo run --example 31_moe_inference_serving
+# gpu ground-up: execution model, memory, first kernels
+cargo run --example 09_gpu_execution_model_host
+cargo run --example 10_memory_hierarchy_and_transfers
+cargo run --example 11_cudarc_runtime
+cargo run --example 12_elementwise_kernels_host
+cargo run --example 13_reductions_and_shared_memory_host
+cargo run --example 14_tiled_matmul_and_coalescing_host
 
-# cudarc and cuda-host 
-cargo run --example 15_cudarc_runtime
-cargo run --example 17_custom_cuda_operation_host
+# gpu: vendor libraries, custom kernels, profiling, multi-gpu
+cargo run --example 15_cublas_integration
+cargo run --example 16_custom_cuda_operation_host
+cargo run --example 18_kernel_profiling
+cargo run --example 19_nccl_and_multi_gpu
 
-# NCCL concepts
-cargo run --example 20_nccl_and_multi_gpu
+# rust systems
+cargo run --example 20_request_lifecycle
+cargo run --example 24_server_and_api
+cargo run --example 25_metrics_benchmarks_and_reliability
 
-# hand-written attention and quantized kernels
-cargo run --example 23_flash_attention_host
-cargo run --example 24_paged_attention_host
-cargo run --example 26_quantized_attention_kernel_host
-cargo run --example 27_gptq_awq_kv_quantization_host
-cargo run --example 29_sparse_attention_host
+# advanced hand-written attention and quantized kernels
+cargo run --example 28_flash_attention_host
+cargo run --example 29_paged_attention_host
+cargo run --example 30_quantized_attention_kernel_host
+cargo run --example 31_gptq_awq_kv_quantization_host
+cargo run --example 32_sparse_attention_host
 
-# triton 
-python triton/21_triton_kernel_basics.py
+# advanced serving
+cargo run --example 33_speculative_decoding
+cargo run --example 34_prefix_caching
+cargo run --example 35_disaggregated_serving
+cargo run --example 36_moe_inference_serving
+
+# triton
+python triton/26_triton_kernel_basics.py
 ```
 
-the paired `.cu` files hold CUDA kernel experiments. their Rust host scaffolds load, validate, and benchmark them through cudarc. implement one file at a time, benchmark it, write down what changed, and compare it against the reference behavior before moving forward.
+the paired `.cu` files hold CUDA kernel source. their Rust host scaffolds load, validate, and benchmark them through cudarc. implement one file at a time, benchmark it, write down what changed, and compare it against the reference behavior before moving forward.

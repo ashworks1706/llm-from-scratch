@@ -112,21 +112,43 @@ int main() {
     // the <<< >>> syntax is used to launch a kernel on the GPU, and it takes two arguments: 
     // the number of blocks and the number of threads per block
     kernel<<<number_of_blocks, threads_per_block>>>(d_output);
-    
+
+    // the launch above is async, the cpu keeps going while the gpu works, so before we read
+    // the results we wait for the gpu to actually finish with cudaDeviceSynchronize
+    cudaDeviceSynchronize();
+
+    // the kernel wrote into d_output which lives on the gpu, the cpu can't read that directly,
+    // so we copy it back into a normal host array with cudaMemcpy (device -> host direction)
+    int h_output[1024];
+    cudaMemcpy(h_output, d_output, sizeof(int) * 1024, cudaMemcpyDeviceToHost);
+
+    // print the first few so we can see each thread wrote its own global index, idx == value
+    for (int i = 0; i < 8; i++) {
+        printf("thread %d wrote %d\n", i, h_output[i]);
+    }
+
+    // we own the gpu memory we asked for, so we free it, just like free() for malloc on the cpu
+    cudaFree(d_output);
+
     // now i'll go over to 09_gpu_execution_model_host.rs and setup host there to use cudarc to run this file
 }
 
 
-// now we execute this file with cmd: 
-// nvcc 09_gpu_execution_model.cu -o 09_gpu_execution_model 
+// now we execute this file with cmd:
+// nvcc 09_gpu_execution_model.cu -o 09_gpu_execution_model
+//
+// on my  machine the default gcc (16) is newer than what cuda 13.2's nvcc supports (up to 15),
+// so nvcc rejects it. we point nvcc at the installed g++-15 as the host compiler instead:
+// nvcc -ccbin g++-15 09_gpu_execution_model.cu -o 09_gpu_execution_model
 
-
-// LEARNING OBJECTIVES:
-// - Compute a global thread index from threadIdx, blockIdx and blockDim
-// - Understand warp-synchronous execution and why branch divergence costs throughput
-// - Choose block and grid dimensions for a 1D (and later 2D) problem
-// - See how one kernel body runs across thousands of threads at once
-// - Write each thread's global index into an output buffer to make the mapping visible
-
-
+// 󰪢 0s 󰜥 󰉋  ••/llm-from-scratch/inference/gpu 󰜥 󰘬 main 
+//   ./09_gpu_execution_model
+// thread 0 wrote 0
+// thread 1 wrote 1
+// thread 2 wrote 2
+// thread 3 wrote 3
+// thread 4 wrote 4
+// thread 5 wrote 5
+// thread 6 wrote 6
+// thread 7 wrote 7
 

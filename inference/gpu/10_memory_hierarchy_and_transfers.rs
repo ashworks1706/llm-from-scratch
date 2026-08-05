@@ -1,10 +1,12 @@
 // we can break it down to number of steps when we're dealing with host side :
 // 1. create cuda context 
 // 2. create stream of gpu workers 
-// 3. allocate memory on device
-// 4. copy data from host to device
-// 5. launch kernel
-// 6. copy data from device to host
+// 3. compile kernel source code to ctx
+// 4. load kernel function from ctx
+// 5. allocate memory on device
+// 6. copy data from host to device
+// 7. launch kernel
+// 8. copy data from device to host
 
 // on kernel side:
 // 1. get thread index and block index
@@ -32,6 +34,8 @@ fn main() -> anyhow::Result<()> {
     let n = 10_000_000;
     let mut h_data = vec![0f32; n]; // this creates a pageable host buffer, which the OS
     // can swap out, so the driver has to stage it through a temp buffer.
+    // vec![0f32; n] is a heap allocation, which is pageable. it creates a buffer of n f32s, all
+    // initialized to 0.0. the OS can move it around in memory, so the GPU can't access it directly.
 
     // what does pageable mean? it means the OS can move it around in memory, so the GPU can't
     // access it directly.
@@ -48,7 +52,7 @@ fn main() -> anyhow::Result<()> {
     let end = ctx.new_event(Some(CUevent_flags::CU_EVENT_DEFAULT))?;
     start.record(&stream)?;
     let mut d_data = stream.alloc_zeros::<f32>(n)?;
-    stream.memcpy_htod(&mut d_data, &h_data)?;
+    stream.memcpy_htod(&mut d_data, &h_data[..])?;
     end.record(&stream)?;
     end.synchronize()?;
     let elapsed_ms = start.elapsed_ms(&end)?;

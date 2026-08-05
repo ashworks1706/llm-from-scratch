@@ -3,10 +3,6 @@
 use {cudarc::driver::{CudaContext, LaunchConfig, PushKernelArg}, cudarc::nvrtc::compile_ptx};
 use {std::sync::Arc};
 
-// nvrtc compiles *device* code only: it can't handle the host main(), the
-// #include <stdio.h>, or the <<<>>> launch in 09_gpu_execution_model.cu. so we
-// point it at 09_gpu_execution_model_kernel.cu, the device-only twin of that
-// file, pulled in at compile time as a string.
 const KERNEL_SRC: &str = include_str!("09_gpu_execution_model_kernel.cu");
 
 fn main() -> anyhow::Result<()> {

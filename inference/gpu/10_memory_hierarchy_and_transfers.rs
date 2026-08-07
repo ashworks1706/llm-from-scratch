@@ -303,8 +303,6 @@ fn main() -> anyhow::Result<()> {
     // if the cpu work takes longer than the gpu copy, the final wait might be almost zero because
     // the gpu already finished by the time the cpu reaches synchronize.
 
-    // now let's test reusing device allocation.
-    //
     // we already allocated d_data once near the start and reused it in every test.
     //
     // in a real inference loop, we don't want to allocate a new gpu buffer every iteration because

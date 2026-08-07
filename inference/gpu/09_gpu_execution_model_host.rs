@@ -3,6 +3,7 @@
 use {cudarc::driver::{CudaContext, LaunchConfig, PushKernelArg}, cudarc::nvrtc::compile_ptx};
 use {std::sync::Arc};
 
+// file, pulled in at compile time as a string.
 const KERNEL_SRC: &str = include_str!("09_gpu_execution_model_kernel.cu");
 
 fn main() -> anyhow::Result<()> {
@@ -59,7 +60,8 @@ fn main() -> anyhow::Result<()> {
 
     stream.synchronize()?; // this is like cudaDeviceSynchronize() in C/C++, it waits for the kernel
     // to finish 
-
+    // up until this line, all calclations live in VRAM isolated, we need to device to host copy
+    // this out 
     // copy the buffer back and see each thread's global index
     let host = stream.clone_dtoh(&d_output)?;
     println!("global thread indices: {host:?}");

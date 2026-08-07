@@ -13,9 +13,6 @@
 // 2. compute global index
 // 3. write to output buffer at global index
 
-// LEARNING OBJECTIVES:
-// - Initialize CUDA devices and streams from Rust through cudarc
-// - Allocate reusable device buffers with clear ownership
 // - Move data asynchronously between host and device memory
 // - Load PTX modules and launch a small targeted CUDA operation
 // - Use CUDA events to measure GPU work accurately
@@ -27,16 +24,16 @@ use std::sync::Arc;
 // we need to create cuda events to deal with timing of gpu work, because the cpu and gpu are
 // asynchronous. we can use cuda events to measure the time taken by gpu work accurately.
 #[allow(unused_imports)]
-use cudarc::driver::{CudaContext, CudaStream};
+use cudarc::driver::{CudaContext, CudaStream, PushKernelArg};
 use cudarc::{driver::LaunchConfig, nvrtc::compile_ptx};
 
-const SRC: &str = include_str!("11_cudarc_example.cu");
+const SRC: &str = include_str!("11_cudarc_runtime.cu");
 // we treat kernel src as lifetime borrow 
 
 fn main() -> anyhow::Result<()> {
     let ctx  = CudaContext::new(0)?;
 
-    let stream: Arc<CudaStream> = ctx.default_stream()?;
+    let stream: Arc<CudaStream> = ctx.default_stream();
 
     let ptx = compile_ptx(SRC)?;
     
@@ -60,7 +57,7 @@ fn main() -> anyhow::Result<()> {
 
  
     // assign memory for output slot of thread 
-    let mut d_output = stream.alloc_zeros::<i32>(total_elements as usize);      
+    let mut d_output = stream.alloc_zeros::<i32>(total_elements as usize)?;      
 
 
 

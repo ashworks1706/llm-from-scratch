@@ -100,12 +100,18 @@ int main() {
 
     // calculate the number of blocks and threads per block
     // we calculate this with the formula: 
-    // number of blocks = (number of threads + threads per block - 1) / threads per block
+    // normally there are 128, 256, 512 threads per block
+    // since gpu processes threads in groups of 32 as warps, if its not multiple of 32,
+    // we're wasting compute, 1024 is maximum threads possible per block
+    // number of threads = 128, 256, 512 
+    // number of blocks = (number of max threads + threads per block - 1) / threads per block
+    // grid size = total_elements / threads per block 
     // why this works? because we want to round up the number of blocks since we can't 
     // have a fraction of a block, and we want to make sure that we have enough blocks 
     // to cover all the threads.
     // the -1 is to make sure that we round up, because if we didn't have it, we would round down
     int threads_per_block = 256;
+
     int number_of_blocks = (1024 + threads_per_block - 1) / threads_per_block;
 
     // now we launch the kernel with the calculated number of blocks and threads per block

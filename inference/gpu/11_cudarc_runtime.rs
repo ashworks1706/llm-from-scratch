@@ -28,23 +28,55 @@ use std::sync::Arc;
 // asynchronous. we can use cuda events to measure the time taken by gpu work accurately.
 #[allow(unused_imports)]
 use cudarc::driver::{CudaContext, CudaStream};
+use cudarc::{driver::LaunchConfig, nvrtc::compile_ptx};
 
-fn move_data_to_gpu(){
-
-}
-
-fn move_data_to_cpu(){
-
-}
+const SRC: &str = include_str!("11_cudarc_example.cu");
+// we treat kernel src as lifetime borrow 
 
 fn main() -> anyhow::Result<()> {
-    let context : Arc<CudaContext> = CudaContext::new(0)?;
+    let ctx  = CudaContext::new(0)?;
 
+    let stream: Arc<CudaStream> = ctx.default_stream()?;
+
+    let ptx = compile_ptx(SRC)?;
     
-        
+    let module = ctx.load_module(ptx)?;
+
+    let f = module.load_function("whoami")?;
+
+   
+    // our sample input will be 1000 float elements 
+    let total_elements = 1000u32;
+
+    let threads_per_block: u32 = 128;
+    let grid_size = (1024 + threads_per_block - 1) / threads_per_block;
+    let shared_bytes = threads_per_block * std::mem::size_of::<f32>() as u32; 
     
+    let cfg = LaunchConfig{
+        grid_dim: (grid_size, 1, 1),
+        block_dim: (threads_per_block, 1, 1),
+        shared_mem_bytes : shared_bytes,
+    };
+
+ 
+    // assign memory for output slot of thread 
+    let mut d_output = stream.alloc_zeros::<i32>(total_elements as usize);      
 
 
-    
+
+    let mut builder = stream.launch_builder(&f);
+
+    builder.arg(&mut d_output);
+
+    unsafe {
+        builder.launch(cfg)?;
+    }
+
+    stream.synchronize()?;
+
+    let host = stream.clone_dtoh(&d_output)?;
+    println!("global thread indices : {host:?}");
+
+       
     Ok(())
 }

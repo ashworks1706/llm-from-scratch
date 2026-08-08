@@ -19,13 +19,15 @@
 // - Keep custom device management isolated from the Candle model path
 
 
-use std::sync::Arc;
+use std::{collections::HashSet, hash::Hash, sync::Arc};
 
+use candle_core::Device;
 // we need to create cuda events to deal with timing of gpu work, because the cpu and gpu are
 // asynchronous. we can use cuda events to measure the time taken by gpu work accurately.
 #[allow(unused_imports)]
 use cudarc::driver::{CudaContext, CudaStream, PushKernelArg};
 use cudarc::{driver::LaunchConfig, nvrtc::compile_ptx};
+use hf_hub::api::sync::ApiBuilder;
 
 const SRC: &str = include_str!("11_cudarc_runtime.cu");
 // we treat kernel src as lifetime borrow 
@@ -74,6 +76,49 @@ fn main() -> anyhow::Result<()> {
     let host = stream.clone_dtoh(&d_output)?;
     println!("global thread indices : {host:?}");
 
-       
+    println!("Kernels are working!");
+
+
+    // now let's load a model from candle, load the shards into here in the kernel! 
+    
+    let device = Device::cuda_if_available(0)?;
+
+    let token = std::env::var("HF_TOKEN")?;
+
+    let api = ApiBuilder::new().with_token(Some(token)).build()?;
+
+    let repo = api.repo(hf_hub::Repo::new("google/gemma-3-4b-pt".to_string(), hf_hub::RepoType::Model));
+    
+    let index_file = std::fs::File::open(repo.get("model.safetensors.index.json")?)?;  
+
+    let index_json: serde_json::Value= serde_json::from_reader(index_file)?;
+
+    let weight_files = index_json["weight_map"]
+    .as_object()
+    .ok_or_else(|| anyhow::anyhow!("Weights not found"))?;
+    // let pretty_json = serde_json::to_string_pretty(&weight_files).unwrap();
+
+
+    // println!("Loaded weight files... {}", pretty_json);
+
+
+    let mut unique_shards : HashSet<String>= std::collections::HashSet::new();
+
+    // unique_shards.insert(shard_file.as_str().unwrap().to_string());
+
+    for (tensor_name, shard_file) in weight_files {
+
+        // Extract the inner string value from the JSON element
+        if let Some(shard_str) = shard_file.as_str() {
+                unique_shards.insert(shard_str.to_string());
+            }
+    }
+
+    // Print the collected unique shards to verify
+    println!("Unique shards: {:?}", unique_shards);
+    
+
+
+
     Ok(())
 }

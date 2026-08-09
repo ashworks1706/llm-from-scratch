@@ -21,7 +21,7 @@
 
 use std::{collections::HashSet, hash::Hash, sync::Arc};
 
-use candle_core::Device;
+use candle_core::{Device, safetensors::MmapedSafetensors};
 // we need to create cuda events to deal with timing of gpu work, because the cpu and gpu are
 // asynchronous. we can use cuda events to measure the time taken by gpu work accurately.
 #[allow(unused_imports)]
@@ -118,6 +118,23 @@ fn main() -> anyhow::Result<()> {
     println!("Unique shards: {:?}", unique_shards);
     
 
+    // now lets load them with mmap 
+    let mut shard_mmaps = std::vec::Vec::new();
+    let mut shard_tensors = std::vec::Vec::new();
+    
+    for (_,shard_name) in unique_shards.iter().enumerate(){
+        let shard_path = repo.get(shard_name)?;  
+
+        let shard_mmap = unsafe {
+            MmapedSafetensors::new(&shard_path)? 
+        };
+
+        if let Ok(tensor) = 
+
+    };
+
+
+     
 
 
     Ok(())

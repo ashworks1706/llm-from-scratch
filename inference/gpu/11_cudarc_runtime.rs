@@ -13,10 +13,6 @@
 // 2. compute global index
 // 3. write to output buffer at global index
 
-// - Move data asynchronously between host and device memory
-// - Load PTX modules and launch a small targeted CUDA operation
-// - Use CUDA events to measure GPU work accurately
-// - Keep custom device management isolated from the Candle model path
 
 
 use std::{collections::HashSet, hash::Hash, sync::Arc};
@@ -116,25 +112,24 @@ fn main() -> anyhow::Result<()> {
 
     // Print the collected unique shards to verify
     println!("Unique shards: {:?}", unique_shards);
-    
 
-    // now lets load them with mmap 
     let mut shard_mmaps = std::vec::Vec::new();
-    let mut shard_tensors = std::vec::Vec::new();
-    
-    for (_,shard_name) in unique_shards.iter().enumerate(){
-        let shard_path = repo.get(shard_name)?;  
 
-        let shard_mmap = unsafe {
-            MmapedSafetensors::new(&shard_path)? 
+    for shard_name in &unique_shards{
+        let mmap = unsafe {
+            let shard_path = repo.get(shard_name)?;
+            let file = std::fs::File::open(repo.get(shard_name));
+
+            let mmap = unsafe{
+                memmap2::Mmap::map(&file);
+            };
+
+            shard_mmaps.push(mmap);
         };
-
-        if let Ok(tensor) = 
-
     };
+    println!("shardmmaps : {:#?}", shard_mmaps);
 
-
-     
+    
 
 
     Ok(())

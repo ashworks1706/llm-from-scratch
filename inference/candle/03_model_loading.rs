@@ -161,7 +161,7 @@ fn main() -> anyhow::Result<()> {
             break; 
         }
     }
-
+ 
     // Validate we successfully extracted it
     if let Some(loaded_tensor) = target_tensor {
         println!(

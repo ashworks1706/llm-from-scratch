@@ -15,7 +15,7 @@
 
 
 
-use std::{collections::HashSet, hash::Hash, sync::Arc};
+use std::{collections::{HashMap, HashSet}, fs::File, sync::Arc};
 
 use candle_core::{Device, safetensors::MmapedSafetensors};
 // we need to create cuda events to deal with timing of gpu work, because the cpu and gpu are
@@ -24,9 +24,18 @@ use candle_core::{Device, safetensors::MmapedSafetensors};
 use cudarc::driver::{CudaContext, CudaStream, PushKernelArg};
 use cudarc::{driver::LaunchConfig, nvrtc::compile_ptx};
 use hf_hub::api::sync::ApiBuilder;
+use memmap2::Mmap;
 
 const SRC: &str = include_str!("11_cudarc_runtime.cu");
 // we treat kernel src as lifetime borrow 
+//
+//
+
+
+fn prepare_host_slice
+    // When a model file (like a .safetensors file) is saved to disk or memory-mapped 
+    // into your RAM, its mathematical weight tensors are serialized as a flat sequence 
+    // of raw binary data
 
 fn main() -> anyhow::Result<()> {
     let ctx  = CudaContext::new(0)?;
@@ -98,39 +107,56 @@ fn main() -> anyhow::Result<()> {
     // println!("Loaded weight files... {}", pretty_json);
 
 
-    let mut unique_shards : HashSet<String>= std::collections::HashSet::new();
-
+    let mut unique_shards = vec![]; 
     // unique_shards.insert(shard_file.as_str().unwrap().to_string());
 
     for (tensor_name, shard_file) in weight_files {
 
         // Extract the inner string value from the JSON element
         if let Some(shard_str) = shard_file.as_str() {
-                unique_shards.insert(shard_str.to_string());
-            }
-    }
+            // Check if the shard is already in the unique_shards vector
+            if !unique_shards.contains(&shard_str.to_string()) {
+                unique_shards.push(shard_str.to_string());
+            };
+            };
+    };
 
     // Print the collected unique shards to verify
     println!("Unique shards: {:?}", unique_shards);
 
-    let mut shard_mmaps = std::vec::Vec::new();
+    let mut file_handles = Vec::new();
+    let mut shard_mmaps = Vec::new();
 
-    for shard_name in &unique_shards{
-        let mmap = unsafe {
-            let shard_path = repo.get(shard_name)?;
-            let file = std::fs::File::open(repo.get(shard_name));
+    for shard_name in &unique_shards {
+        let shard_path = repo.get(shard_name)?;
+        let file = File::open(&shard_path)?;
+        let mmap = unsafe { Mmap::map(&file)? };
+        
+        file_handles.push(file);
+        shard_mmaps.push(mmap);
+    }
 
-            let mmap = unsafe{
-                memmap2::Mmap::map(&file);
-            };
+    let mut all_tensors = HashMap::new();
 
-            shard_mmaps.push(mmap);
-        };
-    };
-    println!("shardmmaps : {:#?}", shard_mmaps);
+    let mut safetensors_objects = Vec::new();
 
-    
+    for mmap in &shard_mmaps {
+        let safetensor = safetensors::SafeTensors::deserialize(mmap)?;
+        safetensors_objects.push(safetensor);
+    }
+
+    for safetensor in &safetensors_objects {
+        for (name, view) in safetensor.tensors() {
+            all_tensors.insert(name.to_string(), view);
+        }
+    }
+
+    println!("Parsed metadata. Found {} total tensors across shards.", all_tensors.len());
+
+    // to smoothly convert safetensors to raw byte segments, we need to convert htem into contiguous
+    // typed array pointers 
 
 
+   
     Ok(())
 }

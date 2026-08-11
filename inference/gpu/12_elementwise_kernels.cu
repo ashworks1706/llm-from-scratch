@@ -7,3 +7,6 @@
 // - Keep global-memory access coalesced across each warp
 // - Match FP32 output against a CPU or Candle reference
 // - Benchmark effective memory bandwidth against the device peak
+
+
+#include 

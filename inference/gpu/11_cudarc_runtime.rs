@@ -17,22 +17,53 @@
 
 use std::{collections::{HashMap, HashSet}, fs::File, sync::Arc};
 
+use anyhow::Ok;
 use candle_core::{Device, safetensors::MmapedSafetensors};
 // we need to create cuda events to deal with timing of gpu work, because the cpu and gpu are
 // asynchronous. we can use cuda events to measure the time taken by gpu work accurately.
 #[allow(unused_imports)]
 use cudarc::driver::{CudaContext, CudaStream, PushKernelArg};
-use cudarc::{driver::LaunchConfig, nvrtc::compile_ptx};
+use cudarc::{driver::{CudaSlice, LaunchConfig}, nvrtc::compile_ptx};
 use hf_hub::api::sync::ApiBuilder;
 use memmap2::Mmap;
+use safetensors::tensor::TensorView;
+
+
+struct GpuTransformerBlock{
+    q_proj: CudaSlice<f32>,
+    k_proj: CudaSlice<f32>,
+    v_proj: CudaSlice<f32>,
+    o_proj: CudaSlice<f32>,
+    gate_proj: CudaSlice<f32>,
+    up_proj: CudaSlice<f32>,
+    down_proj: CudaSlice<f32>,
+    input_layernorm: CudaSlice<f32>,
+    post_attention_layernorm: CudaSlice<f32>,
+}
+
+
+struct GpuGemma{
+    embed_tokens: CudaSlice<f32>,
+    norm: CudaSlice<f32>,
+    layers: Vec<GpuTransformerBlock>,
+}
 
 const SRC: &str = include_str!("11_cudarc_runtime.cu");
 // we treat kernel src as lifetime borrow 
-//
-//
 
-
-fn prepare_host_slice
+// we want to turn a raw file buffer into native Rust floats without copying, this makes it faster
+// to load weights into the GPU 
+// function runs instantly (in 0 nanoseconds) because it doesn't do any mathematical 
+// processing or allocations. It changes the Rust compiler's understanding of the data 
+// structure, allowing you to stream those weights straight to your GPU without wasting a single 
+// byte of system memory
+fn prepare_host_slice<'a>(view: &'a TensorView<'a>)-> &'a [f32]{
+    let raw_bytes = view.data();
+    unsafe{
+        std::slice::from_raw_parts(raw_bytes.as_ptr() as *const f32, 
+        raw_bytes.len() / std::mem::size_of::<f32>())
+    }
+}
     // When a model file (like a .safetensors file) is saved to disk or memory-mapped 
     // into your RAM, its mathematical weight tensors are serialized as a flat sequence 
     // of raw binary data
@@ -156,6 +187,61 @@ fn main() -> anyhow::Result<()> {
     // to smoothly convert safetensors to raw byte segments, we need to convert htem into contiguous
     // typed array pointers 
 
+    // println!("All tenosrs: {:?}", all_tensors.keys());
+    // now we make a closure for laoding to gpu cuda slices 
+    let move_to_vram = |name : &str, stream_worker: &Arc<CudaStream>| -> anyhow::Result<CudaSlice<f32>>{
+        // Allocate structured GPU blocks with cudarc and copy data arrays from the 
+        // CPU host pointer memory address space down into VRAM pointers.
+        let view = all_tensors.get(name).ok_or_else(|| anyhow::anyhow!("missing exepceted model tensor"))?;
+        let host_slice = prepare_host_slice(view);
+        //println!("Host slice success.");
+        let mut d_buffer = stream_worker.alloc_zeros::<f32>(host_slice.len())?;
+        Ok(d_buffer)
+    };
+
+    let embed_tokens = move_to_vram("language_model.model.embed_tokens.weight", &stream)?;
+    let final_norm = move_to_vram("language_model.model.norm.weight", &stream)?;
+
+    println!("Embed tokens and norm weights moved to VRAM");
+
+    let num_layers = 26;
+    let mut layers = Vec::with_capacity(num_layers);
+
+    for i in 0..num_layers{
+        let block = GpuTransformerBlock{
+            q_proj: move_to_vram(&format!("language_model.model.layers.{}.self_attn.q_proj.weight", i), &stream)?,
+            k_proj: move_to_vram(&format!("language_model.model.layers.{}.self_attn.k_proj.weight", i), &stream)?,
+            v_proj: move_to_vram(&format!("language_model.model.layers.{}.self_attn.v_proj.weight", i), &stream)?,
+            o_proj: move_to_vram(&format!("language_model.model.layers.{}.self_attn.o_proj.weight", i), &stream)?,
+            
+            gate_proj: move_to_vram(&format!("language_model.model.layers.{}.mlp.gate_proj.weight", i), &stream)?,
+            up_proj:   move_to_vram(&format!("language_model.model.layers.{}.mlp.up_proj.weight", i), &stream)?,
+            down_proj: move_to_vram(&format!("language_model.model.layers.{}.mlp.down_proj.weight", i), &stream)?,
+            
+            input_layernorm:          move_to_vram(&format!("language_model.model.layers.{}.input_layernorm.weight", i), &stream)?,
+            post_attention_layernorm: move_to_vram(&format!("language_model.model.layers.{}.post_attention_layernorm.weight", i), &stream)?,
+        };
+
+        layers.push(block);
+    }
+
+
+    let _model = GpuGemma{
+        embed_tokens,
+        norm: final_norm,
+        layers,
+    };
+
+
+    println!("Model weights transferred to GPU.");
+
+
+
+
+
+
+
+    
 
    
     Ok(())

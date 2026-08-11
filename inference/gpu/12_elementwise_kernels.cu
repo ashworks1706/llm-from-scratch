@@ -9,4 +9,7 @@
 // - Benchmark effective memory bandwidth against the device peak
 
 
-#include 
+#include <__clang_cuda_runtime_wrapper.h>
+#include <stdio.h>
+
+__global__ 

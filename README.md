@@ -1,3 +1,5 @@
+
+
 this repository is where i build machine learning models from scratch to deeply understand how they work. everything is implemented from the ground up with detailed notes explaining the math, intuition and design choices behind each component.
 
 the goal is complete ml engineering knowledge covering architectures, training pipelines, optimization techniques and deployment.
@@ -36,7 +38,7 @@ data contains dataset and packing utilities for turning raw examples into effici
 
 lora is parameter efficient finetuning using low rank matrices. trains less than 1 percent of parameters by injecting small adapters into attention layers.
 
-inference covers practical model execution after training. the python files introduce quantization, batching and paged kv caches while the numbered rust track uses candle for real model execution, systems lessons for scheduling and serving, targeted cudarc gpu work for measured bottlenecks, and triton literacy for reading modern inference kernels.
+inference covers practical model execution after training. the python reference serves as a correctness oracle for prefill and decode, while the numbered rust track uses candle for real model execution, systems lessons for scheduling and serving, quantization, batching and paged kv caches, targeted cudarc gpu work for measured bottlenecks, and triton literacy for reading modern inference kernels.
 
 efficiency is where lower level performance work belongs, especially rust implementations, kernels and attention optimizations in the language they are usually written in.
 
@@ -80,4 +82,4 @@ TODO -
 
 [ ] REINFORCE
 
-[ ] SAC 
+[ ] SAC

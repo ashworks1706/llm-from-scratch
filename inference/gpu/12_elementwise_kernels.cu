@@ -36,15 +36,25 @@ __global__ void saxpy_kernel(int n, float a, float* x, float* y) {
 
 int main(){
 
-  int* d_out = nullptr;
+  int* d_out;
   cudaMalloc(&d_out,  1024 * sizeof(int));
 
   int threads_per_block = 256;
 
   int num_of_blocks = (1024 + threads_per_block - 1) / threads_per_block;
 
-  
+  int h_out[1024];
 
+  saxpy_kernel<<<num_of_blocks, threads_per_block>>>(1024, 2.0f, 2.0f, d_out);
 
+  cudaDeviceSynchronize();
+
+  cudaMemcpy(h_out, d_out, sizeof(int) * 1024, cudaMemcpyDeviceToHost);
+
+  for (int i = 0; i < 8; i++) {
+    printf("thread %d wrote %d\n", i, h_out[i]);
+  }
+
+  cudaFree(d_out);
 
 }

@@ -79,12 +79,6 @@ path = "gpu/14_tiled_matmul_and_coalescing_host.rs"
 name = "15_cublas_integration"
 path = "gpu/15_cublas_integration.rs"
 [[example]]
-name = "16_custom_cuda_operation_host"
-path = "gpu/16_custom_cuda_operation_host.rs"
-[[example]]
-name = "17_decode_cache_extension_host"
-path = "gpu/17_decode_cache_extension_host.rs"
-[[example]]
 name = "18_kernel_profiling"
 path = "gpu/18_kernel_profiling.rs"
 [[example]]
@@ -111,7 +105,7 @@ path = "systems/24_server_and_api.rs"
 name = "25_metrics_benchmarks_and_reliability"
 path = "systems/25_metrics_benchmarks_and_reliability.rs"
 
-# --- advanced kernels and serving (triton 26-27 are python, not cargo examples) ---
+# --- advanced kernels and serving ---
 [[example]]
 name = "28_flash_attention_host"
 path = "gpu/28_flash_attention_host.rs"
@@ -119,14 +113,8 @@ path = "gpu/28_flash_attention_host.rs"
 name = "29_paged_attention_host"
 path = "gpu/29_paged_attention_host.rs"
 [[example]]
-name = "30_quantized_attention_kernel_host"
-path = "gpu/30_quantized_attention_kernel_host.rs"
-[[example]]
 name = "31_gptq_awq_kv_quantization_host"
 path = "gpu/31_gptq_awq_kv_quantization_host.rs"
-[[example]]
-name = "32_sparse_attention_host"
-path = "gpu/32_sparse_attention_host.rs"
 [[example]]
 name = "33_speculative_decoding"
 path = "systems/33_speculative_decoding.rs"

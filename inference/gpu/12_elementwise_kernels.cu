@@ -116,7 +116,8 @@ int main(){
   // the device pointers to access the data on the device side. We cannot use host pointers on the device side, and we cannot use device 
   // pointers on the host side. We need to use the appropriate pointers for each side.
 
-  saxpy_kernel<<<number_of_blocks, threads_per_block>>>(large_N, a, d_large_x, d_large_y);
+  // saxpy_kernel<<<number_of_blocks, threads_per_block>>>(large_N, a, d_large_x, d_large_y);
+  saxpy_kernel_grid_stride<<<number_of_blocks, threads_per_block>>>(large_N, a, d_large_x, d_large_y);
   // wait so why dont we just use d_large_x d_large_y without creating h_large_x and h_large_y? because if we only create pointer on device side,
   // we will not be able to access data on host side, why do we need access? cant we just printf it? we cannot printf it because we cannot access device memory from host code, 
   // we need to copy the data from device to host before we can access it on host side.

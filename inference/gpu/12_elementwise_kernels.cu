@@ -1,14 +1,3 @@
-// First CUDA kernels: elementwise operations and grid-stride loops
-//
-// LEARNING OBJECTIVES:
-// - Write a vector-add / SAXPY kernel that processes one element per thread
-// - Handle arrays larger than a single launch with a grid-stride loop
-// - Guard out-of-range threads with a bounds check
-// - Keep global-memory access coalesced across each warp
-// - Match FP32 output against a CPU or Candle reference
-// - Benchmark effective memory bandwidth against the device peak
-
-
 #include <stdio.h>
 #include <cuda_runtime.h> 
 // what is saxpy? saxpy is a linear algebra operation that computes 
@@ -37,6 +26,21 @@ __global__ void saxpy_kernel(int n, float a, float* x, float* y) {
   int idx = threadIdx.x + blockIdx.x * blockDim.x;
   if (idx < n ) {
     y[idx] = a * x[idx] + y[idx];
+  }
+}
+
+
+// what is grid stride loop? grid stride loop is a technique used in CUDA programming to allow each thread to process multiple elements of an array.
+// normally, we would launch a kernel with a number of threads equal to the number of elements in the array, and each thread would 
+// process one element. However, this can be inefficient if the number of elements is much larger than the number of threads that 
+// can be launched on the GPU. In this case, we can use a grid stride loop to allow each thread to process multiple elements of 
+// the array by using a loop that increments the index by the total number of threads in the grid. This allows us to efficiently 
+// process large arrays with a limited number of threads.
+__global__ void saxpy_kernel_grid_stride(int n, float a, float* x, float* y) {
+  int idx = threadIdx.x + blockIdx.x * blockDim.x;
+  int stride = blockDim.x * gridDim.x;
+  for (int i = idx; i < n; i += stride) {
+    y[i] = a * x[i] + y[i];
   }
 }
 
@@ -76,9 +80,64 @@ int main(){
   cudaFree(d_x);
   cudaFree(d_y); 
 
+  // now lets try to run this code on a larger array, say 1 million elements. We will need to modify the code to handle arrays 
+  // larger than a single launch with a grid-stride loop. This means that each thread will process multiple elements of the 
+  // input arrays, and we will need to guard out-of-range threads with a bounds check. We will also need to keep global-memory 
+  // access coalesced across each warp, and match FP32 output against a CPU or Candle reference. Finally, 
+  // we will benchmark effective memory bandwidth against the device peak.
+
+
+  // create a large array of 1 million elements 
+  int large_N = 1000000;
+  // first we create pointers to hold large arrays by allocating memory on host side 
+  float *h_large_x = (float*)malloc(large_N * sizeof(float));
+  // what is x and y? why not just one var? we cannot because we are doing saxpy operation, which is y = a * x + y, so we need two arrays to hold the input and output data.
+  float *h_large_y = (float*)malloc(large_N * sizeof(float));
+  // these floats are on host side, we will need to allocate memory on device side as well.
+  // yes we can write cpu code in cuda file, but we need to make sure that we are not using any cuda specific functions in the cpu code.
+
+
+  // initialize the large arrays with some values
+  for (int i = 0; i < large_N; i++) {
+    h_large_x[i] = 1.0f; // x depicts the input array, we can initialize it with 1.0f for simplicity   
+    h_large_y[i] = (float)i; // y depicts the output array, we use i here because we want to see the effect of the saxpy operation on the output array, and initializing it with i will give us a clear view of how the output changes after the operation.
+  }
+
+  // now we create these floats on device side as well, and we will need to copy the data from host to device before launching the kernel.
+  float *d_large_x, *d_large_y;
+  // why not just use h_large_x and h_large_y? because we need to allocate memory on the device side as well, and we cannot use host pointers on 
+  // the device side. We need to use device pointers to access the data on the device side.
+  cudaMalloc((void**)&d_large_x, large_N * sizeof(float));
+  cudaMalloc((void**)&d_large_y, large_N * sizeof(float));
+  // now that we have created the large arrays on both host and device side, we will need to copy the data from host to device before launching the kernel.
+  cudaMemcpy(d_large_x, h_large_x, large_N * sizeof(float), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_large_y, h_large_y, large_N * sizeof(float), cudaMemcpyHostToDevice);
+  // here why did we need pointer from cpu and pointer from gpu? because we need to copy the data from host to device, and we need to use 
+  // the device pointers to access the data on the device side. We cannot use host pointers on the device side, and we cannot use device 
+  // pointers on the host side. We need to use the appropriate pointers for each side.
+
+  saxpy_kernel<<<number_of_blocks, threads_per_block>>>(large_N, a, d_large_x, d_large_y);
+  // wait so why dont we just use d_large_x d_large_y without creating h_large_x and h_large_y? because if we only create pointer on device side,
+  // we will not be able to access data on host side, why do we need access? cant we just printf it? we cannot printf it because we cannot access device memory from host code, 
+  // we need to copy the data from device to host before we can access it on host side.
+
+  // now we copy it back to h_large_y from d_large_y, and then we can print the result on host side.
+  cudaMemcpy(h_large_y, d_large_y, large_N * sizeof(float), cudaMemcpyDeviceToHost);
+  
+
+  cudaDeviceSynchronize();
+
+  printf("Result for large array: ");
+  for (int i = 0; i < 10; i++) {
+    printf("%f ", h_large_y[i]);
+  }
+
+  cudaFree(d_large_x);
+  cudaFree(d_large_y);
+
+  free(h_large_x);
+  free(h_large_y);
+
   return 0;
-
-
-
 
 }

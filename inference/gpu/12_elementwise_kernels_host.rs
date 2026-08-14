@@ -1,49 +1,44 @@
-// Rust host scaffold for 12_elementwise_kernels.cu.
-// Keep CUDA source in the paired .cu file and use this file to compile, load,
-// launch, validate, and benchmark it through cudarc.
+use cudarc::driver::{CudaContext, LaunchConfig, PushKernelArg};
+use cudarc::nvrtc::compile_ptx;
 
-#[allow(unused_imports)]
-use {cudarc::driver::CudaContext, cudarc::nvrtc::compile_ptx};
-use {cudarc::driver::PushKernelArg};
+const SRC: &str = include_str!("12_elementwise_kernel_manual.cu");
 
-const SRC : &str = include_str!("12_elementwise_kernel_manual.cu");
 
+// calculate memory and speed for saxpy vs saxpy grid kernel 
 fn main() -> anyhow::Result<()> {
-
     let ctx = CudaContext::new(0)?;
-
     let stream = ctx.default_stream();
 
-    let ptx = compile_ptx(SRC)
-        .map_err(|e| anyhow::anyhow!("Failed to compile CUDA source: {}", e))?;
+    let ptx = compile_ptx(SRC)?;
 
-    let module = ctx.load_module(ptx)
-        .map_err(|e| anyhow::anyhow!("Failed to load CUDA module: {}", e))?;
+    let module = ctx.load_module(ptx)?;
 
-    let kernel = module.load_function("kernel")
-        .map_err(|e| anyhow::anyhow!("Failed to load kernel function: {}", e))?;
+    let f = module.load_function("saxpy_grid")?;
 
-    let N = 1024;
-    let mut d_output = stream.alloc_zeros::<f32>(N)?;
+    let n: usize = 1024;
+    let n_i32 = n as i32;
+    let a: f32 = 2.0;
 
-    let grid = (N as u32 / 256, 1, 1);
-    let block = (256, 1, 1);
+    let h_x = vec![1.0f32; n];
+    let h_y = vec![3.0f32; n];
 
-    let cfg = cudarc::driver::LaunchConfig {
-        grid_dim: grid,
-        block_dim: block,
-        shared_mem_bytes: 0,
-    };
+    let d_x = stream.clone_htod(&h_x)?;
+    let mut d_y = stream.clone_htod(&h_y)?;
 
-    let mut builder = stream.launch_builder(&kernel);
-    builder.arg(&mut d_output);
+    let cfg = LaunchConfig::for_num_elems(n as u32);
+
     unsafe {
-        builder.launch(cfg)?;
+        stream
+            .launch_builder(&f)
+            .arg(&n_i32)
+            .arg(&a)
+            .arg(&d_x)
+            .arg(&mut d_y)
+            .launch(cfg)?;
     }
 
-
-
-
+    let h_result = stream.clone_dtoh(&d_y)?;
+    println!("First element of result: {}", h_result[0]);
 
     Ok(())
 }

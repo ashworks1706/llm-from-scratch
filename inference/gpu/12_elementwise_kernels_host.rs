@@ -80,12 +80,10 @@ fn main() -> anyhow::Result<()> {
 
     let h_result = stream.clone_dtoh(&d_y)?;
 
-    println!("=== Memory Overview ===");
     println!("Elements (N):             {}", n);
     println!("Total Allocated (Device): {:.2} MB", total_bytes_allocated as f64 / (1024.0 * 1024.0));
     println!("Traffic per iteration:    {:.2} MB", bytes_per_kernel_call as f64 / (1024.0 * 1024.0));
     println!();
-    println!("=== Performance Comparison ===");
     println!("Standard saxpy:");
     println!("  Avg Time:     {:?}", dur_saxpy);
     println!("  Throughput:   {:.2} GB/s", (bytes_per_kernel_call as f64 / dur_saxpy.as_secs_f64()) / 1e9);

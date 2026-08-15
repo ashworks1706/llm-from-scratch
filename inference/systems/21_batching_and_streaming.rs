@@ -1,6 +1,3 @@
-// Batched generation and streamed responses
-//
-// LEARNING OBJECTIVES:
 // - Combine compatible requests into a model execution batch
 // - Handle requests with different prompt and generated lengths
 // - Stream each request independently while sharing model work
@@ -13,5 +10,11 @@ use anyhow::Result;
 use tokio::sync::mpsc;
 
 fn main() -> Result<()> {
+    
+
+
+
+
+
     Ok(())
 }

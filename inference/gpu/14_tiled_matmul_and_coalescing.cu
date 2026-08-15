@@ -1,10 +1,3 @@
-// Tiled matrix multiply and memory coalescing
-// LEARNING OBJECTIVES:
-// - Reason about arithmetic intensity and the memory-bound vs compute-bound line
-// - Validate the result against a CPU or Candle matmul
-// - Benchmark against cuBLAS and explain the remaining gap
-
-
 #include <stdio.h>
 #include <cuda_runtime.h> 
 

@@ -1,0 +1,356 @@
+
+# regular neural networks flatten out the images in the layers
+# which results in way too many parameters, and it loses spatial structures ( treats nearby pixels same as for pixels)
+# it also fails to detect centers or corners/ segmentation 
+
+
+# in CNNs, instead of connectting every pixel to every neuron
+# we use local connections and share weights (we share weights so that same filter across image)
+# we also preserve spatial structure 
+# this turns in fewer parameters and we do learn spatial awareness  for the same window we share 
+
+import torch 
+import torch.nn as nn 
+import torch.nn.functional as F 
+import numpy as np 
+
+# translation invariance is same pattern detected regardless of position 
+# why? shared weights, pooling aggregates nearby activates 
+
+# CNN is basically like sliding a small filter or window across an image, 
+# each position : multiply filter with image patch, sum up 
+# the reason we use same filter across entire image is because it reduces parameters
+# tranlsation invariance (cat anywhere -> detected), learns generalizable patterns 
+# but each neuron looks at small region, to fully exploit the meaning 
+# Simple example:
+# Image (5×5):
+# 1  2  3  4  5
+# 6  7  8  9  10
+# 11 12 13 14 15
+# 16 17 18 19 20
+# 21 22 23 24 25
+
+# Filter/Kernel (3×3):
+# 1  0 -1
+# 1  0 -1
+# 1  0 -1
+
+# This filter detects VERTICAL EDGES!
+# (Left side: positive, Right side: negative)
+
+# Convolution at position (1,1):
+# Take 3×3 patch starting at (1,1):
+# 1  2  3
+# 6  7  8
+# 11 12 13
+
+# Element-wise multiply with filter:
+# 1×1   2×0   3×(-1)  =  1   0  -3
+# 6×1   7×0   8×(-1)  =  6   0  -8
+# 11×1  12×0  13×(-1) = 11   0 -13
+
+# Sum all values:
+# 1 + 0 + (-3) + 6 + 0 + (-8) + 11 + 0 + (-13) = -6
+
+# Output at position (1,1): -6
+
+# Sliding Across Entire Image:
+
+# Step 1: Place filter at top-left
+# Step 2: Compute dot product → output value
+# Step 3: Slide right by 1 (stride=1)
+# Step 4: Repeat until end of row
+# Step 5: Move down, repeat
+
+# Result: Output feature map (smaller than input)
+
+# the key parameters CNN has are 
+# kernel size : size of filter, if small cpatures fine details, if large captures bigger patterns
+# common is 3x3
+# stride : how much to move filter each step, stride 1, move 1 pixel at a time (more overlap), 2 move faster smaller output
+# padding : add border of zeros around image, without padding: output smaller than input, with padding: can keep same size
+# "small" padding : output size = input size 
+# "valid" padding : no padding (output shrinks)
+# number of filters : how many different pattersn to detect 
+# more filters = detect more patterns 
+# each filter produces one output channel 
+
+
+# output formula 
+# Output_heihgt = (input height - kernel_height + 2 * padding) / stride + 1
+# output_Width = (inputwidth - kernelwidth + 2 * padding) / stride + 1
+# Input: 28×28, Kernel: 3×3, Stride: 1, Padding: 0
+# Output: (28 - 3 + 0) / 1 + 1 = 26×26
+
+# Input: 28×28, Kernel: 3×3, Stride: 1, Padding: 1
+# Output: (28 - 3 + 2) / 1 + 1 = 28×28 (same size!)
+
+# Input: 32×32, Kernel: 5×5, Stride: 2, Padding: 2
+# Output: (32 - 5 + 4) / 2 + 1 = 16×16 (halved!)
+
+
+
+# pooling :
+# after convlution, feature maps can be large, pooling reduces size while keeping important info 
+# it reduces computation, overfitting and translation variance (small shifts dont matter )
+# Max pooling, average pooling 
+# # Take maximum value in each region
+     
+# Input (4×4):
+# 1   3   2   4
+# 5   6   7   8
+# 9   10  11  12
+# 13  14  15  16
+
+# Max Pool (2×2, stride=2):
+# Split into 2×2 regions:
+# Region 1:     Region 2:
+# 1  3          2  4
+# 5  6          7  8
+# Max: 6        Max: 8
+
+# Region 3:     Region 4:
+# 9  10         11 12
+# 13 14         15 16
+# Max: 14       Max: 16
+
+# Output (2×2):
+# 6   8
+# 14  16
+
+# Size reduced by 2x in each dimension!
+
+# Average Pooling:
+# Take average instead of max
+
+# Same input:
+# 1   3   2   4
+# 5   6   7   8
+# 9   10  11  12
+# 13  14  15  16
+
+# Average Pool (2×2, stride=2):
+# Region 1: (1+3+5+6)/4 = 3.75
+# Region 2: (2+4+7+8)/4 = 5.25
+# Region 3: (9+10+13+14)/4 = 11.5
+# Region 4: (11+12+15+16)/4 = 13.5
+
+# Output:
+# 3.75   5.25
+# 11.5   13.5
+
+# Max Pool: Keeps strongest activations
+# Avg Pool: Smooths features
+
+
+# Typical CNN Structure:
+
+#    Input Image
+#        ↓
+#    [Conv → ReLU → Pool] × N    (Feature extraction)
+#        ↓
+#    [Flatten]                    (Convert 2D → 1D)
+#        ↓
+#    [Fully Connected → ReLU] × M (Classification)
+#        ↓
+#    Output (class probabilities)
+
+# Example: Simple CNN for MNIST
+
+#    Input: 28×28×1 (grayscale image)
+    
+#    Layer 1: Conv2D
+#    - Filters: 32
+#    - Kernel: 3×3
+#   - Output: 26×26×32
+#   - Learns: 32 different low-level patterns (edges, corners)
+    
+#   Layer 2: ReLU
+#   - Non-linearity
+#   - Output: 26×26×32 (same size)
+    
+#   Layer 3: MaxPool2D
+#   - Pool size: 2×2
+#   - Output: 13×13×32 (halved)
+    
+#   Layer 4: Conv2D
+#   - Filters: 64
+#   - Kernel: 3×3
+#   - Output: 11×11×64
+#   - Learns: 64 mid-level patterns (combine edges into shapes)
+    
+#   Layer 5: ReLU
+#   - Output: 11×11×64
+    
+#   Layer 6: MaxPool2D
+#   - Pool size: 2×2
+#   - Output: 5×5×64
+    
+#   Layer 7: Flatten
+#   - Output: 5×5×64 = 1600 neurons
+    
+#   Layer 8: Fully Connected
+#   - Output: 128 neurons
+#   - Combines features for classification
+    
+#   Layer 9: ReLU
+#   - Output: 128
+    
+#   Layer 10: Fully Connected
+#   - Output: 10 neurons (10 digit classes)
+#   - Logits for each class
+    
+#   Loss: CrossEntropyLoss
+
+
+
+# CNNs basically learn by - 
+# Early layers (Conv1-2):
+# Detect edges, corners, colors/tectures,
+# Middle layers (Conv3-4):
+# combine edges into shapes, detetct parts
+# Deep layers :
+# Detect whole objects, combine parts into concepts, high level features 
+
+
+# cat detection :
+# edge detectors 
+# curve detectors 
+# ear/whisker deteectors 
+# face part detectors 
+# whole cat detector 
+
+
+# code 
+#
+#
+#
+
+def manual_conv2d(image, kernel, stride=1, padding=0):
+    H,W = image.shape 
+    K = kernel.shape[0]
+
+    if padding > 0:
+        image = np.pad(image, padding, mode='constant', constant_values=0)
+        H, W = image.shape
+
+    
+    # output size: (input - kernel +2*padding) / stride + 1 
+    out_H = (H - K ) // stride + 1 
+    out_W = (W - K ) // stride + 1 
+
+    output = np.zeros((out_H, out_W))
+
+    for i in range(out_H):
+        for j in range(out_W):
+            h_start = i*stride 
+            w_start = j*stride 
+            h_end = h_start + K 
+            w_end = w_start + K 
+
+            patch= image[h_start:h_end, w_start:w_end]
+            output[i,j] = np.sum(patch * kernel) # dot product 
+    return output 
+
+
+# test image 
+image = np.array([
+    [1,  2,  3,  4,  5],
+    [6,  7,  8,  9,  10],
+    [11, 12, 13, 14, 15],
+    [16, 17, 18, 19, 20],
+    [21, 22, 23, 24, 25]
+], dtype=np.float32)
+
+# Vertical edge detector
+kernel_vertical = np.array([
+    [1,  0, -1],
+    [1,  0, -1],
+    [1,  0, -1]
+], dtype=np.float32)
+
+print("\n1. Manual Convolution")
+print("Image (5×5):")
+print(image)
+print("\nVertical edge kernel (3×3):")
+print(kernel_vertical)
+
+output = manual_conv2d(image, kernel_vertical, stride=1, padding=0)
+print(f"\nOutput (3×3):")
+print(output)
+
+# Horizontal edge detector
+kernel_horizontal = np.array([
+    [1,   1,  1],
+    [0,   0,  0],
+    [-1, -1, -1]
+], dtype=np.float32)
+
+output_h = manual_conv2d(image, kernel_horizontal)
+print(f"\nHorizontal edge output:")
+print(output_h)
+
+
+
+
+print("2. Padding & Stride")
+
+# No padding: shrinks
+output_no_pad = manual_conv2d(image, kernel_vertical, stride=1, padding=0)
+print(f"No padding: {image.shape} → {output_no_pad.shape}")
+
+# Padding=1: same size
+output_pad1 = manual_conv2d(image, kernel_vertical, stride=1, padding=1)
+print(f"Padding=1:  {image.shape} → {output_pad1.shape}")
+
+# Stride=2: downsamples
+output_s2 = manual_conv2d(image, kernel_vertical, stride=2, padding=0)
+print(f"Stride=2:   {image.shape} → {output_s2.shape}")
+
+# Convert to tensors: (batch, channels, H, W)
+image_torch = torch.from_numpy(image).unsqueeze(0).unsqueeze(0)
+kernel_torch = torch.from_numpy(kernel_vertical).unsqueeze(0).unsqueeze(0)
+
+print(f"Image shape: {image_torch.shape}")
+print(f"Kernel shape: {kernel_torch.shape}")
+
+# Functional API
+output_torch = F.conv2d(image_torch, kernel_torch, stride=1, padding=0)
+print(f"Output shape: {output_torch.shape}")
+print(f"Output:\n{output_torch.squeeze().numpy()}")
+
+# Using nn.Conv2d
+conv_layer = nn.Conv2d(in_channels=1, out_channels=1, kernel_size=3, 
+                    stride=1, padding=0, bias=False)
+
+with torch.no_grad():
+    conv_layer.weight = nn.Parameter(kernel_torch)
+
+output_layer = conv_layer(image_torch)
+print(f"\nnn.Conv2d output:\n{output_layer.squeeze().detach().numpy()}")
+
+
+# Multiple filters 
+multi_conv = nn.Conv2d(in_channels =1, out_channels=3, kernel_size=3, stride =1 , padding =1 )
+output_multi = multi_conv(image_torch)
+     
+print(f"Input:  {image_torch.shape}")
+print(f"Output: {output_multi.shape}")
+print(f"3 filters → 3 feature maps")
+
+params = sum(p.numel() for p in multi_conv.parameters())
+print(f"Parameters: {params} (27 weights + 3 biases)")
+
+
+
+
+
+
+
+
+
+
+
+
+
+

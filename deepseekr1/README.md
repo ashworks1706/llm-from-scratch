@@ -1,0 +1,7 @@
+deepseek r1 is a language model that learns to reason before answering. instead of generating answers directly, it produces thinking tokens first where it works through the problem step by step, then generates the final answer. this two-phase approach improves performance on complex tasks like math and coding.
+
+the architecture combines a standard transformer with explicit reasoning. the thinking phase can be long and complex while the output phase produces the final concise answer. special tokens mark the boundaries between thinking and output phases. the model learns through both supervised finetuning on thinking+answer pairs and reinforcement learning to improve the quality of both the reasoning process and the final answer.
+
+the key innovation is making the reasoning process explicit and learnable. unlike previous models that had implicit reasoning in hidden states, r1 gives the model space to think out loud. this leads to better intermediate steps, fewer errors in complex reasoning, and more interpretable outputs. the model can learn to allocate thinking tokens efficiently - spending more time on hard problems and less on easy ones.
+
+training happens in stages. first, supervised finetuning teaches the model to generate both thinking and answers from human demonstrations. second, a reward model is trained to evaluate both the reasoning quality and answer correctness. finally, reinforcement learning optimizes the policy using these rewards while maintaining coherence through kl divergence constraints to the sft baseline.

@@ -1,0 +1,7 @@
+this folder implements reinforcement learning from human feedback. after supervised finetuning the model can follow instructions but may not align with human preferences on subjective qualities like helpfulness, harmlessness and honesty.
+
+dpo uses direct preference optimization for single-stage offline training. it takes preference pairs where humans labeled one response as better than another for the same prompt. instead of absolute labels we have relative preferences which are more natural. the key insight is that we can directly optimize the policy to increase likelihood of chosen responses and decrease rejected ones, while using kl divergence to prevent drifting from the reference model (sft).
+
+ppo uses proximal policy optimization with a learned reward model. it generates responses on-policy, scores them with a reward model, computes advantages using a value function, and updates with clipped policy gradients. this allows online interaction but requires training a separate reward model. the clipping mechanism prevents too-large policy changes which keeps training stable.
+
+grpo uses group relative policy optimization by generating k diverse responses per prompt and using relative rankings as training signal. this approach is more sample efficient by creating multiple preference pairs from a single prompt group. comparisons are more stable than absolute rewards. it scales well to large models by leveraging group sampling for variance reduction.

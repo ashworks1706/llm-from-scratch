@@ -1,0 +1,129 @@
+[package]
+name = "inference"
+version = "0.1.0"
+edition = "2021"
+description = "Practical LLM inference engineering  in Rust"
+publish = false
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+anyhow = "1.0.104"
+axum = "0.8.9"
+candle-core = { git = "https://github.com/huggingface/candle.git", features = ["cuda"] }
+candle-nn = { git = "https://github.com/huggingface/candle.git" }
+candle-transformers = { git = "https://github.com/huggingface/candle.git" }
+cudarc = { version = "0.19.8", features = ["driver", "nvrtc", "cublas", "cuda-version-from-build-system"] }
+hf-hub = "0.4"
+memmap2 = "0.9.11"
+rand = "0.10.2"
+rayon = "1.12.0"
+safetensors = "0.8.0"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"
+thiserror = "2.0.19"
+tokenizers = { version = "0.23.1", default-features = false, features = ["onig", "http"] }
+tokio = { version = "1.53.1", features = ["full"] }
+tower-http = { version = "0.7.0", features = ["trace"] }
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
+
+[dev-dependencies]
+criterion = "0.8.2"
+
+[[example]]
+name = "01_inference_system"
+path = "candle/01_inference_system.rs"
+[[example]]
+name = "02_tensors_devices_and_dtypes"
+path = "candle/02_tensors_devices_and_dtypes.rs"
+[[example]]
+name = "03_model_loading"
+path = "candle/03_model_loading.rs"
+[[example]]
+name = "04_llama_execution"
+path = "candle/04_llama_execution.rs"
+[[example]]
+name = "05_generation_and_sampling"
+path = "candle/05_generation_and_sampling.rs"
+[[example]]
+name = "06_kv_cache"
+path = "candle/06_kv_cache.rs"
+[[example]]
+name = "07_quantized_inference"
+path = "candle/07_quantized_inference.rs"
+[[example]]
+name = "08_profiling_and_extension_points"
+path = "candle/08_profiling_and_extension_points.rs"
+# --- gpu ground-up track ---
+[[example]]
+name = "09_gpu_execution_model_host"
+path = "gpu/09_gpu_execution_model_host.rs"
+[[example]]
+name = "10_memory_hierarchy_and_transfers"
+path = "gpu/10_memory_hierarchy_and_transfers.rs"
+[[example]]
+name = "11_cudarc_runtime"
+path = "gpu/11_cudarc_runtime.rs"
+[[example]]
+name = "12_elementwise_kernels_host"
+path = "gpu/12_elementwise_kernels_host.rs"
+[[example]]
+name = "13_reductions_and_shared_memory_host"
+path = "gpu/13_reductions_and_shared_memory_host.rs"
+[[example]]
+name = "14_tiled_matmul_and_coalescing_host"
+path = "gpu/14_tiled_matmul_and_coalescing_host.rs"
+[[example]]
+name = "15_cublas_integration"
+path = "gpu/15_cublas_integration.rs"
+[[example]]
+name = "18_kernel_profiling"
+path = "gpu/18_kernel_profiling.rs"
+[[example]]
+name = "19_nccl_and_multi_gpu"
+path = "gpu/19_nccl_and_multi_gpu.rs"
+
+# --- systems track ---
+[[example]]
+name = "20_request_lifecycle"
+path = "systems/20_request_lifecycle.rs"
+[[example]]
+name = "21_batching_and_streaming"
+path = "systems/21_batching_and_streaming.rs"
+[[example]]
+name = "22_prefill_decode_scheduler"
+path = "systems/22_prefill_decode_scheduler.rs"
+[[example]]
+name = "23_kv_cache_policy"
+path = "systems/23_kv_cache_policy.rs"
+[[example]]
+name = "24_server_and_api"
+path = "systems/24_server_and_api.rs"
+[[example]]
+name = "25_metrics_benchmarks_and_reliability"
+path = "systems/25_metrics_benchmarks_and_reliability.rs"
+
+# --- advanced kernels and serving ---
+[[example]]
+name = "28_flash_attention_host"
+path = "gpu/28_flash_attention_host.rs"
+[[example]]
+name = "29_paged_attention_host"
+path = "gpu/29_paged_attention_host.rs"
+[[example]]
+name = "31_gptq_awq_kv_quantization_host"
+path = "gpu/31_gptq_awq_kv_quantization_host.rs"
+[[example]]
+name = "33_speculative_decoding"
+path = "systems/33_speculative_decoding.rs"
+[[example]]
+name = "34_prefix_caching"
+path = "systems/34_prefix_caching.rs"
+[[example]]
+name = "35_disaggregated_serving"
+path = "systems/35_disaggregated_serving.rs"
+[[example]]
+name = "36_moe_inference_serving"
+path = "systems/36_moe_inference_serving.rs"

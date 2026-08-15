@@ -1,0 +1,15 @@
+venv/
+.env
+data/
+**/data/
+*__pycache__
+checkpoints/*.pt
+*.tar.gz
+*.gz
+*-ubyte
+*.pt
+*.safetensors
+*.bin
+ebt/
+dlm_causal_rewards/
+**/hf_cache/

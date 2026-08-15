@@ -43,6 +43,13 @@ __global__ void saxpy_kernel_grid_stride(int n, float a, float* x, float* y) {
     y[i] = a * x[i] + y[i];
   }
 }
+// Component,Hardware Location,Speed / Latency,Variables / Code Located Here
+// Host RAM,Motherboard DDR4/DDR5 sticks,Medium (~80 GB/s),"h_x, h_y, h_large_x, h_large_y"
+// PCIe Bus,Motherboard PCIe Slot (Gen4/Gen5),Slowest (~32–64 GB/s),Data transfer highway for cudaMemcpy
+// Device VRAM,GPU Board GDDR6 / HBM chips,"Fast (~1,000–3,000 GB/s)","d_x, d_y, d_large_x, d_large_y"
+// GPU SM Registers,Directly on the GPU Silicon Chip,"Fastest (~20,000+ GB/s)","idx, stride, a, local intermediate floats"
+// GPU ALU / FMA Cores,Arithmetic units inside each SM,1 clock cycle,The actual math: a * x[idx] + y[idx]
+
 
 int main(){
 

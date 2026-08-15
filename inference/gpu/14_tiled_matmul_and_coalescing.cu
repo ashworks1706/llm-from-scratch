@@ -24,7 +24,22 @@ __global__ void matmul_naive(int n, const int *A, const int *B, int *C) {
     }
 }
 
+// by tiling we basically load a tile of A and a tile of B into shared memory, then compute 
+// the product of those tiles, and accumulate the result into C. where A and B are 
+// matrices of size n x n, and C is the output matrix of size n x n.
+
+// this is fast because by loading tile of A and tile of B into shared memory, we reduce # of global memory accesses, 
+// global memory accesses is slow because it is not cached, and it is not coalesced and everytime a thread accesses
+// global memory, the memory controller has to fetch a whole cache line by default, which is 128 bytes, and 
+// if the threads are not accessing contiguous memory locations, then we will have a lot of wasted bandwidth.
+
+
+// we can think about these tiles as like a sliding window, where we slide the tiles across the 
+// matrices A and B, and compute the product of the tiles, and accumulate the result into C.
 __global__ void tiled_matmul(int n, int *A, int *B, int *C){
+  __shared__ int tile_A[16][16];
+  __shared__ int tile_B[16][16];
+
 
 }
 

@@ -19,7 +19,8 @@ fn main() -> anyhow::Result<()> {
 
     let module = ctx.load_module(ptx)?;
 
-    let f = module.load_function("tiled_matmul")?;
+    let f = module.load_function("matmul")?;
+    let f_tiled = module.load_function("tiled_matmul")?;
 
 
     let n = 1024;
@@ -37,15 +38,15 @@ fn main() -> anyhow::Result<()> {
 
     // host side pointeers (input + output)
     // for input we need tile row and tile column 
-    let h_r = vec![n];
-    let h_c = vec![n];
-    
-    // output 
+    let h_a = vec![n];
+    let h_b = vec![n];
+     
+    // output  
     let h_o = vec![n];
-
+ 
     // device side pointers (input + output)
-    let d_r = stream.clone_htod(&h_r)?;
-    let d_c = stream.clone_htod(&h_c)?;
+    let d_a = stream.clone_htod(&h_a)?; 
+    let d_b = stream.clone_htod(&h_b)?;
     // output 
     let mut d_o = stream.clone_htod(&h_o)?;
 
@@ -53,8 +54,39 @@ fn main() -> anyhow::Result<()> {
         stream
             .launch_builder(&f)
             .arg(&n)
-            .arg(&d_r)
-            .arg(&d_c)
+            .arg(&d_a)
+            .arg(&d_b)
+            .arg(&mut d_o)
+            .launch(cfg)?;
+    }
+
+
+    stream.synchronize()?;
+
+
+    // tileed mode :: 
+    //
+
+    // host side pointeers (input + output)
+    // for input we need tile row and tile column 
+    let tiled_h_a = vec![n];
+    let tiled_h_b = vec![n];
+    
+    // output 
+    let tiled_h_o = vec![n];
+
+    // device side pointers (input + output)
+    let tiled_d_a = stream.clone_htod(&tiled_h_a)?;
+    let tiled_d_b = stream.clone_htod(&tiled_h_b)?;
+    // output 
+    let mut tiled_d_o = stream.clone_htod(&tiled_h_o)?;
+
+    unsafe {
+        stream
+            .launch_builder(&f)
+            .arg(&n)
+            .arg(&tiled_d_a)
+            .arg(&tiled_d_b)
             .arg(&mut d_o)
             .launch(cfg)?;
     }

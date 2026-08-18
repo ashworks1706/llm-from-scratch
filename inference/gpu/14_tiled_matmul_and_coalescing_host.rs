@@ -5,7 +5,7 @@
 
 use std::sync::Arc;
 
-use cudarc::{driver::{CudaContext, LaunchConfig}, nvrtc::compile_ptx};
+use cudarc::{driver::{CudaContext, LaunchConfig, PushKernelArg}, nvrtc::compile_ptx};
 
 const SRC : &str = "14_tiled_matmul_and_coalescing.cu";
 
@@ -34,6 +34,36 @@ fn main() -> anyhow::Result<()> {
         0, 
         stream
     );
+
+    // host side pointeers (input + output)
+    // for input we need tile row and tile column 
+    let h_r = vec![n];
+    let h_c = vec![n];
+    
+    // output 
+    let h_o = vec![n];
+
+    // device side pointers (input + output)
+    let d_r = stream.clone_htod(&h_r)?;
+    let d_c = stream.clone_htod(&h_c)?;
+    // output 
+    let mut d_o = stream.clone_htod(&h_o)?;
+
+    unsafe {
+        stream
+            .launch_builder(&f)
+            .arg(&n)
+            .arg(&d_r)
+            .arg(&d_c)
+            .arg(&mut d_o)
+            .launch(cfg)?;
+    }
+
+
+    stream.synchronize()?;
+
+
+
     
 
     Ok(())

@@ -45,6 +45,9 @@ fn main() -> anyhow::Result<()> {
     // output 
     let mut d_o = stream.clone_htod(&h_o)?;
 
+
+    let mut start = std::time::Instant::now();
+
     unsafe {
         stream
             .launch_builder(&f)
@@ -57,6 +60,10 @@ fn main() -> anyhow::Result<()> {
 
 
     stream.synchronize()?;
+
+    let mut end = std::time::Instant::now();
+
+    println!("Time taken for standard matmul: {:?}", end.duration_since(start));
 
 
     // tileed mode :: 
@@ -76,6 +83,8 @@ fn main() -> anyhow::Result<()> {
     // output 
     let mut tiled_d_o = stream.clone_htod(&tiled_h_o)?;
 
+    start = std::time::Instant::now();
+
     unsafe {
         stream
             .launch_builder(&f)
@@ -89,6 +98,9 @@ fn main() -> anyhow::Result<()> {
 
     stream.synchronize()?;
 
+    end = std::time::Instant::now();
+
+    println!("Time taken for tiled matmul: {:?}", end.duration_since(start));
 
 
     

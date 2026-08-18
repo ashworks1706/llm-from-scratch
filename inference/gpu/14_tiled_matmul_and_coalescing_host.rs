@@ -29,12 +29,7 @@ fn main() -> anyhow::Result<()> {
 
     let blocks_per_grid = (n + threads_per_block - 1) / threads_per_block;
 
-    let cfg = LaunchConfig(
-        blocks_per_grid, 
-        threads_per_block, 
-        0, 
-        stream
-    );
+    let cfg = LaunchConfig::for_num_elems(n);
 
     // host side pointeers (input + output)
     // for input we need tile row and tile column 

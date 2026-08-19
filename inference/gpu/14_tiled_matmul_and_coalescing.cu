@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <cuda_runtime.h> 
 
+// even with shared mem tiling, cuBLAS is way faster because 
+// it uses register tiling where each individual thread computes its own tile of C, 
+// and it uses warp-level primitives to reduce the number of synchronizations along with 
+// prefetching the next tile of A and B into registers while computing the current tile of C,
 __global__ void matmul_naive(int n, const int *A, const int *B, int *C) {
     int col = blockIdx.x * blockDim.x + threadIdx.x;
     int row = blockIdx.y * blockDim.y + threadIdx.y;

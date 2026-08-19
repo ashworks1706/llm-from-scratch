@@ -1,14 +1,12 @@
 use std::sync::Arc;
-
 use cudarc::{driver::{CudaContext, LaunchConfig, PushKernelArg}, nvrtc::compile_ptx};
 
-const SRC : &str = "14_tiled_matmul_and_coalescing.cu";
+const SRC: &str = include_str!("14_tiled_matmul_and_coalescing.cu");
 
 fn main() -> anyhow::Result<()> {
-
     // arithmetic intensity is the ratio of FLOPS to bytes transferred from global VRAM.
 
-    let ctx : Arc<CudaContext> = CudaContext::new(0)?;
+    let ctx: Arc<CudaContext> = CudaContext::new(0)?;
 
     let stream = ctx.default_stream();
 
@@ -19,26 +17,28 @@ fn main() -> anyhow::Result<()> {
     let f = module.load_function("matmul")?;
     let f_tiled = module.load_function("tiled_matmul")?;
 
-     
-
     let n = 1024;
+    let n_i32 = n as i32;
 
     let threads_per_block = 16;
 
     let blocks_per_grid = (n + threads_per_block - 1) / threads_per_block;
 
-    let cfg = LaunchConfig::for_num_elems(n);
-
+    let cfg = LaunchConfig {
+        grid_dim: (blocks_per_grid as u32, blocks_per_grid as u32, 1),
+        block_dim: (threads_per_block as u32, threads_per_block as u32, 1),
+        shared_mem_bytes: 0,
+    };
 
     // for a NxN matrix, we need N^2 threads to compute the output matrix.
 
     // host side pointeers (input + output)
     // for input we need tile row and tile column 
-    let h_a = vec![n];
-    let h_b = vec![n];
+    let h_a = vec![1i32; n * n];
+    let h_b = vec![2i32; n * n];
      
     // output  
-    let h_o = vec![n];
+    let h_o = vec![0i32; n * n];
  
     // device side pointers (input + output)
     let d_a = stream.clone_htod(&h_a)?; 
@@ -46,13 +46,12 @@ fn main() -> anyhow::Result<()> {
     // output 
     let mut d_o = stream.clone_htod(&h_o)?;
 
-
     let mut start = std::time::Instant::now();
 
     unsafe {
         stream
             .launch_builder(&f)
-            .arg(&n)
+            .arg(&n_i32)
             .arg(&d_a)
             .arg(&d_b)
             .arg(&mut d_o)
@@ -64,8 +63,6 @@ fn main() -> anyhow::Result<()> {
     // = 8 * N^2 bytes. then it is also written to output matrix so the total bytes transferred from
     // global memory is 8 * N^2 + 4 * N^2 = 12 * N^2 bytes.
     // 0.25 Flop/bytes 
-    
-    
 
     stream.synchronize()?;
 
@@ -73,17 +70,16 @@ fn main() -> anyhow::Result<()> {
 
     println!("Time taken for standard matmul: {:?}", end.duration_since(start));
 
-
     // tileed mode :: 
     //
 
     // host side pointeers (input + output)
     // for input we need tile row and tile column 
-    let tiled_h_a = vec![n];
-    let tiled_h_b = vec![n];
+    let tiled_h_a = vec![1i32; n * n];
+    let tiled_h_b = vec![2i32; n * n];
     
     // output 
-    let tiled_h_o = vec![n];
+    let tiled_h_o = vec![0i32; n * n];
 
     // device side pointers (input + output)
     let tiled_d_a = stream.clone_htod(&tiled_h_a)?;
@@ -95,11 +91,11 @@ fn main() -> anyhow::Result<()> {
 
     unsafe {
         stream
-            .launch_builder(&f)
-            .arg(&n)
+            .launch_builder(&f_tiled)
+            .arg(&n_i32)
             .arg(&tiled_d_a)
             .arg(&tiled_d_b)
-            .arg(&mut d_o)
+            .arg(&mut tiled_d_o)
             .launch(cfg)?;
     }
 
@@ -114,8 +110,9 @@ fn main() -> anyhow::Result<()> {
 
     println!("Time taken for tiled matmul: {:?}", end.duration_since(start));
 
-
-    
+    let res_naive = stream.clone_dtoh(&d_o)?;
+    let res_tiled = stream.clone_dtoh(&tiled_d_o)?;
+    println!("C[0] check: naive = {}, tiled = {}", res_naive[0], res_tiled[0]);
 
     Ok(())
 }

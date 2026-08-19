@@ -1,7 +1,7 @@
 use std::sync::Arc;
 use cudarc::{driver::{CudaContext, LaunchConfig, PushKernelArg}, nvrtc::compile_ptx};
 
-const SRC: &str = include_str!("14_tiled_matmul_and_coalescing.cu");
+const SRC: &str = include_str!("14_tiled_matmul_and_coalescing_host.cu");
 
 fn main() -> anyhow::Result<()> {
     // arithmetic intensity is the ratio of FLOPS to bytes transferred from global VRAM.
@@ -115,4 +115,15 @@ fn main() -> anyhow::Result<()> {
     println!("C[0] check: naive = {}, tiled = {}", res_naive[0], res_tiled[0]);
 
     Ok(())
+    // > cargo run --example 14_tiled_matmul_and_coalescing_host
+    // Compiling inference v0.1.0 (/home/ash/projects/llm-from-scratch/inference)
+    //     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.55s
+    //     Running `target/debug/examples/14_tiled_matmul_and_coalescing_host`
+    // Time taken for standard matmul: 3.067708ms
+    // Time taken for tiled matmul: 2.40138ms
+    // C[0] check: naive = 2048, tiled = 2048
+    // 2s .../llm-from-scratch/inference git:main 
+    // > ``
+
+
 }

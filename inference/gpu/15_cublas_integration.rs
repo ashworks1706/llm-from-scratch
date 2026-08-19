@@ -8,9 +8,23 @@
 // - Compare cuBLAS execution against Candle and a custom operation baseline
 // - Recognize when vendor GEMM is preferable to a handwritten CUDA kernel
 
+
+// 
+
 #[allow(unused_imports)]
 use {cudarc::cublas::CudaBlas, cudarc::driver::CudaContext};
 
 fn main() -> anyhow::Result<()> {
+    let ctx = CudaContext::new(0)?;
+    
+    let stream = ctx.default_stream(); 
+
+    let blas = CudaBlas::new(stream.clone())?;
+
+
+
+
+
+
     Ok(())
 }

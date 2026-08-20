@@ -13,7 +13,7 @@
 
 #[allow(unused_imports)]
 use {cudarc::cublas::CudaBlas, cudarc::driver::CudaContext};
-use {cudarc::cublas::Gemm};
+use {cudarc::{cublas::Gemm, driver::LaunchConfig}};
 
 
 // let's prepare a normal linear layer that has an input and output layer, in normal perceptron,
@@ -60,8 +60,19 @@ fn main() -> anyhow::Result<()> {
     // output 
     let mut d_o = stream.clone_htod(&h_o)?;
 
+    let threads_per_block = 16;
 
-    blas.gemm(cfg, d_a, d_b, d_o);
+    let blocks_per_grid = (n + threads_per_block - 1) / threads_per_block;
+
+    let cfg = LaunchConfig {
+        grid_dim: (blocks_per_grid as u32, blocks_per_grid as u32, 1),
+        block_dim: (threads_per_block as u32, threads_per_block as u32, 1),
+        shared_mem_bytes: 0,
+    };
+
+
+
+    blas.gemm(cfg, &d_a, &d_b, &mut d_o);
 
     Ok(())
 }

@@ -72,7 +72,9 @@ fn main() -> anyhow::Result<()> {
 
 
 
-    blas.gemm(cfg, &d_a, &d_b, &mut d_o);
+    unsafe {
+    blas.gemm(cfg, &d_a, &d_b, &mut d_o)?;
+    }
 
     Ok(())
 }

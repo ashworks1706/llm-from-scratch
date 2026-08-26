@@ -9,12 +9,10 @@
 // - Recognize when vendor GEMM is preferable to a handwritten CUDA kernel
 
 
-// 
-
 #[allow(unused_imports)]
 use {cudarc::cublas::CudaBlas, cudarc::driver::CudaContext};
-use {cudarc::{cublas::{Gemm, GemmConfig}, driver::LaunchConfig}};
-
+use {cudarc::{cublas::{Gemm, GemmConfig, sys::cublasOperation_t}, driver::LaunchConfig}};
+use half::f16;
 
 // let's prepare a normal linear layer that has an input and output layer, in normal perceptron,
 // we have weights and biases
@@ -35,6 +33,7 @@ fn main() -> anyhow::Result<()> {
 
     // this is GEMM, general matrix multiply, that aims to solve 
     // C = \alpha . op(A) . op(B) + \beta + C 
+    // row-major matrix is equivalent to a transposed column-major matrix
     
     let ctx = CudaContext::new(0)?;
     
@@ -65,7 +64,16 @@ fn main() -> anyhow::Result<()> {
     let blocks_per_grid = (n + threads_per_block - 1) / threads_per_block;
 
     let cfg = GemmConfig {
-
+        transa: cublasOperation_t::CUBLAS_OP_N, // Don't transpose (interpret row-major as col-major transpose)
+        transb: cublasOperation_t::CUBLAS_OP_N,
+        m: n as i32,  // Rows of op(A) in col-major (Columns of W in row-major = N)
+        n: n as i32,  // Cols of op(B) in col-major (Rows of X in row-major = M)
+        k: n as i32,  // Shared dimension K
+        alpha: half::f16::from_f32(1.0),
+        lda: n as i32, // Leading dimension of A
+        ldb: n as i32, // Leading dimension of B
+        beta: half::f16::from_f32(0.0),
+        ldc: n as i32, // Leading dimension of C
     }
 
 

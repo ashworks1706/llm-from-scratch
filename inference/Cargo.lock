@@ -1600,6 +1600,7 @@ dependencies = [
  "candle-transformers",
  "criterion",
  "cudarc 0.19.8",
+ "half",
  "hf-hub",
  "memmap2",
  "rand 0.10.2",

@@ -1,13 +1,3 @@
-// cuBLAS integration for model linear layers
-//
-// LEARNING OBJECTIVES:
-// - Use cuBLAS through cudarc for dense model matrix multiplication
-// - Understand matrix layout, transpose flags and leading dimensions
-// - Run FP16 and BF16 GEMM without writing a custom matmul kernel
-// - Reuse handles, streams and workspace across inference iterations
-// - Compare cuBLAS execution against Candle and a custom operation baseline
-// - Recognize when vendor GEMM is preferable to a handwritten CUDA kernel
-
 
 #[allow(unused_imports)]
 use {cudarc::cublas::CudaBlas, cudarc::driver::CudaContext};
@@ -18,13 +8,11 @@ use half::f16;
 // we have weights and biases
 // for this we've got input X[M,K] with weight W[K,N] and output Y[M,N]
 
-struct LinearLayer{
-    _in : [4, 4096], // M=4 tokens, K=4096 hidden dim 
-    _w : [4096, 11008], // K=4096 hidden dim, N=11008 MLP projection
-    _o : [4, 11008], // output layer 
+pub struct LinearLayer {
+    pub _in: [[f16; 4096]; 4],       // [Rows; Cols] -> 4 rows of 4096 elements
+    pub _w: [[f16; 11008]; 4096],    // 4096 rows of 11008 elements (~90MB, will stack overflow if on stack!)
+    pub _o: [[f16; 11008]; 4],       // 4 rows of 11008 elements
 }
-
-
 
 fn main() -> anyhow::Result<()> {
  
@@ -111,4 +99,13 @@ fn main() -> anyhow::Result<()> {
 
     Ok(())
 }
+
+// when to use vendor GEMM(Cublas / CUTLASS): when the matrix is large enough to benefit from the
+// vendor's optimized implementation, typically for matrices larger than 128x128. For smaller
+// matrices, a custom kernel may be more efficient due to lower overhead.
+//
+// when to use handwritten custom cuda kernels : for memory bound operations, small matrix
+// multiplications, or when you need to implement a specific algorithm that is not well-supported by
+// vendor libraries. Custom kernels can be optimized for specific data layouts and access patterns,
+// potentially outperforming general-purpose libraries for certain workloads.
 

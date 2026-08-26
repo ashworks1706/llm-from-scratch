@@ -24,6 +24,8 @@ struct LinearLayer{
     _o : [4, 11008], // output layer 
 }
 
+
+
 fn main() -> anyhow::Result<()> {
  
     // in transformers, there's lot of matri multiplications so in order to do it fastly we need to
@@ -44,7 +46,6 @@ fn main() -> anyhow::Result<()> {
     println!("{:?}", blas);
 
     // CudaBlas { handle: 0x556cd7c70660, stream: CudaStream { cu_stream: 0x0, ctx: CudaContext { cu_device: 0, cu_ctx: 0x556cd7021700, ordinal: 0, has_async_alloc: true, is_primary: 
-    // true, num_streams: 0, event_tracking: true, error_state: 0 } } }
 
     // 2. Set dimensions for an MLP projection layer: X[M, K] * W[K, N] = Y[M, N]
     let m = 4usize;      // Tokens / Batch size
@@ -52,9 +53,11 @@ fn main() -> anyhow::Result<()> {
     let n = 11008usize;  // MLP intermediate dimension
 
     // 3. Allocate host vectors using FP16
-    let h_x = vec![f16::from_f32(1.0); m * k];
+    let h_x = vec![f16::from_f32(1.0); m * k]; // in rust, vec![value; size] creates a
+    // vector of given size with all elements initialized to value
     let h_w = vec![f16::from_f32(0.5); k * n];
     let h_y = vec![f16::from_f32(0.0); m * n];
+
 
     // 4. Copy to device
     let d_x = stream.clone_htod(&h_x)?;

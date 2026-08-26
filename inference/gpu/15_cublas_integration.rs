@@ -11,7 +11,7 @@
 
 #[allow(unused_imports)]
 use {cudarc::cublas::CudaBlas, cudarc::driver::CudaContext};
-use {cudarc::{cublas::{Gemm, GemmConfig, sys::cublasOperation_t}, driver::LaunchConfig}};
+use {cudarc::{cublas::{Gemm, GemmConfig, sys::cublasOperation_t}, driver::LaunchConfig}, std::time::Instant};
 use half::f16;
 
 // let's prepare a normal linear layer that has an input and output layer, in normal perceptron,
@@ -45,41 +45,67 @@ fn main() -> anyhow::Result<()> {
 
     // CudaBlas { handle: 0x556cd7c70660, stream: CudaStream { cu_stream: 0x0, ctx: CudaContext { cu_device: 0, cu_ctx: 0x556cd7021700, ordinal: 0, has_async_alloc: true, is_primary: 
     // true, num_streams: 0, event_tracking: true, error_state: 0 } } }
-    
-    let n = 1024;
 
-    let h_a = vec![1f16; n * n];
-    let h_b = vec![2f16; n * n];
-     
-    // output  
-    let h_o = vec![0f16; n * n];
-     // device side pointers (input + output)
-    let d_a = stream.clone_htod(&h_a)?; 
-    let d_b = stream.clone_htod(&h_b)?;
-    // output 
-    let mut d_o = stream.clone_htod(&h_o)?;
+    // 2. Set dimensions for an MLP projection layer: X[M, K] * W[K, N] = Y[M, N]
+    let m = 4usize;      // Tokens / Batch size
+    let k = 4096usize;   // Hidden dimension
+    let n = 11008usize;  // MLP intermediate dimension
 
-    let threads_per_block = 16;
+    // 3. Allocate host vectors using FP16
+    let h_x = vec![f16::from_f32(1.0); m * k];
+    let h_w = vec![f16::from_f32(0.5); k * n];
+    let h_y = vec![f16::from_f32(0.0); m * n];
 
-    let blocks_per_grid = (n + threads_per_block - 1) / threads_per_block;
+    // 4. Copy to device
+    let d_x = stream.clone_htod(&h_x)?;
+    let d_w = stream.clone_htod(&h_w)?;
+    let mut d_y = stream.clone_htod(&h_y)?;
 
+    // 5. Configure GEMM
+    // To compute Y = X * W in row-major:
+    // Pass W as matrix A (dim N x K) and X as matrix B (dim K x M)
     let cfg = GemmConfig {
-        transa: cublasOperation_t::CUBLAS_OP_N, // Don't transpose (interpret row-major as col-major transpose)
+        transa: cublasOperation_t::CUBLAS_OP_N,
         transb: cublasOperation_t::CUBLAS_OP_N,
-        m: n as i32,  // Rows of op(A) in col-major (Columns of W in row-major = N)
-        n: n as i32,  // Cols of op(B) in col-major (Rows of X in row-major = M)
-        k: n as i32,  // Shared dimension K
-        alpha: half::f16::from_f32(1.0),
-        lda: n as i32, // Leading dimension of A
-        ldb: n as i32, // Leading dimension of B
-        beta: half::f16::from_f32(0.0),
-        ldc: n as i32, // Leading dimension of C
-    }
+        m: n as i32,
+        n: m as i32,
+        k: k as i32,
+        alpha: f16::from_f32(1.0),
+        lda: n as i32,
+        ldb: k as i32,
+        beta: f16::from_f32(0.0),
+        ldc: n as i32,
+    };
 
-
+    // 6. Warmup
     unsafe {
-    blas.gemm(cfg, &d_a, &d_b, &mut d_o)?;
+        blas.gemm(cfg, &d_w, &d_x, &mut d_y)?;
     }
+    stream.synchronize()?;
+
+    // 7. Benchmark
+    let iterations = 100;
+    let start = Instant::now();
+
+    for _ in 0..iterations {
+        unsafe {
+            blas.gemm(cfg, &d_w, &d_x, &mut d_y)?;
+        }
+    }
+    stream.synchronize()?;
+    let elapsed = start.elapsed() / iterations;
+
+    // 8. Verify Result
+    let res = stream.clone_dtoh(&d_y)?;
+    let total_flops = 2.0 * (m as f64) * (n as f64) * (k as f64);
+    let tflops = (total_flops / elapsed.as_secs_f64()) / 1e12;
+
+    println!("=== cuBLAS FP16 Linear Layer Result ===");
+    println!("Matrix Dimensions: M={}, K={}, N={}", m, k, n);
+    println!("Average Time:      {:?}", elapsed);
+    println!("Compute Density:   {:.2} TFLOP/s", tflops);
+    println!("Y[0][0] value:     {:.2} (Expected: {:.2})", res[0].to_f32(), (k as f32) * 0.5);
 
     Ok(())
 }
+

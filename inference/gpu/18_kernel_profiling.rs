@@ -1,10 +1,6 @@
-use cudarc::cublas::{Gemm, GemmConfig};
-
-#[allow(unused_imports)]
-use {
-    cudarc::driver::{sys::CUevent_flags, CudaContext},
-    std::time::Instant,
-};
+use cudarc::cublas::{sys::cublasOperation_t, CudaBlas, Gemm, GemmConfig};
+use cudarc::driver::{sys::CUevent_flags, CudaContext};
+use std::time::Instant;
 
 fn main() -> anyhow::Result<()> {
     // there's usually three profile regions:
@@ -27,63 +23,85 @@ fn main() -> anyhow::Result<()> {
 
     // lets run a gemm kernel and compare std timing and cuda event timing
 
+
     let ctx = CudaContext::new(0)?;
-
     let stream = ctx.default_stream();
+    let blas = CudaBlas::new(stream.clone())?;
 
-    let blas = cudarc::cublas::CudaBlas::new(stream.clone())?;
-
-    let h_x = vec![0.0f32; 1024 * 1024];
-    let h_y = vec![0.0f32; 1024 * 1024];
+    let n = 1024usize;
+    let h_x = vec![1.0f32; n * n];
+    let h_y = vec![0.0f32; n * n];
 
     let d_x = stream.clone_htod(&h_x)?;
     let mut d_y = stream.clone_htod(&h_y)?;
 
     let cfg = GemmConfig {
-        transa: cudarc::cublas::sys::cublasOperation_t::CUBLAS_OP_N,
-        transb: cudarc::cublas::sys::cublasOperation_t::CUBLAS_OP_N,
-        lda: 1024,
-        ldb: 1024,
-        ldc: 1024,
-        m: 1024,
-        n: 1024,
-        k: 1024,
+        transa: cublasOperation_t::CUBLAS_OP_N,
+        transb: cublasOperation_t::CUBLAS_OP_N,
+        lda: n as i32,
+        ldb: n as i32,
+        ldc: n as i32,
+        m: n as i32,
+        n: n as i32,
+        k: n as i32,
         alpha: 1.0f32,
         beta: 0.0f32,
     };
 
-    // std timer measures wall-clock time from the CPU side
-    let start = Instant::now();
-
-    // create CUDA events with timing enabled
     let start_event = ctx.new_event(Some(CUevent_flags::CU_EVENT_DEFAULT))?;
     let end_event = ctx.new_event(Some(CUevent_flags::CU_EVENT_DEFAULT))?;
 
-    // record the point in the stream immediately before GEMM
-    start_event.record(&stream)?;
+    let iterations = 100;
 
-    unsafe {
-        blas.gemm(cfg, &d_x, &d_x, &mut d_y)?;
+    // 1. Warmup
+    for _ in 0..10 {
+        unsafe {
+            blas.gemm(cfg, &d_x, &d_x, &mut d_y)?;
+        }
     }
+    stream.synchronize()?;
 
-    // record the point in the stream immediately after GEMM
+    // pure GPU Kernel Time (Asynchronous Stream Pipelining)
+    start_event.record(&stream)?;
+    for _ in 0..iterations {
+        unsafe {
+            blas.gemm(cfg, &d_x, &d_x, &mut d_y)?;
+        }
+    }
     end_event.record(&stream)?;
-
-    // CPU waits until GPU reaches the end event
     end_event.synchronize()?;
+    let avg_gpu_ms = start_event.elapsed_ms(&end_event)? / iterations as f32;
 
-    // GPU execution time between the two events
-    let gpu_ms = start_event.elapsed_ms(&end_event)?;
+    // synchronous Kernel Time Measuring Host Sync / Driver Stalls
+    let start_sync = Instant::now();
+    for _ in 0..iterations {
+        unsafe {
+            blas.gemm(cfg, &d_x, &d_x, &mut d_y)?;
+        }
+        stream.synchronize()?;
+    }
+    let avg_sync_ms = (start_sync.elapsed().as_secs_f64() * 1000.0) / iterations as f64;
 
-    // since we synchronized above, this is actual wall-clock completion time
-    let wall_time = start.elapsed();
+    //  end-to-End Latency Copies + Compute
+    let start_e2e = Instant::now();
+    for _ in 0..iterations {
+        let d_in = stream.clone_htod(&h_x)?;
+        let mut d_out = stream.clone_htod(&h_y)?;
+        unsafe {
+            blas.gemm(cfg, &d_in, &d_in, &mut d_out)?;
+        }
+        let _h_res = stream.clone_dtoh(&d_out)?;
+    }
+    let avg_e2e_ms = (start_e2e.elapsed().as_secs_f64() * 1000.0) / iterations as f64;
 
-    println!("cuda event: {:.3} ms", gpu_ms);
-    println!("std instant: {:.3} ms", wall_time.as_secs_f64() * 1000.0);
+    // Arithmetic Performance Metrics
+    let total_flops = 2.0 * (n as f64) * (n as f64) * (n as f64);
+    let tflops = (total_flops / (avg_gpu_ms as f64 / 1000.0)) / 1e12;
 
-
-   // cuda event: 134.498 ms
-   // std instant: 134.661 ms
+    println!("=== Evaluation Metrics (Matrix Size: {}x{}) ===", n, n);
+    println!("Pure GPU Kernel Time:     {:.4} ms ({:.2} TFLOP/s)", avg_gpu_ms, tflops);
+    println!("Synchronous Per-Step:     {:.4} ms (Overhead: +{:.4} ms)", avg_sync_ms, avg_sync_ms - avg_gpu_ms as f64);
+    println!("End-to-End (with Copies): {:.4} ms (Penalty:  {:.1}x slower)", avg_e2e_ms, avg_e2e_ms / avg_gpu_ms as f64);
 
     Ok(())
 }

@@ -4,6 +4,17 @@ use {cudarc::cublas::CudaBlas, cudarc::driver::CudaContext};
 use {cudarc::{cublas::{Gemm, GemmConfig, sys::cublasOperation_t}, driver::LaunchConfig}, std::time::Instant};
 use half::f16;
 
+// cuBLAS / cuBLASLt: Dense matrix multiplication (Linear/MLP layers, GEMM)
+// cuDNN / CUTLASS:   Attention mechanisms (FlashAttention), convolutions, fused ops
+// NCCL:              Multi-GPU communication (AllReduce, Tensor Parallelism)
+// CUB / Thrust:      Reusable primitives inside kernels (reductions, prefix scans, sorts)
+// cuRAND / cuFFT:    Random number generation and Fourier transforms
+// cuSPARSE:          Sparse matrix operations (pruned weights, sparse attention)
+// cuFile (GDS):      Direct NVMe-to-GPU memory loading (fast checkpoint loading)
+// NVTX / CUPTI:      Profiling markers and GPU performance metrics
+
+
+
 // let's prepare a normal linear layer that has an input and output layer, in normal perceptron,
 // we have weights and biases
 // for this we've got input X[M,K] with weight W[K,N] and output Y[M,N]

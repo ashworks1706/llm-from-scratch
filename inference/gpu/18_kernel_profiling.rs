@@ -2,6 +2,34 @@ use cudarc::cublas::{sys::cublasOperation_t, CudaBlas, Gemm, GemmConfig};
 use cudarc::driver::{sys::CUevent_flags, CudaContext};
 use std::time::Instant;
 
+
+// gemm is used for when every output element is linear combination of every input element, and is a
+// good example of a kernel that is compute bound, and not memory bound. while elementwise or
+// reduction kernels whose outputs depends strictly on the input at the exact same index are memory
+// bound, and will be limited by the memory bandwidth of the GPU. //
+//
+//
+// elementwie operations arel ike GeLU, ReLU, Sigmoid, Tanh, etc. and are memory bound. while
+// reduction operations are like sum, mean, max, min, etc. and are also memory bound. while gemm is
+// compute bound. in general, compute bound kernels will be limited by the number of cores on the
+// GPU, while memory bound kernels will be limited by the memory bandwidth of the GPU. 
+//
+//
+//
+// optimization stragey for compute bound kernels is to increase the number of threads and blocks,
+// while optimization strategy for memory bound kernels is to increase the memory bandwidth by using
+// shared memory, and to reduce the number of memory accesses by using registers.
+//
+// for example, operation fusion is a technique that can be used to reduce the number of memory
+// accesses by combining multiple operations into a single kernel, and is a common optimization
+// technique for memory bound kernels. Cache subtiles in shared memory to reduce global memory
+// accesses is another common optimization technique for memory bound kernels.
+//
+//
+// activations are memory bound, while matrix multiplications are compute bound.
+//
+
+
 fn main() -> anyhow::Result<()> {
     // there's usually three profile regions:
     //

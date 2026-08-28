@@ -1,4 +1,4 @@
-use cudarc::cublas::Gemm;
+use cudarc::cublas::{Gemm, GemmConfig};
 
 #[allow(unused_imports)]
 use {
@@ -39,9 +39,12 @@ fn main() -> anyhow::Result<()> {
     let d_x = stream.clone_htod(&h_x)?;
     let mut d_y = stream.clone_htod(&h_y)?;
 
-    let cfg = cudarc::cublas::GemmConfig {
+    let cfg = GemmConfig {
         transa: cudarc::cublas::sys::cublasOperation_t::CUBLAS_OP_N,
         transb: cudarc::cublas::sys::cublasOperation_t::CUBLAS_OP_N,
+        lda: 1024,
+        ldb: 1024,
+        ldc: 1024,
         m: 1024,
         n: 1024,
         k: 1024,
@@ -77,6 +80,10 @@ fn main() -> anyhow::Result<()> {
 
     println!("cuda event: {:.3} ms", gpu_ms);
     println!("std instant: {:.3} ms", wall_time.as_secs_f64() * 1000.0);
+
+
+   // cuda event: 134.498 ms
+   // std instant: 134.661 ms
 
     Ok(())
 }

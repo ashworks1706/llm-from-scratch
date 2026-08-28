@@ -94,7 +94,7 @@ fn main() -> anyhow::Result<()> {
     }
     let avg_e2e_ms = (start_e2e.elapsed().as_secs_f64() * 1000.0) / iterations as f64;
 
-    // Arithmetic Performance Metrics
+    // arithmetic Performance Metrics
     let total_flops = 2.0 * (n as f64) * (n as f64) * (n as f64);
     let tflops = (total_flops / (avg_gpu_ms as f64 / 1000.0)) / 1e12;
 
@@ -105,3 +105,10 @@ fn main() -> anyhow::Result<()> {
 
     Ok(())
 }
+
+
+
+// === Evaluation Metrics (Matrix Size: 1024x1024) ===
+// Pure GPU Kernel Time:     0.3215 ms (6.68 TFLOP/s)
+// Synchronous Per-Step:     0.3604 ms (Overhead: +0.0388 ms)
+// End-to-End (with Copies): 2.4594 ms (Penalty:  7.6x slower)

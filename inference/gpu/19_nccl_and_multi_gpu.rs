@@ -140,6 +140,7 @@ use std::sync::Arc;
 use cudarc::cublas::sys::cublasOperation_t;
 use cudarc::cublas::{CudaBlas, Gemm, GemmConfig};
 use cudarc::driver::{CudaContext, CudaStream};
+use cudarc::nccl::{Comm, Id};
 
 const M = 4;
 const K = 16;
@@ -150,7 +151,26 @@ struct GpuWorker{
     rank: usize,
     ctx: Arc<CudaContext>,
     stream: Arc<CudaStream>,
-    comm: Comm
+    comm: Comm,
+    blas: CudaBlas,
+}
+
+impl GpuWorker{
+    fn new(rank: usize, world_size: usize, id: Id) -> anyhow::Result<Self> {
+        let ctx = Arc::new(CudaContext::new(rank)?);
+        let stream = ctx.default_stream();
+
+        let comm = Comm::from_rank(ctx.clone(), rank, world_size, id)?;
+        let blas = CudaBlas::new(stream.clone())?;
+
+        Ok(Self{
+            rank,
+            ctx,
+            stream,
+            comm,
+            blas,
+        })
+    }
 }
 
 fn main() -> anyhow::Result<()> {

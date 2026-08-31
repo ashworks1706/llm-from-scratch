@@ -135,15 +135,13 @@
 // loss, the router is encouraged to distribute the tokens evenly across the experts, which can
 // improve the performance of the model by ensuring that all experts are utilized effectively.
 
-use std::os::unix::thread;
 use std::sync::Arc;
 use std::thread::spawn;
 
 use cudarc::cublas::sys::cublasOperation_t;
 use cudarc::cublas::{CudaBlas, Gemm, GemmConfig};
 use cudarc::driver::{CudaContext, CudaStream};
-use cudarc::nccl::sys::ncclRedOp_t;
-use cudarc::nccl::{Comm, Id};
+use cudarc::nccl::{Comm, Id, ReduceOp};
 
 const M: usize = 4;
 const K: usize = 16;
@@ -163,7 +161,8 @@ impl GpuWorker{
         let ctx: Arc<CudaContext> = CudaContext::new(rank)?;
         let stream = ctx.default_stream();
 
-        let comm = Comm::from_rank(stream.clone(), rank, world_size, id);
+        let comm = Comm::from_rank(stream.clone(), rank, world_size, id)
+            .map_err(|e| anyhow::anyhow!("nccl comm init failed: {:?}", e.0))?;
         let blas = CudaBlas::new(stream.clone())?;
 
         Ok(Self{
@@ -228,7 +227,7 @@ fn run_tensor_parallel_mlp(worker: &GpuWorker) -> anyhow::Result<()>{
 
     // 2. Row-Parallel Down-Projection: Y1_local[M, K/P] * W_down_local[K/P, K] = Partial_Y2[M, K]
 
-    let mut d_out_partial = stream.clone_htod(vec![0.0f32; M * K])?;
+    let mut d_out_partial = stream.clone_htod(&vec![0.0f32; M * K])?;
     let d_w_down = stream.clone_htod(&h_w_down_local)?;
 
     let cfg_down = GemmConfig {
@@ -257,17 +256,22 @@ fn run_tensor_parallel_mlp(worker: &GpuWorker) -> anyhow::Result<()>{
     // 3. NCCL AllReduce (Sum partial dot products across both GPUs)
     // Partial_Y2 on GPU 0 + Partial_Y2 on GPU 1 -> Final Full Output Y2 on all GPUs
 
-    unsafe{
-        // ncclRedOp_t::ncclSum means that we want to sum the partial outputs across all GPUs, and
-        // store the result in d_out_partial on each GPU, so that each GPU has the final output Y2 
-        worker.comm.all_reduce(&mut d_out_partial, &ncclRedOp_t::ncclSum, stream,)?;
-    }
+    // all_reduce needs a separate receive buffer in cudarc's safe api, and the stream is baked
+    // into the Comm, so it isn't passed here.
+    let mut d_out_final = stream.alloc_zeros::<f32>(M * K)?;
+
+    // ncclRedOp_t::ncclSum means that we want to sum the partial outputs across all GPUs, and
+    // store the result in d_out_partial on each GPU, so that each GPU has the final output Y2
+    worker.comm
+        .all_reduce(&d_out_partial, &mut d_out_final, &ReduceOp::Sum)
+        .map_err(|e| anyhow::anyhow!("nccl all_reduce failed: {:?}", e.0))?;
 
     stream.synchronize()?;
 
-    let final_res = stream.clone_dtoh(&d_out_partial)?;
+    let final_res = stream.clone_dtoh(&d_out_final)?;
     println!("Gpu {} AllReduce finished, final output shape: [{}, {}]", rank, M, K);
 
+    Ok(())
 }
 
 
@@ -282,7 +286,7 @@ let device_count = CudaContext::device_count()?;
     }
 
     // Generate shared NCCL unique ID on root
-    let shared_id = Id::new()?;
+    let shared_id = Id::new().map_err(|e| anyhow::anyhow!("nccl id creation failed: {:?}", e.0))?;
 
     // Spawn 2 threads, each managing one GPU device rank
     let mut handles = vec![];

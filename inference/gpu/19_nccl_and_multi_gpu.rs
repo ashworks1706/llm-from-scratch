@@ -135,8 +135,23 @@
 // loss, the router is encouraged to distribute the tokens evenly across the experts, which can
 // improve the performance of the model by ensuring that all experts are utilized effectively.
 
+use std::sync::Arc;
 
-use anyhow::Result;
+use cudarc::cublas::sys::cublasOperation_t;
+use cudarc::cublas::{CudaBlas, Gemm, GemmConfig};
+use cudarc::driver::{CudaContext, CudaStream};
+
+const M = 4;
+const K = 16;
+const N = 32;
+const TP_WORLD_SIZE = 2;
+
+struct GpuWorker{
+    rank: usize,
+    ctx: Arc<CudaContext>,
+    stream: Arc<CudaStream>,
+    comm: Comm
+}
 
 fn main() -> anyhow::Result<()> {
 

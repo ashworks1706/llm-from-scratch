@@ -2,6 +2,28 @@
 // just like how we got shards we put shards on different gpu vrams 
 
 
+// core NCCL collective primitives are all reduce, all gather, reduce scatter, and all to all 
+//
+// all reduce where it combines data across all GPUs and returns the result to all GPUs, used
+// for gradient averaging in data parallelism 
+// Math: T_all_reduce = 2(P-1)\alpha + 2((P-1)/P) S / \beta where P is the number of GPUs, S is
+// the size of the data, \alpha is the latency, and \beta is the bandwidth, this is the time it
+// takes to perform an all reduce operation across P GPUs with data size S, latency \alpha, and
+// bandwidth \beta. The first term 2(P-1)\alpha represents the latency cost of sending and
+// receiving messages between GPUs, while the second term 2((P-1)/P) S / \beta represents the
+// bandwidth cost of transferring data between GPUs. The factor of 2 accounts for the fact that
+// each GPU needs to send and receive data from all other GPUs.
+
+// all gather where it gathers data from all GPUs and returns the result to all GPUs, used for
+// gathering activations in pipeline parallelism
+
+// reduce scatter where it combines data across all GPUs and returns the result to a subset of
+// GPUs, used for sharding model parameters in tensor parallelism
+
+// all to all where it exchanges data between all GPUs, used for routing token activations in
+// expert parallelism
+
+
 // there's different types of parallelisms invovled, tensor parallelism which is about splitting
 // indiivudlam atrix multiplicatiosn across GPUs within the same layer, this requires frequent
 // synchronization per layer via NVLINK
@@ -70,35 +92,53 @@
 // to the number of layers and pipeline stages, but increases linearly with the batch size, sequence
 // length, and hidden size.
 //
+
+
+
 //  expert paralllism is used in MoE models where different gpus hold differnete expert sub
 //  networks, routing token activations via All to All communciation 
+// instaed of sharindg every weight amtrix (TP) or every layer (PP), we shard the model across
+// experts, where each expert is a subnetwork
+//
+// trainable router projects the hidden state x into E expert logits: h(x) = X. W_gate, where W_gate
+// is the weight matrix of the router, and E is the number of experts. The router then selects the
+// top-k experts based on the logits, and routes the token to those experts. The experts then
+// process the token and return the output to the router, which then combines the outputs from the
+// experts and returns the final output. This requires all-to-all communication to exchange the
+// token activations between the experts, and all-reduce to combine the outputs from the experts.
+// The router can be trained using reinforcement learning or supervised learning, and can be used to
+// improve the performance of the model by selecting the most relevant experts for each token. This
+// allows the model to scale to larger sizes without increasing the computational cost, as only a
+// subset of experts are used for each token.
+//
+// EP relies on All to All communication to exchange token activations between experts, and All
+// Reduce to combine the outputs from the experts.
+// let B be # tokens, H = hidden dim size, k = # active experts selected per token, P = # GPUs, 
+// the fraction of tokens sent to other remote GPPUs is P-1/P, since each token is routed to k
+// experts, and each expert is on a different GPU, the fraction of tokens sent to other GPUs is
+// (P-1)/P. The total number of tokens sent to other GPUs is B * k * (P-1)/P, and the total number
+// of tokens sent to the local GPU is B * k * 1/P. This means that the amount of data transferred
+// per step increases linearly with the number of tokens, hidden size, and active experts, and
+// decreases with the number of GPUs. This allows the model to scale to larger sizes without
+// increasing the computational cost, as only a subset of experts are used for each token.
+//
+//
+// to enforce uniform routing across routing, 
+// L_balance = \alpha * E * \sum_{i=1}^{E} (n_i - n/E)^2 where \alpha is a hyperparameter that
+// controls the strength of the regularization, E is the number of experts, n_i is the number of
+// tokens routed to expert i, and n is the total number of tokens. This loss encourages the router
+// to distribute the tokens evenly across the experts, by penalizing the router for routing too many
+// tokens to a single expert. The term (n_i - n/E)^2 measures the deviation of the number of tokens
+// routed to expert i from the expected number of tokens n/E, and the sum over all experts measures
+// the total deviation across all experts. The factor of E scales the loss by the number of experts,
+// and the hyperparameter \alpha controls the strength of the regularization. By minimizing this
+// loss, the router is encouraged to distribute the tokens evenly across the experts, which can
+// improve the performance of the model by ensuring that all experts are utilized effectively.
 
 
 use anyhow::Result;
 
 fn main() -> anyhow::Result<()> {
-
-
-    // core NCCL collective primitives are all reduce, all gather, reduce scatter, and all to all 
-    //
-    // all reduce where it combines data across all GPUs and returns the result to all GPUs, used
-    // for gradient averaging in data parallelism 
-    // Math: T_all_reduce = 2(P-1)\alpha + 2((P-1)/P) S / \beta where P is the number of GPUs, S is
-    // the size of the data, \alpha is the latency, and \beta is the bandwidth, this is the time it
-    // takes to perform an all reduce operation across P GPUs with data size S, latency \alpha, and
-    // bandwidth \beta. The first term 2(P-1)\alpha represents the latency cost of sending and
-    // receiving messages between GPUs, while the second term 2((P-1)/P) S / \beta represents the
-    // bandwidth cost of transferring data between GPUs. The factor of 2 accounts for the fact that
-    // each GPU needs to send and receive data from all other GPUs.
-
-    // all gather where it gathers data from all GPUs and returns the result to all GPUs, used for
-    // gathering activations in pipeline parallelism
-
-    // reduce scatter where it combines data across all GPUs and returns the result to a subset of
-    // GPUs, used for sharding model parameters in tensor parallelism
-    
-    // all to all where it exchanges data between all GPUs, used for routing token activations in
-    // expert parallelism
 
 
 

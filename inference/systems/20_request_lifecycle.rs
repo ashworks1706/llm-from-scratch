@@ -1,17 +1,32 @@
-// Inference request lifecycle and state machine
-//
-// LEARNING OBJECTIVES:
-// - Represent waiting, prefill, decode, completed, cancelled and failed requests
-// - Store prompt tokens, generated tokens, sampling parameters and timing state
-// - Keep model state and request state separate
-// - Release resources exactly once when a request completes or disconnects
-// - Define clear cancellation, timeout and error transitions
-// - Make request ownership explicit before adding concurrent scheduling
 
 use anyhow::Result;
 #[allow(unused_imports)]
 use std::time::Instant;
 
+struct SamplingParams{
+    pub temperature: f32,
+    pub top_p: f32,
+    pub top_k: f32,
+    pub max_tokens: usize,
+    pub stop_tokens: Vec<u32>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum FinishReason {
+    StopToken,
+    LengthLimit,
+    Canceled,
+    Timeout,
+    Error(String), 
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum RequestState {
+    Waiting,
+    Prefill,
+    Decode,
+    Finished(FinishReason),
+}
 fn main() -> Result<()> {
     Ok(())
 }

@@ -135,17 +135,20 @@
 // loss, the router is encouraged to distribute the tokens evenly across the experts, which can
 // improve the performance of the model by ensuring that all experts are utilized effectively.
 
+use std::os::unix::thread;
 use std::sync::Arc;
+use std::thread::spawn;
 
 use cudarc::cublas::sys::cublasOperation_t;
 use cudarc::cublas::{CudaBlas, Gemm, GemmConfig};
 use cudarc::driver::{CudaContext, CudaStream};
+use cudarc::nccl::sys::ncclRedOp_t;
 use cudarc::nccl::{Comm, Id};
 
-const M = 4;
-const K = 16;
-const N = 32;
-const TP_WORLD_SIZE = 2;
+const M: usize = 4;
+const K: usize = 16;
+const N: usize = 32;
+const TP_WORLD_SIZE: usize = 2;
 
 struct GpuWorker{
     rank: usize,
@@ -157,10 +160,10 @@ struct GpuWorker{
 
 impl GpuWorker{
     fn new(rank: usize, world_size: usize, id: Id) -> anyhow::Result<Self> {
-        let ctx = Arc::new(CudaContext::new(rank)?);
+        let ctx: Arc<CudaContext> = CudaContext::new(rank)?;
         let stream = ctx.default_stream();
 
-        let comm = Comm::from_rank(ctx.clone(), rank, world_size, id)?;
+        let comm = Comm::from_rank(stream.clone(), rank, world_size, id);
         let blas = CudaBlas::new(stream.clone())?;
 
         Ok(Self{
@@ -190,19 +193,115 @@ fn run_tensor_parallel_mlp(worker: &GpuWorker) -> anyhow::Result<()>{
 
     let d_x = stream.clone_htod(&h_x)?;
     let d_w_up = stream.clone_htod(&h_w_up_local)?;
-    let mut d_hidden = stream.clone_htod(*vec[0.0f32; M * local_n])?;
+    let mut d_hidden = stream.clone_htod(&vec![0.0f32; M * local_n])?;
 
+    // in row major, Y1= X * W_up is done as: W_up^T * X^T 
 
+    let cfg_up = GemmConfig {
+        transa: cublasOperation_t::CUBLAS_OP_N, // transa by gemmconfig means the first matrix,
+        // transb means the second matrix, so we want to do W_up^T * X^T
+        transb: cublasOperation_t::CUBLAS_OP_N,
+        m: local_n as i32, // m is the number of rows of the output matrix, which is N/P
+        n: M as i32, // n is the number of columns of the output matrix, which is M 
+        k: K as i32, // k is the number of columns of the first matrix and rows of the second
+        // matrix, which is K 
+        alpha: 1.0, // alpha is the scaling factor for the product of the two matrices, which is
+        // 1.0, what does this even mena? in GEMM, scaling means that the product of the two
+        //   matrices is multiplied by alpha before being added to the output matrix, when we need
+        //   scaling? we need mostly in backpropagation when we need to scale the gradients by the
+        //   learning rate, but in forward pass we don't need scaling, so we set alpha to 1.0, and
+        //   beta to 0.0, which means that the output matrix is not scaled before being added to the
+        //   product of the two matrices, so 
+        lda: local_n as i32, // lda is the leading dimension of the first matrix, which is N/P 
+        ldb: K as i32, // ldb is the leading dimension of the second matrix, which is K 
+        beta: 0.0, // beta is the scaling factor for the output matrix, which is 0.0, meaning that
+        // the output 
+        ldc : local_n as i32, // ldc is the leading dimension of the output matrix, which is N/P
+    };
+
+    unsafe{
+        worker.blas.gemm(cfg_up, &d_w_up, &d_x, &mut d_hidden)?;
+    }
+    stream.synchronize()?;
+
+    println!("Gpu {} Finished up-proj, hidden shape: [{}, {}]", rank, M, local_n);
+
+    // 2. Row-Parallel Down-Projection: Y1_local[M, K/P] * W_down_local[K/P, K] = Partial_Y2[M, K]
+
+    let mut d_out_partial = stream.clone_htod(vec![0.0f32; M * K])?;
+    let d_w_down = stream.clone_htod(&h_w_down_local)?;
+
+    let cfg_down = GemmConfig {
+        transa: cublasOperation_t::CUBLAS_OP_N,
+        transb: cublasOperation_t::CUBLAS_OP_N,
+        m: K as i32, // m is the number of rows of the output matrix
+        n: M as i32, // n is the number of columns of the output matrix
+        k: local_n as i32, // k is the number of columns of the first matrix and rows of the second
+    // matrix
+        
+        alpha: 1.0,
+        lda: K as i32, // lda is the leading dimension of the first matrix
+        ldb: local_n as i32, // ldb is the leading dimension of the second matrix
+        beta: 0.0,
+        ldc: K as i32, // ldc is the leading dimension of the output matrix
+    };
     
+    unsafe{
+        worker.blas.gemm(cfg_down, &d_hidden, &d_w_down, &mut d_out_partial)?;
+    }
 
+    stream.synchronize()?;
 
+    println!("Gpu {} Row-parallel down-proj finished, partial output shape: [{}, {}]", rank, M, K); 
+
+    // 3. NCCL AllReduce (Sum partial dot products across both GPUs)
+    // Partial_Y2 on GPU 0 + Partial_Y2 on GPU 1 -> Final Full Output Y2 on all GPUs
+
+    unsafe{
+        // ncclRedOp_t::ncclSum means that we want to sum the partial outputs across all GPUs, and
+        // store the result in d_out_partial on each GPU, so that each GPU has the final output Y2 
+        worker.comm.all_reduce(&mut d_out_partial, &ncclRedOp_t::ncclSum, stream,)?;
+    }
+
+    stream.synchronize()?;
+
+    let final_res = stream.clone_dtoh(&d_out_partial)?;
+    println!("Gpu {} AllReduce finished, final output shape: [{}, {}]", rank, M, K);
 
 }
 
 
 fn main() -> anyhow::Result<()> {
 
+let device_count = CudaContext::device_count()?;
+    println!("Total Available CUDA Devices: {}", device_count);
 
+    if device_count < 2 {
+        println!("This example requires at least 2 CUDA GPUs to execute multi-GPU communication.");
+        return Ok(());
+    }
+
+    // Generate shared NCCL unique ID on root
+    let shared_id = Id::new()?;
+
+    // Spawn 2 threads, each managing one GPU device rank
+    let mut handles = vec![];
+
+    for rank in 0..TP_WORLD_SIZE {
+        let id_copy = shared_id;
+        let handle = spawn(move || -> anyhow::Result<()> {
+            let worker = GpuWorker::new(rank, TP_WORLD_SIZE, id_copy)?;
+            run_tensor_parallel_mlp(&worker)?;
+            Ok(())
+        });
+        handles.push(handle);
+    }
+
+    for handle in handles {
+        handle.join().unwrap()?;
+    }
+
+    println!("\nMulti-GPU Tensor Parallel MLP executed successfully.");
 
     Ok(())
 }

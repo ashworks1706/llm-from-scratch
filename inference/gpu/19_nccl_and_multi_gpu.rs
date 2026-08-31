@@ -37,7 +37,38 @@
 // pass at the same time, this requires a lot of memory to store the activations for the forward
 // pass while we compute the backward pass, but it reduces the bubble problem and improves
 // throughput.
+// P = # of pipeline stages, M = # of microbatches, T = time to compute one microbatch, B = time to
+// send one microbatch, F = time to forward pass 
+// total_pipeline_time = (M + P - 1) * T + (M + P - 1) * B + (M + P - 1) * F, where M is the number
+// of microbatches, P is the number of pipeline stages, T is the time to compute one microbatch, B
+// is the time to send one microbatch, and F is the time to forward pass. The first term (M + P - 1)
+// * T represents the time to compute all microbatches, the second term (M + P - 1) * B represents
+// the time to send all microbatches, and the third term (M + P - 1) * F represents the time to
+// forward pass all microbatches. The total time is the sum of these three terms, which gives us the
+// total time to complete the pipeline parallelism with 1F1B scheduling.
 //
+// basically, to minimize bubblke, we must set the # of microbatches M >= 4P to 8P where P is the
+// number of pipeline stages, this ensures that there are enough microbatches to keep all pipeline
+// stages busy and minimize the bubble problem.
+//
+//
+//
+// in TP, bytes transferred per step is O(2 * L * b * S * H * P-1/P) where L is the number of
+// layers, b is the batch size, S is the sequence length, H is the hidden size, and P is the number
+// of pipeline stages. This is because each layer needs to send its activations to the next layer,
+// and each layer needs to receive activations from the previous layer. The factor of 2 accounts for
+// the fact that each layer needs to send and receive data from all other layers, and the factor of
+// (P-1)/P accounts for the fact that each layer only needs to send and receive data from the other
+// P-1 layers, not itself. This means that the amount of data transferred per step increases
+// linearly with the number of layers, batch size, sequence length, and hidden size, and decreases
+// with the number of pipeline stages. while in PP, bytes trasnfored is O(b * S * H) since each
+// layer only needs to send and receive data from the previous and next layers, not all layers. This
+// means that the amount of data transferred per step increases linearly with the batch size,
+// sequence length, and hidden size, but is independent of the number of layers and pipeline stages.
+// This is because each layer only needs to send and receive data from the previous and next layers,
+// not all layers. This means that the amount of data transferred per step is constant with respect
+// to the number of layers and pipeline stages, but increases linearly with the batch size, sequence
+// length, and hidden size.
 //
 //  expert paralllism is used in MoE models where different gpus hold differnete expert sub
 //  networks, routing token activations via All to All communciation 

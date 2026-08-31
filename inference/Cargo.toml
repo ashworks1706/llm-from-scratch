@@ -14,7 +14,7 @@ axum = "0.8.9"
 candle-core = { git = "https://github.com/huggingface/candle.git", features = ["cuda"] }
 candle-nn = { git = "https://github.com/huggingface/candle.git" }
 candle-transformers = { git = "https://github.com/huggingface/candle.git" }
-cudarc = { version = "0.19.8", features = ["driver", "nvrtc", "cublas", "cuda-version-from-build-system"] }
+cudarc = { version = "0.19.8", features = ["driver", "nccl" ,"nvrtc", "cublas", "cuda-version-from-build-system"] }
 hf-hub = "0.4"
 memmap2 = "0.9.11"
 rand = "0.10.2"

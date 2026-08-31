@@ -173,6 +173,21 @@ impl GpuWorker{
     }
 }
 
+
+fn run_tensor_parallel_mlp(worker: &GpuWorker) -> anyhow::Result<()>{
+    let rank = worker.rank;
+    let stream = &worker.stream;
+
+    let local_n = N / TP_WORLD_SIZE; // column split dimension (16)
+    let local_k = K / TP_WORLD_SIZE;
+
+    println!("Gpu {} Initializing weights ... ", rank );
+    
+
+
+}
+
+
 fn main() -> anyhow::Result<()> {
 
 

@@ -182,7 +182,19 @@ fn run_tensor_parallel_mlp(worker: &GpuWorker) -> anyhow::Result<()>{
     let local_k = K / TP_WORLD_SIZE;
 
     println!("Gpu {} Initializing weights ... ", rank );
+
+    // column-parallel up-proj: X[M,K] * W_up_local[K,N/P] = Y1[M, N/P] 
+    let h_x = vec![1.0f32; M*K];
+    let h_w_up_local = vec![0.5f32;K*local_n];
+    let h_w_down_local = vec![0.25f32; local_k*K];
+
+    let d_x = stream.clone_htod(&h_x)?;
+    let d_w_up = stream.clone_htod(&h_w_up_local)?;
+    let mut d_hidden = stream.clone_htod(*vec[0.0f32; M * local_n])?;
+
+
     
+
 
 
 }

@@ -3,7 +3,7 @@ use anyhow::Result;
 #[allow(unused_imports)]
 use std::time::Instant;
 
-struct SamplingParams{
+pub struct SamplingParams{
     pub temperature: f32,
     pub top_p: f32,
     pub top_k: f32,
@@ -27,6 +27,14 @@ pub enum RequestState {
     Decode,
     Finished(FinishReason),
 }
+
+pub struct Request{ 
+    pub id: u64,
+    pub prompt_tokens: Vec<u32>,
+    pub output_tokens: Vec<u32>,
+    pub 
+}
+
 fn main() -> Result<()> {
     Ok(())
 }

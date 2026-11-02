@@ -7,15 +7,21 @@
 
 def reverse_copy(items: list[int]) -> list[int]:
     # return a reversed copy without modifying the caller's list.
-    pass
+    rev_c = items[::-1]
+    return rev_c
 
 
 def rotate_right(items: list[int], k: int) -> list[int]:
-    # shift elements right by k positions with wraparound.
-    # build a new list and preserve the original; also handle an empty list.
-    pass
+    if not items:
+        raise ValueError("list cannot be empty")
+    k = k % len(items)  
+    return items[-k:] + items[:-k]
+
 
 
 def moving_pairs(items: list[int]) -> list[tuple[int, int]]:
-    # produce adjacent pairs: [2, 4, 8] -> [(2, 4), (4, 8)].
-    pass
+    pairs = []
+    for i in range(len(items) - 1):
+        pairs.append((items[i], items[i + 1]))
+
+    return pairs

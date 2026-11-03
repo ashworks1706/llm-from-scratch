@@ -32,7 +32,7 @@ class Transaction:
         pass
 
     def __enter__(self) -> Any:
-        # return the db. 
+        # return the db.
         pass
 
     def __exit__(self, exc_type, exc, tb) -> bool:

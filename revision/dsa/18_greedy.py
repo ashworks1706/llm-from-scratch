@@ -37,12 +37,6 @@ def task_scheduler(tasks: list[str], cooldown: int) -> int:
     pass
 
 
-def assign_cookies(greed: list[int], sizes: list[int]) -> int:
-    # each child needs a cookie of size >= greed, one cookie each. maximize satisfied children.
-    # sort both; give the smallest cookie that satisfies the least greedy unsatisfied child. O(n log n).
-    pass
-
-
 if __name__ == '__main__':
     # brute force oracle for can_jump: dfs with memo over reachable indices; compare on 200 random short lists.
     # assert gas_station([1,2,3,4,5], [3,4,5,1,2]) == 3 and gas_station([2,3,4], [3,4,3]) == -1.

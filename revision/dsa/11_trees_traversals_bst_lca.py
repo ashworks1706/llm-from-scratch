@@ -26,12 +26,6 @@ def level_order(root: TreeNode | None) -> list[list[int]]:
     pass
 
 
-def max_depth_and_diameter(root: TreeNode | None) -> tuple[int, int]:
-    # (height in nodes, diameter in edges). one postorder pass: at each node the best path through it is left + right height.
-    # empty tree is (0, 0). a single node is (1, 0).
-    pass
-
-
 def is_valid_bst(root: TreeNode | None) -> bool:
     # pass an open interval (low, high) down; checking only parent versus child is wrong.
     # equal values are invalid. use None, not float infinity, for open bounds. O(n).

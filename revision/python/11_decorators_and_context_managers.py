@@ -1,11 +1,12 @@
 # a decorator is a function that takes a function and returns a replacement; @d is f = d(f) at definition time.
-# without functools.wraps the wrapper replaces __name__, __doc__ and __wrapped__ of the original.
+# without functools.wraps the wrapper shows its own __name__ and __doc__ instead of the original, and has no __wrapped__.
 # a decorator with arguments is a factory: retry(3) returns the real decorator. that is three nested functions.
 # a context manager guarantees cleanup: __enter__ runs, the body runs, __exit__(exc_type, exc, tb) always runs.
 # __exit__ returning a true value swallows the exception; return False or None to let it propagate.
 # from platform: modules/auth/routes.py officer_route builds a wrapper and sets wrapper.__name__ = view.__name__ by hand,
 # while modules/auth/decorators.py auth_required uses functools.wraps. Flask names an endpoint after the function.
-# from platform: core/db/session.py session() is a @contextmanager that commits on success, rolls back on error, always closes.
+# from platform: core/db/session.py session() is a @contextmanager that commits on success, rolls back on error, always closes;
+# modules/godfather/files.py PodFiles is the class form with __enter__ and __exit__.
 # explain: what happens in Flask if two views are registered through a wrapper that never copies __name__?
 # explain: with two stacked decorators @a over @b, which wrapper runs first on a call, and which was applied first?
 

@@ -38,7 +38,7 @@ class Bag:
 
 
 def shifted(window: Window, by: int) -> Window:
-    # a new window moved by `by`, using dataclasses.replace. the original is unchanged.
+    # a new window moved by the given amount, using dataclasses.replace. the original is unchanged.
     pass
 
 

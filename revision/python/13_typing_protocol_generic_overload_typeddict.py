@@ -3,8 +3,8 @@
 # @overload gives a checker several signatures for one runtime function; only the last, undecorated def has a body.
 # Literal narrows a string parameter to specific values. isinstance, None checks and TypeGuard narrow a union inside a branch.
 # TypedDict describes dict keys for a checker only; at runtime it is a plain dict, so untrusted data still needs validating.
-# from platform: core/hosting.py defines HostingClient and HostingProvider as Protocols that RunPod and "This server" both satisfy.
-# from platform: the Makefile check target runs uv run ty check . ; types guide the checker and never validate JSON.
+# from platform: core/hosting.py defines HostingClient and HostingProvider as Protocols; providers register into PROVIDERS by name.
+# from platform: make check and make ci both run uv run ty check . ; types guide the checker and never validate JSON.
 # explain: what does a Protocol buy you over an ABC when the implementations live in different packages?
 # explain: why can a TypedDict-annotated dict from json.loads still contain a string where the type says int?
 

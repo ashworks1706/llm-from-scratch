@@ -1,48 +1,28 @@
-# a decorator is a function that takes a function and returns a replacement; @d is f = d(f) at definition time.
-# without functools.wraps the wrapper shows its own __name__ and __doc__ instead of the original, and has no __wrapped__.
-# a decorator with arguments is a factory: retry(3) returns the real decorator. that is three nested functions.
-# a context manager guarantees cleanup: __enter__ runs, the body runs, __exit__(exc_type, exc, tb) always runs.
-# __exit__ returning a true value swallows the exception; return False or None to let it propagate.
-# from platform: modules/auth/routes.py officer_route builds a wrapper and sets wrapper.__name__ = view.__name__ by hand,
-# while modules/auth/decorators.py auth_required uses functools.wraps. Flask names an endpoint after the function.
-# from platform: core/db/session.py session() is a @contextmanager that commits on success, rolls back on error, always closes;
-# modules/godfather/files.py PodFiles is the class form with __enter__ and __exit__.
-# explain: what happens in Flask if two views are registered through a wrapper that never copies __name__?
-# explain: with two stacked decorators @a over @b, which wrapper runs first on a call, and which was applied first?
+# a decorator replaces a function at definition time, so @d above f means f = d(f).
+# without functools.wraps the wrapper loses the original name and docstring.
+# a decorator that takes arguments is a factory, so it needs three nested functions.
+# a context manager always runs its exit hook, and a true return value from it swallows the exception.
 
 import functools
-from collections.abc import Callable, Iterator
-from contextlib import contextmanager
+from collections.abc import Callable
 from typing import Any
 
 
 def retry(times: int, exceptions: tuple[type[BaseException], ...] = (Exception,)) -> Callable:
-    # decorator factory: call the function up to times attempts, retrying only on the listed exceptions.
-    # re-raise the last exception after the final attempt. preserve the wrapped function's metadata.
-    pass
-
-
-def counted(func: Callable) -> Callable:
-    # wrap func and expose wrapper.calls, the number of times it has been called (including calls that raised).
+    # call the function up to times attempts and retry only on the listed exceptions.
+    # re-raise the last exception after the final attempt and preserve the wrapped metadata.
     pass
 
 
 class Transaction:
-    # context manager class over any db object with commit(), rollback(), close().
+    # wraps any db object with commit, rollback and close methods.
     def __init__(self, db: Any) -> None:
         pass
 
     def __enter__(self) -> Any:
-        # return the db.
         pass
 
     def __exit__(self, exc_type, exc, tb) -> bool:
-        # commit on success, rollback on an exception, always close. the exception must still propagate.
+        # commit on success, roll back on an exception, and always close.
+        # the exception must still propagate to the caller.
         pass
-
-
-@contextmanager
-def session_scope(factory: Callable[[], Any]) -> Iterator[Any]:
-    # the same contract as Transaction using a generator: yield inside try/except/finally.
-    # an exception thrown into the generator at the yield must be re-raised after rollback.
-    pass

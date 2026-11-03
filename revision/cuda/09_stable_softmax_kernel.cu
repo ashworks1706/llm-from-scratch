@@ -16,3 +16,8 @@ __global__ void softmax_online(const float* input, float* output, int rows, int 
     // each thread keeps a local (m, d), merges as it strides, then a block reduce combines pairs
     // with the rescaling rule. then a second pass writes exp(x - m) / d. reads input twice, not three times.
 }
+
+void softmax_host(const float* h_in, float* h_out, int rows, int cols) {
+    // launch rows blocks of 256 threads. compare both kernels to a double-precision cpu softmax.
+    // test rows with values like 1000.0f and -1000.0f, where a naive exp(x) overflows or underflows.
+}

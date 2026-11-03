@@ -16,3 +16,7 @@ __global__ void block_sum_shfl(const float* input, float* partial, int n) {
     // __shared__ float warp_sums[32], __syncthreads(), then warp 0 reduces warp_sums and writes partial[blockIdx.x].
     // out-of-range threads contribute 0. handle blockDim.x < 1024 (fewer warps than 32).
 }
+
+__device__ float warp_reduce_max(float v) {
+    // same butterfly with fmaxf. use it later for softmax. -INFINITY is the identity element.
+}

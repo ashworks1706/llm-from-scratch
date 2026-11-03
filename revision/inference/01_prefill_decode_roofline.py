@@ -19,7 +19,7 @@ def attainable_flops(intensity: float, peak_flops: float, bandwidth: float) -> f
 
 
 def decode_step_estimate(params: float, bytes_per_param: float, batch: int, peak_flops: float, bandwidth: float) -> dict:
-    # one decode step for `batch` sequences, ignoring kv cache. flops = 2 * params * batch; bytes = params * bytes_per_param.
+    # one decode step for batch sequences, ignoring kv cache. flops = 2 * params * batch; bytes = params * bytes_per_param.
     # return {"intensity", "bound": "compute" or "memory", "step_seconds"}. step time = max(flops/peak, bytes/bandwidth).
     pass
 

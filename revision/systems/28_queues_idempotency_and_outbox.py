@@ -1,17 +1,13 @@
-# a queue gives at-least-once delivery: a consumer must ack AFTER finishing, so a crash redelivers the
-# message. exactly-once processing is built from at-least-once delivery + an idempotent consumer
-# (dedupe by idempotency key); exactly-once delivery over a network is impossible.
-# the dual-write problem: updating the db and publishing a message are two systems, so one can fail.
-# the outbox pattern writes the message to an outbox table in the SAME db transaction as the state
-# change; a relay polls the outbox, publishes, and marks it sent (so the publish itself is at-least-once).
-# a lease/visibility timeout lets a crashed consumer's message become available again.
-# stdlib only: sqlite3 or plain dicts.
-# from halo: packages/db/src/schema.ts defines singular_delivery (id = "rc:" + RevenueCat event id, status
-# pending/sending/delivered/skipped/failed/ambiguous/shadow, lease_token, lease_expires_at, next_attempt_at,
-# send_attempts). packages/api/src/singular/SingularPurchaseForwarder.ts inserts the row if absent, claims
-# it under a lease (LEASE_MS = 10 min), retries retryable failures with backoff up to MAX_SEND_ATTEMPTS = 8,
-# and parks a failure with mayHaveApplied (and expired leases) as ambiguous. plans/010 says Singular does
-# not dedupe, so a blind resend is permanent data corruption. mirror claim, lease and ambiguous on a toy.
+# a queue gives at-least-once delivery: ack AFTER finishing, so a crash redelivers. exactly-once effects =
+# at-least-once delivery + an idempotent consumer (dedupe by idempotency key). a visibility timeout (lease)
+# makes a crashed consumer's message visible again. dual-write problem: db update and publish are two systems.
+# outbox pattern: write the message to an outbox table in the SAME transaction as the state change; a relay
+# publishes and marks it sent. stdlib only: sqlite3 or plain dicts.
+# from halo: packages/db/src/schema.ts singular_delivery has id = "rc:" + RevenueCat event id, a status enum
+# (pending, sending, delivered, skipped, failed, ambiguous, shadow), lease_token, lease_expires_at, next_attempt_at.
+# packages/api/src/singular/SingularPurchaseForwarder.ts inserts if absent, claims under a lease (LEASE_MS = 10 min),
+# retries with backoff up to MAX_SEND_ATTEMPTS = 8, and parks a failure with mayHaveApplied as ambiguous.
+# plans/010 says Singular does not dedupe, so a blind resend corrupts data. mirror claim, lease, ambiguous.
 # explain: why is "ambiguous" safer than retrying when a send times out after the request left?
 
 import time

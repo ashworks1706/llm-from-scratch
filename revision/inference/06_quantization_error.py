@@ -12,7 +12,7 @@ import torch
 
 
 def quantize_int8(x: torch.Tensor, group: int | None) -> tuple[torch.Tensor, torch.Tensor]:
-    # symmetric. group None = per tensor, otherwise groups of `group` along the last dim (must divide it).
+    # symmetric. group None = per tensor, otherwise groups of group along the last dim (must divide it).
     # return (int8 tensor same shape as x, float scales). all-zero groups must not divide by zero.
     pass
 

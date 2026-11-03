@@ -14,3 +14,8 @@ __global__ void attention_row(const float* q, const float* k, const float* v, fl
     // phase 2: block max, exp, block sum (reuse the reductions you wrote). phase 3: thread t owns output dims t, t+blockDim.x, ...
     // and sums p[j] * v[j][dim] over j. dynamic shared memory size is a launch argument; say what it is.
 }
+
+void attention_host(const float* h_q, const float* h_k, const float* h_v, float* h_out, int n, int d) {
+    // launch n blocks. compare with a cpu reference at n = 64, 512 for causal and non-causal.
+    // time it with cuda events and note how time grows when n doubles (expected ~4x).
+}

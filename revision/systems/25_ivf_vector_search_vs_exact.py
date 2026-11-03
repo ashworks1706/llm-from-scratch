@@ -1,15 +1,12 @@
-# exact search scores the query against EVERY vector: O(N*d) per query, perfect recall, simple.
-# IVF (inverted file) clusters vectors with k-means into nlist cells; a query finds the nprobe nearest
-# centroids and scans only those cells: roughly N*nprobe/nlist work, but recall drops when the true
-# neighbor sits in an unprobed cell. HNSW is a different family: a layered proximity graph, greedy search
-# from a sparse top layer down to a dense bottom layer; fast and high recall, but more memory and slow
-# inserts/deletes. product quantization compresses vectors to codes to cut memory further.
-# requires numpy. use a small random clustered dataset, e.g. 5000 x 32 float32.
-# from piramid: docs/ROADMAP.md lists HNSW and IVF under Out of scope; apps/engine/database/src/search/
-# engine.rs scores every stored vector and keeps the k best. this is interview knowledge to contrast
-# with that exact scan, not something to add there. from platform: modules/knowledge/search.py
-# _dense_python scores every stored vector by cosine distance too.
-# explain: at what N does an exact scan stop being acceptable, and when does a GPU make it acceptable longer?
+# exact search scores the query against EVERY vector: O(N*d) per query, perfect recall.
+# IVF clusters vectors with k-means into nlist cells; a query scans only the nprobe nearest cells, about
+# N*nprobe/nlist work, but recall drops when the true neighbor sits in an unprobed cell.
+# HNSW is another family: a layered proximity graph searched greedily top to bottom; high recall and fast,
+# but more memory and slower inserts. product quantization compresses vectors into codes. requires numpy.
+# from piramid: docs/ROADMAP.md lists HNSW and IVF under Out of scope; apps/engine/database/src/search/engine.rs
+# scores every stored vector and keeps the best k. this is interview knowledge to contrast with that exact
+# scan. from platform: modules/knowledge/search.py _dense_python also scores every stored vector (cosine).
+# explain: at what N does an exact scan stop being acceptable, and when does a GPU extend that?
 
 import numpy as np
 

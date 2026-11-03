@@ -32,10 +32,9 @@ class Window:
 
 @dataclass
 class Bag:
-    # fix the shared-default trap: every Bag() gets its own items list, and tags defaults to an empty set.
-    name: str
-    items: list[int] = field(default_factory=list)
-    tags: set[str] = field(default_factory=set)
+    # a name, a list of ints and a set of tags; the list and the set default to empty and are never shared between instances.
+    # first write items: list[int] = [] and read the error, then fix it.
+    pass
 
 
 def shifted(window: Window, by: int) -> Window:

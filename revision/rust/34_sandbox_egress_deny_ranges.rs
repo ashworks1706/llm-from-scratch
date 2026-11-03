@@ -5,7 +5,7 @@
 //
 // from sparky: deploy/sandbox/squid.conf (acl internal dst ..., http_access deny rules) and
 // apps/engine/src/runtime/tools/sandbox/egress.rs (internal docker network + proxy container).
-// toy: ipv4 only, ranges as (network, prefix_len).
+// toy: ipv4 only, a subset of the squid ranges, as (network, prefix_len).
 //
 // explain: why is a deny list of ranges acceptable here when it is a weak design for site filtering?
 // explain: a hostname resolves to 127.0.0.1 after the check. which layer must check the resolved address?
@@ -17,7 +17,7 @@ const DENIED: [([u8; 4], u8); 11] = [
 ];
 
 fn in_range(ip: [u8; 4], network: [u8; 4], prefix: u8) -> bool {
-    // compare the first `prefix` bits. prefix 0 matches everything, 32 matches one host.
+    // compare the first prefix bits. prefix 0 matches everything, 32 matches one host.
     // do it with u32 masks, not string matching.
     todo!()
 }

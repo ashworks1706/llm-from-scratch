@@ -25,7 +25,7 @@ impl Limiter {
     async fn admit(&self, cancel: &CancellationToken, time_left: Duration) -> Result<OwnedSemaphorePermit, AdmitError> {
         // wait = min(max_wait, time_left). select between cancel.cancelled() and
         // timeout(wait, acquire_owned). timeout -> Busy, cancel -> Cancelled, closed semaphore -> Closed.
-        // invariant: at most `slots` permits are ever held at once.
+        // invariant: at most slots permits are ever held at once.
         todo!()
     }
 }

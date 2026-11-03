@@ -1,4 +1,4 @@
-// an outbox writes the event to your own database when it is accepted and delivers from the database, not from memory.
+// an outbox writes the event to its own database when it is accepted and delivers from the database, not from memory.
 // delivery is at least once, so a blind retry corrupts data when the receiver does not deduplicate.
 // a send failure is classified twice, by whether it may have reached the receiver and by whether it is worth retrying.
 // a possibly applied failure is parked as ambiguous, and only clean failures back off and retry.

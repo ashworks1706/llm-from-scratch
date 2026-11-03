@@ -1,14 +1,7 @@
-// the model sees tool definitions; the loop dispatches by name through trait objects.
-// a registry is a map name -> Arc<dyn Tool>. insertion by an existing name replaces the old tool.
-// definitions come out in name order (BTreeMap) so the prompt is deterministic, and a tool that is
-// switched off (available() == false) is not offered but can still be looked up by name.
-//
-// from sparky: apps/engine/src/core/traits/tools/mod.rs (Tool) and
-// apps/engine/src/runtime/harness/tools.rs (ToolSet::with/get/definitions). sparky's Tool is
-// async via async_trait; keep this toy synchronous so no dependency is needed.
-//
-// explain: why Arc<dyn Tool> instead of an enum of known tools? what does the enum give back?
-// explain: why does an unavailable tool stay in the map but leave the definitions list?
+// the model sees tool definitions, and the loop dispatches by name through trait objects.
+// a registry maps a name to an Arc<dyn Tool>, and inserting an existing name replaces the old tool.
+// definitions come out in name order so the prompt is deterministic.
+// a switched off tool is not offered but can still be looked up by name.
 
 use std::collections::BTreeMap;
 use std::sync::Arc;
@@ -26,22 +19,13 @@ trait Tool: Send + Sync {
 struct ToolSet { tools: BTreeMap<String, Arc<dyn Tool>> }
 
 impl ToolSet {
-    fn with(self, tool: Arc<dyn Tool>) -> Self {
-        // consume self, key by definition().name, return the updated set. same name replaces.
-        todo!()
-    }
-
-    fn get(&self, name: &str) -> Option<&Arc<dyn Tool>> {
-        todo!()
-    }
-
     fn definitions(&self) -> Vec<ToolDefinition> {
         // name order, available tools only.
         todo!()
     }
 
     fn dispatch(&self, name: &str, args: &str) -> Result<String, String> {
-        // unknown name is an Err whose text the model can read ("no tool named ..."); never panic.
+        // an unknown name is an Err whose text the model can read, and it must never panic.
         todo!()
     }
 }

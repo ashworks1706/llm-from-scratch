@@ -1,15 +1,7 @@
-// a consequential action is held, not run. the model's call is stored with a token, a hash of the
-// exact arguments, and a ttl. a human answers with the token. claim() is atomic: it returns the held
-// action once, for the same user, before expiry; every other case is None (the route answers 409).
-// the caller never resends arguments, so approving cannot swap in different ones.
-//
-// from sparky: apps/engine/src/core/traits/safety/confirmation.rs (ConfirmationStore),
-// core/tests/support/safety.rs (Held double: single use, tied to the asked user),
-// stores/platform/confirmation.rs (real store is Platform's /pending routes), routes/chat.rs (confirm).
-// reproduce the state machine in memory; the real single-use guarantee lives in Platform.
-//
-// explain: claim takes an approved flag; why must approve and deny both be single use?
-// explain: what attack does binding the token to the user id stop that the random token alone does not?
+// a consequential action is held rather than run, stored under a token with the user, a hash of the arguments and a ttl.
+// a human answers with the token alone, so approving can never swap in different arguments.
+// claim is atomic and returns the held action at most once, for the same user, before expiry.
+// a claim by the wrong user must not consume the real owner's token.
 
 use std::collections::HashMap;
 use std::time::{Duration, Instant};
@@ -26,13 +18,8 @@ impl Store {
     }
 
     fn claim(&mut self, token: u128, user: &str, now: Instant) -> Option<String> {
-        // Some(action) exactly once. None if: unknown token, other user, expired, already claimed.
-        // a wrong-user attempt must NOT consume the real owner's token.
-        // remove expired entries you touch; O(1) per call.
+        // return Some(action) once. None for an unknown token, another user, an expired entry or a repeat claim.
+        // remove expired entries you touch, and keep each call O(1).
         todo!()
     }
-}
-
-fn main() {
-    // tests: claim twice, claim after ttl, claim as another user then as the owner.
 }

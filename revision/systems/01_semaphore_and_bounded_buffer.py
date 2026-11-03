@@ -1,10 +1,7 @@
-# a semaphore is a counter with blocking acquire (wait while count == 0) and release (count += 1, wake one).
-# a condition variable gives you wait/notify under a lock; always wait in a while loop (spurious wakeups,
-# and another thread may take the resource before you run). build the semaphore from threading.Condition only.
-# bounded buffer: producers block when full, consumers block when empty; that block IS the backpressure.
-# from platform: core/jobs.py gates inline job threads with threading.BoundedSemaphore (_slots, JOB_THREADS,
-# default 4). reproduce the primitive and the bound, not the job system.
-# explain: why must a buffer that shares ONE condition between producers and consumers use notify_all?
+# a semaphore is a counter with a blocking acquire that waits while the count is 0 and a release that wakes one waiter.
+# a condition variable gives wait and notify under a lock, and the wait always sits in a while loop.
+# another thread may take the resource first, and wakeups can be spurious, so the condition is rechecked.
+# a bounded buffer blocks producers when full and consumers when empty, and that block is the backpressure.
 
 import threading
 from collections import deque
@@ -12,33 +9,33 @@ from collections import deque
 
 class MySemaphore:
     def __init__(self, count: int):
-        # reject count < 0. keep ONE lock inside a Condition. do not use threading.Semaphore.
+        # reject count < 0 and build it on one threading.Condition, not threading.Semaphore.
         pass
 
     def acquire(self, timeout: float | None = None) -> bool:
-        # block while count == 0; decrement. return False if the timeout expires. while-loop the wait.
+        # block while count is 0, then decrement, and return False if the timeout expires.
         pass
 
     def release(self) -> None:
-        # increment and wake a waiter. a BoundedSemaphore variant would raise past the initial count.
+        # increment the count and wake one waiter.
         pass
 
 
 class BoundedBuffer:
     def __init__(self, capacity: int):
-        # capacity >= 1. one lock, two conditions (not_full, not_empty) sharing it.
+        # capacity is at least 1, with two conditions named not_full and not_empty sharing one lock.
         pass
 
     def put(self, item) -> None:
-        # block while full.
+        # block while the buffer is full.
         pass
 
     def get(self):
-        # block while empty. FIFO order per consumer view.
+        # block while the buffer is empty and return items in fifo order.
         pass
 
 
 if __name__ == '__main__':
-    # 4 producers x 250 items, 3 consumers, capacity 5. assert every item consumed exactly once
-    # and len never exceeded capacity (sample under the lock).
+    # run 4 producers of 250 items and 3 consumers on capacity 5.
+    # assert every item is consumed exactly once and the length never exceeds capacity, sampled under the lock.
     pass

@@ -1,15 +1,7 @@
-// a write-ahead log records each change before it is applied. every entry gets the next
-// sequence number. on open, replay entries with seq greater than the last checkpointed seq.
-// a checkpoint makes the state durable FIRST (snapshot plus last_seq), and only then rotates
-// the log. rotating before the snapshot is durable loses data on a crash.
-// the log starts with a version header; replay refuses a version it does not know.
-//
-// from piramid: apps/engine/database/src/storage/wal/log.rs (log, replay, rotate),
-// apps/engine/database/src/collection/checkpoint.rs (checkpoint order) and
-// apps/engine/database/src/collection/open.rs (replay_wal) are the reference.
-// model the file as a Vec of entries; no real I/O.
-// explain: why replay skips seq <= min_seq instead of just trusting the log was rotated?
-// explain: what does sync_on_write buy, and what is lost on a crash if it is off?
+// a write ahead log records each change before it is applied, and every entry gets the next sequence number.
+// on open, replay only entries with a sequence greater than the last checkpointed one.
+// a checkpoint makes the snapshot durable first and only then rotates the log, since rotating earlier loses data on a crash.
+// the log starts with a version header, and replay refuses a version it does not know.
 
 use std::collections::HashSet;
 
@@ -22,29 +14,19 @@ struct Durable { snapshot: HashSet<u64>, last_seq: u64 }
 const WAL_VERSION: u32 = 1;
 
 impl Wal {
-    fn log(&mut self, mut entry: Entry) -> u64 {
-        // stamp entry with next_seq, append it, bump next_seq, return the seq it got.
-        todo!()
-    }
-
     fn replay(&self, min_seq: u64) -> Result<Vec<Entry>, String> {
-        // error if version != WAL_VERSION. otherwise entries with seq > min_seq, in order.
+        // error if version differs from WAL_VERSION. otherwise return entries with seq above min_seq, in order.
         todo!()
     }
-}
-
-fn apply(state: &mut HashSet<u64>, entry: &Entry) {
-    // Insert adds the id, Delete removes it, Checkpoint changes nothing.
-    todo!()
 }
 
 fn checkpoint(wal: &mut Wal, durable: &mut Durable, state: &HashSet<u64>) {
-    // 1. write the snapshot and last_seq (= next_seq - 1) into durable.
-    // 2. only then clear the entries. next_seq keeps counting up; it never resets.
+    // write the snapshot and last_seq, which is next_seq minus one, into durable. only then clear the entries.
+    // next_seq keeps counting up and never resets.
     todo!()
 }
 
 fn open(wal: &Wal, durable: &Durable) -> Result<HashSet<u64>, String> {
-    // start from the snapshot, replay entries after durable.last_seq. crash-safe at any point.
+    // start from the snapshot and apply entries after durable.last_seq. a crash at any point must leave this correct.
     todo!()
 }

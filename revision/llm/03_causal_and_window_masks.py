@@ -17,7 +17,7 @@ def causal_mask(tq: int, tk: int) -> torch.Tensor:
 
 
 def sliding_window_mask(tq: int, tk: int, window: int) -> torch.Tensor:
-    # causal AND each query sees at most `window` keys including itself. window >= 1.
+    # causal AND each query sees at most window keys including itself. window >= 1.
     pass
 
 

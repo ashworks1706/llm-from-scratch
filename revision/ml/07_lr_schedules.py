@@ -24,5 +24,5 @@ def as_lambda(base_lr: float, warmup: int, total: int, min_lr: float):
 
 if __name__ == '__main__':
     # assert lr_at(0) is small, lr_at(warmup) == base_lr, lr_at(total) == min_lr, and monotone decay after warmup.
-    # drive a real LambdaLR for `total` steps and compare its lr to lr_at at every step.
+    # drive a real LambdaLR for total steps and compare its lr to lr_at at every step.
     pass

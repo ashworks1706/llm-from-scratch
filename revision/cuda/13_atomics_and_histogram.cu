@@ -15,3 +15,9 @@ __global__ void histogram_shared(const unsigned char* data, unsigned int* bins, 
     // __shared__ unsigned int local[256]; zero it, __syncthreads(), atomicAdd into local over grid-stride elements,
     // __syncthreads(), then each thread merges bins t, t+blockDim.x, ... into global with atomicAdd.
 }
+
+void histogram_host(const unsigned char* h_data, unsigned int* h_bins, int n) {
+    // allocate, copy, zero the bins with cudaMemset BEFORE launch, launch both kernels, copy back.
+    // check against a cpu histogram: bin counts must sum to n and match exactly (integers).
+    // time both with cuda events on uniform and on constant input.
+}

@@ -16,3 +16,8 @@ __global__ void layernorm_kernel(const float* x, const float* gamma, const float
     // two-pass: mean by reduction, then variance of (x - mean) by reduction, then normalize.
     // note where each __syncthreads() is needed when reusing one shared buffer for both reductions.
 }
+
+void norm_host(const float* h_x, float* h_out, int rows, int cols) {
+    // compare rmsnorm_kernel with a cpu reference. try cols = 4096 and an awkward cols = 1000.
+    // check that a row of identical values gives mean 0 and does not produce nan in layernorm.
+}

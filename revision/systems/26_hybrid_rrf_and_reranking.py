@@ -1,15 +1,12 @@
-# lexical search (BM25) finds exact terms, ids and rare words; dense search finds paraphrases. their
-# scores live on different scales, so do not add them raw. reciprocal rank fusion uses ranks only:
-# score(d) = sum over lists of 1 / (k + rank_in_list), k around 60, rank starting at 1. a doc missing
-# from a list contributes nothing from it.
-# a typical pipeline: cheap recall stage (top ~50 from each leg) -> fuse -> expensive reranker
-# (cross-encoder or llm) on the top few -> cut to top_k. the reranker only helps if recall already
-# put the answer in the candidates.
-# from platform: modules/knowledge/search.py rrf(lists, k=60.0) fuses the vector leg and the text leg,
-# using 1 / (k + rank + 1) over a 0-based enumerate, with CANDIDATES = 50 per leg and tuning["rrf_k"].
-# from sparky: apps/engine/src/stores/platform/retrieval.rs calls the platform search; fusion happens there.
-# explain: why does rrf need no score normalization, and what does it throw away?
-# explain: what recall@50 vs precision@5 tradeoff does adding a reranker change?
+# lexical search (BM25) finds exact terms and ids; dense search finds paraphrases. their scores are on
+# different scales, so fuse by rank: reciprocal rank fusion score(d) = sum over lists of 1 / (k + rank),
+# k around 60. a doc missing from a list adds nothing from it.
+# pipeline: cheap recall (top ~50 per leg) -> fuse -> expensive reranker (cross-encoder or llm) on the top few.
+# a reranker only helps if recall already put the answer in the candidates.
+# from platform: modules/knowledge/search.py rrf(lists, k=60.0) fuses the vector and text legs with
+# 1 / (k + rank + 1) over a 0-based enumerate; CANDIDATES = 50 per leg; k comes from tuning["rrf_k"].
+# from sparky: apps/engine/src/stores/platform/retrieval.rs calls platform search, which fuses.
+# explain: why does rrf need no score normalization, and what information does it throw away?
 
 def rrf(lists: list[list[str]], k: float = 60.0) -> list[tuple[str, float]]:
     # fused (id, score) sorted by score desc; ties broken by id so output is deterministic.

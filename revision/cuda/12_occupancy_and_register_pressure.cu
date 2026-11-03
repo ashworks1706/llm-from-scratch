@@ -5,6 +5,7 @@
 // ask the runtime instead of guessing: cudaOccupancyMaxActiveBlocksPerMultiprocessor and cudaFuncGetAttributes
 // report registers, shared memory and local (spill) bytes.
 // reasoning only, no kernel math. solve 07_streams_events_and_profiling.cu first for timing.
+// see inference/gpu/14_tiled_matmul_and_coalescing.cu: its tile size sets shared memory per block.
 // explain: a block of 256 threads uses 64 registers per thread on an SM with 65536 registers. how many blocks fit by registers?
 // explain: when does __launch_bounds__ or -maxrregcount help, and when does it cause spills that hurt?
 

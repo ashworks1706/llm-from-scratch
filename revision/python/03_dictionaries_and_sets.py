@@ -3,7 +3,7 @@ def count_by_market(trades: list[dict]) -> dict[str, int]:
     res = {}
     for trade in trades:
         market = trade["market"]
-        res[market] += res.get(market, 0) + trade["quantity"]
+        res[market] = res.get(market, 0) + trade["quantity"]
     return res
 
 

@@ -2,7 +2,7 @@
 # a monotonic stack keeps indices whose values are sorted; each index is pushed once and popped once, so O(n).
 # pattern: for next greater element, pop while the top is smaller than the current value; the popped ones resolved.
 # store indices, not values, when you need distances or widths.
-# bracket matching and min stack basics: revision/python/08 valid_brackets. solve it first.
+# bracket matching is revision/python/08 valid_brackets. solve it first.
 # explain: the inner while loop looks like O(n^2). why is the total work O(n)?
 # explain: for largest rectangle, why do sentinel bars at both ends remove the leftover-stack cleanup?
 

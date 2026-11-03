@@ -11,12 +11,7 @@
 def subsets(nums: list[int]) -> list[list[int]]:
     # all 2^n subsets of distinct values, any order. empty input returns [[]].
     # invariant: path holds the choices made so far; at each index either include nums[i] or skip it.
-    pass
-
-
-def subsets_with_dup(nums: list[int]) -> list[list[int]]:
-    # same but nums may repeat and the result must have no duplicate subsets. sort, then skip nums[i] == nums[i - 1]
-    # when i > start in the loop form.
+    # follow-up: with repeated values and no duplicate subsets, sort and skip nums[i] == nums[i - 1] when i > start.
     pass
 
 
@@ -45,5 +40,5 @@ def word_search(board: list[list[str]], word: str) -> bool:
 
 if __name__ == '__main__':
     # assert len(subsets(list(range(10)))) == 1024 and len(permutations([1, 2, 3, 4])) == 24.
-    # assert n_queens_count(8) == 92. assert subsets_with_dup([1, 2, 2]) has 6 subsets.
+    # assert n_queens_count(8) == 92 and combination_sum([2, 3, 6, 7], 7) has 2 combinations.
     pass

@@ -2,7 +2,7 @@
 # insert, search and starts_with cost O(L) for a word of length L, independent of how many words are stored.
 # space is O(total characters) worst case; a dict per node trades memory for simplicity, a 26 slot array trades the reverse.
 # the end-of-word flag matters: "app" being a prefix of "apple" does not make "app" a word.
-# a prefix trie over token ids is the structure behind prefix caching: see inference/systems/34_prefix_caching.rs.
+# prefix caching can key shared kv blocks by a trie over token ids: see inference/systems/34_prefix_caching.rs.
 # explain: when does a hash set of all prefixes beat a trie, and when does the trie win on memory?
 # explain: word search II prunes by deleting trie leaves. what does that buy against checking each word separately?
 

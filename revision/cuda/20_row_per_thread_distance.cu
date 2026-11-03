@@ -8,7 +8,7 @@
 // launched from apps/engine/hardware/src/gpu/kernels/distance.rs (DistanceModule::cosine_batch).
 // the host passes the query squared norm in, so the kernel computes it once per query, not per row.
 // explain: why does a thread per row waste memory bandwidth at dim 768, and what mapping fixes it?
-// explain: when rows is small (say 128) why does this kernel lose to the CPU even before transfer cost?
+// explain: at rows = 128 and block size 256, how many threads do real work, and what does that say about occupancy?
 
 __global__ void cosine_rows(const float* query, const float* slab, float* out,
                             unsigned int dim, unsigned int rows, float query_norm_sq) {

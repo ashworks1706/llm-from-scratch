@@ -1,7 +1,7 @@
 // Send: the value can move to another thread. Sync: &T can be shared with another thread (T: Sync iff &T: Send).
 // both are auto traits derived from fields. Rc is !Send and !Sync (non-atomic count); Cell and RefCell are Send but !Sync.
 // Arc<T> is Send + Sync only if T: Send + Sync. Mutex<T> is Sync when T: Send, because it serializes access.
-// MutexGuard is !Send on most platforms: the lock must be released by the thread that took it.
+// MutexGuard is !Send: the lock is released by the thread that took it.
 // a poisoned std Mutex means a holder panicked; the caller picks: recover the data or refuse.
 // from sparky: apps/engine/src/routes/rate_limit.rs RateLimiter keeps Arc<std::sync::Mutex<RateWindow>> and opens the limit on poison.
 // from piramid: apps/engine/database/src/collection/manager.rs defines CollectionHandle = Arc<RwLock<Collection>> (parking_lot).

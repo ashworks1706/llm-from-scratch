@@ -5,8 +5,8 @@
 // passes keep the row numbers from the first pass. unused slots hold -FLT_MAX and index 0xFFFFFFFF.
 //
 // from piramid: apps/engine/hardware/src/gpu/kernels/distance.cu (select_top_k) and the host loop in
-// distance.rs (DistanceModule::top_k, select_pass). MAX_TOP_K there is 1024 because k lives in per-thread memory.
-// explain: why one thread per chunk and not a heap or a bitonic sort, and what limits k?
+// distance.rs (DistanceModule::top_k, select_pass). MAX_TOP_K there is 1024.
+// explain: why one thread per chunk with insertion into a sorted array, and what does k cost per thread?
 // explain: a chunk of 8192 scores per thread leaves most of the GPU idle on small inputs. what would you change?
 
 __global__ void select_top_k(const float* scores, const unsigned int* in_index, unsigned int has_index,

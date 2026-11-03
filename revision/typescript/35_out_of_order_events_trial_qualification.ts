@@ -28,6 +28,6 @@ export function hasEarlyCancellation(trial: Trial, cancellations: Cancellation[]
 
 export function decide(trial: Trial, source: Source, facts: { now: number; hasEarlyCancellation: boolean }): Decision {
   // order: now < qualifiesAt -> waiting. early cancellation -> cancelled. expiresAt <= now -> skipped expired.
-  // source still pending or sending -> waiting. source not delivered or shadow -> skipped source_not_delivered. else qualified.
+  // source still pending or sending -> waiting. any status other than delivered or shadow -> skipped source_not_delivered. else qualified.
   throw new Error("not implemented");
 }

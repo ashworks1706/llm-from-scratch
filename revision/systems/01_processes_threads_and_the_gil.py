@@ -17,7 +17,7 @@ def burn(n: int) -> int:
 
 
 def run_threaded(fn, args: list[int], workers: int) -> list[int]:
-    # run fn(arg) for each arg on `workers` threads, results in input order.
+    # run fn(arg) for each arg on workers threads, results in input order.
     # a worker must not mutate shared state without a lock. join every thread.
     pass
 

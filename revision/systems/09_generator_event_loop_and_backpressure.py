@@ -43,5 +43,5 @@ class BoundedQueue:
 
 if __name__ == '__main__':
     # three tasks sleeping different ticks must finish in wake order, ties by spawn order.
-    # assert drop_oldest keeps the newest `capacity` items after 100 puts.
+    # assert drop_oldest keeps the newest capacity items after 100 puts.
     pass

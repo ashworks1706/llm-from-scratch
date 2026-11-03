@@ -16,7 +16,7 @@ fn argmax(logits: &[f32]) -> Option<u32> {
 }
 
 fn apply_repetition_penalty(logits: &mut [f32], history: &[u32], penalty: f32, window: usize) {
-    // look at the last `window` tokens of history, each distinct token once.
+    // look at the last window tokens of history, each distinct token once.
     // positive logit /= penalty, otherwise *= penalty. skip ids outside logits. penalty 1.0 or window 0 is a no-op.
     todo!()
 }

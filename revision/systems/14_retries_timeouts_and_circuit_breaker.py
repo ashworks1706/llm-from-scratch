@@ -14,7 +14,7 @@ import random
 
 def backoff_delay(attempt: int, base: float, cap: float, remaining: float, rng: random.Random) -> float:
     # attempt starts at 1. delay = min(cap, base * 2**attempt) with equal or full jitter via rng,
-    # clipped to `remaining`. never negative, never overflows for attempt = 10_000.
+    # clipped to remaining. never negative, never overflows for attempt = 10_000.
     pass
 
 

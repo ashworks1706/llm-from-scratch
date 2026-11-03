@@ -2,7 +2,7 @@
 # participant durably logs its vote (yes means it promises it CAN commit and holds its locks). phase 2:
 # if every vote is yes the coordinator logs COMMIT and sends it, else logs ABORT. the coordinator's log
 # write is the commit point. the known flaw: a participant that voted yes and lost the coordinator is
-# BLOCKED -- it cannot decide alone until the coordinator recovers.
+# BLOCKED; it cannot decide alone until the coordinator recovers.
 # participant states: INIT -> PREPARED -> COMMITTED or ABORTED. coordinator: INIT -> WAITING -> COMMITTED/ABORTED.
 # alternatives: saga (compensating actions, no locks, eventual) and idempotent retries via an outbox (see 28_).
 # explain: why must a participant persist PREPARED before replying yes?

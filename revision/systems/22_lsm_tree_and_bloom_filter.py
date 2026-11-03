@@ -12,7 +12,7 @@ import hashlib
 
 class Bloom:
     def __init__(self, bits: int, hashes: int):
-        # derive `hashes` positions from one stable hash (hashlib), not python hash().
+        # derive hashes positions from one stable hash (hashlib), not python hash().
         pass
 
     def add(self, key: str) -> None:

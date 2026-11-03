@@ -13,8 +13,15 @@
 type Row = { status: "pending" | "processing" | "completed" | "failed"; spendCost: number | null; deductTransactionId: string | null; refundTransactionId: string | null };
 type Eligibility = { reason: "eligible"; cost: number } | { reason: "not_failed" | "already_refunded" | "not_charged" };
 
-export const spendKey = (generationId: string): string => `generation:${generationId}:spend`;
-export const refundKey = (generationId: string): string => `generation:${generationId}:refund`;
+export function spendKey(generationId: string): string {
+  // "generation:<id>:spend". pure and deterministic, same id always gives the same key.
+  throw new Error("not implemented");
+}
+
+export function refundKey(generationId: string): string {
+  // "generation:<id>:refund". must differ from spendKey for the same id, say why in a comment of your own.
+  throw new Error("not implemented");
+}
 
 export class Ledger {
   private applied = new Map<string, number>();

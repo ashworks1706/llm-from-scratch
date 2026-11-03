@@ -5,7 +5,7 @@
 # a covering index answers from the index without touching the table.
 # stdlib only: sqlite3.
 # from platform: AGENTS.md says nothing creates tables at startup, alembic/ holds migrations, and
-# `make ci` runs `alembic check`. from halo: packages/db/src/migrations/ holds timestamp-named dirs.
+# make ci runs alembic check. from halo: packages/db/src/migrations/ holds timestamp-named dirs.
 # explain: why can adding an index on a hot postgres table take down writes, and what does CONCURRENTLY do?
 
 import sqlite3

@@ -1,6 +1,6 @@
 # a queue gives at-least-once delivery: a consumer must ack AFTER finishing, so a crash redelivers the
 # message. exactly-once processing is built from at-least-once delivery + an idempotent consumer
-# (dedupe by idempotency key) -- you cannot get exactly-once delivery over a network.
+# (dedupe by idempotency key); exactly-once delivery over a network is impossible.
 # the dual-write problem: updating the db and publishing a message are two systems, so one can fail.
 # the outbox pattern writes the message to an outbox table in the SAME db transaction as the state
 # change; a relay polls the outbox, publishes, and marks it sent (so the publish itself is at-least-once).
@@ -8,9 +8,10 @@
 # stdlib only: sqlite3 or plain dicts.
 # from halo: packages/db/src/schema.ts defines singular_delivery (id = "rc:" + RevenueCat event id, status
 # pending/sending/delivered/skipped/failed/ambiguous/shadow, lease_token, lease_expires_at, next_attempt_at,
-# send_attempts). packages/api/src/singular/SingularPurchaseForwarder.ts inserts it before the webhook is
-# acked, claims a row under a lease (LEASE_MS = 10 min), and parks an unknown outcome as "ambiguous"
-# rather than resending, because plans/010 notes Singular does not dedupe. mirror claim/lease/ambiguous.
+# send_attempts). packages/api/src/singular/SingularPurchaseForwarder.ts inserts the row if absent, claims
+# it under a lease (LEASE_MS = 10 min), retries retryable failures with backoff up to MAX_SEND_ATTEMPTS = 8,
+# and parks a failure with mayHaveApplied (and expired leases) as ambiguous. plans/010 says Singular does
+# not dedupe, so a blind resend is permanent data corruption. mirror claim, lease and ambiguous on a toy.
 # explain: why is "ambiguous" safer than retrying when a send times out after the request left?
 
 import time

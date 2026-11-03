@@ -22,7 +22,7 @@ class TokenBucket:
         pass
 
     def retry_after(self, cost: float = 1.0) -> float:
-        # seconds until `cost` tokens will exist (0 if available now). used for the Retry-After header.
+        # seconds until cost tokens will exist (0 if available now). used for the Retry-After header.
         pass
 
 
@@ -31,7 +31,7 @@ class SlidingWindowLog:
         pass
 
     def allow(self) -> bool:
-        # evict timestamps <= now - window, then accept if fewer than `limit` remain. record only accepted ones.
+        # evict timestamps <= now - window, then accept if fewer than limit remain. record only accepted ones.
         pass
 
 
@@ -46,5 +46,5 @@ class FixedWindow:
 
 if __name__ == '__main__':
     # with a fake clock: bucket(cap 5, 1/s) allows 5 at t=0, 0 at t=0.5, 1 at t=1.0.
-    # show fixed window letting 2*limit through around a boundary where the log allows only `limit`.
+    # show fixed window letting 2*limit through around a boundary where the log allows only limit.
     pass

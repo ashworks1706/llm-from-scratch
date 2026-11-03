@@ -1,6 +1,6 @@
 # a transaction groups statements as atomic, consistent, isolated, durable (ACID). isolation anomalies:
 # dirty read, non-repeatable read, phantom, lost update, write skew. the classic app bug is a lost update:
-# SELECT balance, compute in python, UPDATE balance = <value> -- two writers read the same old value.
+# SELECT balance, compute in python, UPDATE balance = <value>: two writers read the same old value.
 # fixes: atomic update (UPDATE t SET n = n + 1), optimistic version column, SELECT ... FOR UPDATE
 # (postgres), or a serializable retry loop. sqlite is single-writer: BEGIN IMMEDIATE takes the write lock early.
 # stdlib only: sqlite3 with a file db (not :memory:) so two connections share it; isolation_level=None

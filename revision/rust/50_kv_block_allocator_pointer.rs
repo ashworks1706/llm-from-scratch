@@ -20,7 +20,7 @@ fn blocks_within(
 }
 
 fn slot_of(blocks: &[u32], position: usize, block_size: usize) -> u32 {
-    // physical slot of token `position` in a sequence whose pages are `blocks`, in token order.
+    // physical slot of token position in a sequence whose pages are blocks, in token order.
     todo!()
 }
 

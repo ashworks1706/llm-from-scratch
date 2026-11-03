@@ -12,7 +12,7 @@ import ast
 
 def imports_of(source: str) -> set[str]:
     # top-level dotted module names imported by python source (ast.walk, Import and ImportFrom).
-    # relative imports (level > 0) resolve against `package` only if you add that param; skip them here.
+    # relative imports (level > 0) resolve against package only if you add that param; skip them here.
     pass
 
 
@@ -24,7 +24,7 @@ def forbidden_edges(files: dict[str, str], rules: list[tuple[str, str]]) -> list
 
 
 def import_cycles(files: dict[str, str]) -> list[list[str]]:
-    # find cycles in the module dependency graph restricted to modules in `files`. each cycle once,
+    # find cycles in the module dependency graph restricted to modules in files. each cycle once,
     # rotated to start at its smallest name. dfs with colors; do not recurse past 1000 modules.
     pass
 

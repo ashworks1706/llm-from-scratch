@@ -26,7 +26,7 @@ class Leader(Replica):
         pass
 
     def write(self, key: str, value: str, sync_acks: int) -> int:
-        # append locally, ship to followers, return seq. only `sync_acks` followers must apply before
+        # append locally, ship to followers, return seq. only sync_acks followers must apply before
         # returning; the rest catch up later (call catch_up).
         pass
 

@@ -6,6 +6,7 @@
 // from sparky: apps/engine/src/runtime/harness/memory/detect.rs sentences() returns impl Iterator<Item = &str> via split_inclusive.
 // from sparky: apps/engine/src/wiring/tools.rs has type Build<'a> = Box<dyn FnOnce() -> Result<Vec<Arc<dyn Tool>>, String> + 'a>.
 // from piramid: apps/engine/database/src/storage/vectors/reader.rs VectorReader::iter returns Box<dyn Iterator<..> + 'a>.
+// note: todo!() cannot stand in for an impl Trait return, so this file compiles once sentences and make_counter are written.
 // explain: why does a lazy chain with no consumer do no work, and where does a collect() allocate?
 // explain: why must a deferred, run-once builder be Box<dyn FnOnce> and not Box<dyn Fn>?
 

@@ -1,46 +1,23 @@
-// money moves through a ledger that accepts an idempotency key. the same key applied twice changes the balance once.
-// keys are derived from the generation id, so a retry, a crash replay or a cron sweep reuses the same key.
-// charge is two writes: intent (cost recorded) then spend (transaction id recorded). refund only when failed and charged.
-// a row with intent but no transaction id is "still charging": readers poll briefly, then report a conflict.
-//
-// from halo: packages/api/src/generation/GenerationBilling.ts (revenueCatGenerationSpendReference / RefundReference,
-// revenueCatRefundEligibility, generationBillingState) and generation/generation-charge.ts (awaitSettledCharge, chargedFor).
-// reproduce the key scheme and the eligibility order on a toy in-memory ledger.
-//
-// explain: why derive the key from the generation id and not a random uuid per attempt?
-// explain: what is the failure window between intent and spend, and which sweep closes it?
+// money moves through a ledger that accepts an idempotency key, and the same key applied twice changes the balance once.
+// keys derive from the job id, so a retry, a crash replay or a sweep always reuses the same key.
+// a charge is two writes, the intent with its cost and then the transaction id, so a row with intent only is still charging.
+// the refund key must differ from the spend key for the same id, and a refund needs a failed job that was charged.
 
 type Row = { status: "pending" | "processing" | "completed" | "failed"; spendCost: number | null; deductTransactionId: string | null; refundTransactionId: string | null };
 type Eligibility = { reason: "eligible"; cost: number } | { reason: "not_failed" | "already_refunded" | "not_charged" };
-
-export function spendKey(generationId: string): string {
-  // "generation:<id>:spend". pure and deterministic, same id always gives the same key.
-  throw new Error("not implemented");
-}
-
-export function refundKey(generationId: string): string {
-  // "generation:<id>:refund". must differ from spendKey for the same id, say why in a comment of your own.
-  throw new Error("not implemented");
-}
 
 export class Ledger {
   private applied = new Map<string, number>();
   private balance = 0;
 
   apply(key: string, delta: number): { applied: boolean; balance: number } {
-    // first time for a key: add delta, remember the key, applied true.
-    // seen key: change nothing, applied false, current balance. O(1).
+    // a first key adds delta and is remembered, a seen key changes nothing and reports applied false.
+    // each call is O(1).
     throw new Error("not implemented");
   }
 }
 
 export function refundEligibility(row: Row): Eligibility {
-  // check in this order: not failed, already refunded, never charged (no transaction id), else eligible with row cost.
-  // the order matters when a row hits two conditions: say which reason you want an operator to see.
-  throw new Error("not implemented");
-}
-
-export function isStillCharging(row: Row | null): boolean {
-  // true only when status is pending, spendCost is recorded and deductTransactionId is still null.
+  // check not failed, then already refunded, then never charged, and otherwise return eligible with the row cost.
   throw new Error("not implemented");
 }

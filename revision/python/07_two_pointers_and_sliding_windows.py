@@ -30,5 +30,18 @@ def maximum_window_sum(nums: list[int], k: int) -> int | None:
 
 
 def longest_distinct_substring(text: str) -> int:
-    
-    pass
+    seen = {}
+    left = 0
+    max_length = 0
+
+    for right, char in enumerate(text):
+
+        if char in seen and seen[char] >= left:
+            left = seen[char] + 1
+
+        seen[char] = right
+
+        current_length = right - left + 1
+        max_length = max(max_length, current_length)
+
+    return max_length

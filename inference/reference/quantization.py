@@ -128,76 +128,76 @@ def quantize_weight(weight):
     # now we use FULL range [-128 to 127] = all 256 values!
     # visual: [-128 ................. 0 ................. 127]
     #          ↑ data spans entire range (maximum precision!) ↑
-    def quantize_model(model):
+def quantize_model(model):
+    
+    # we loop through all modules in the model
+    # named_modules() gives us (name, module) pairs
+    # example names: "layers.0.attention.wq", "layers.1.mlp.up_proj"
+    # this recursively walks through the entire model tree
+    for name, module in model.named_modules():
         
-        # we loop through all modules in the model
-        # named_modules() gives us (name, module) pairs
-        # example names: "layers.0.attention.wq", "layers.1.mlp.up_proj"
-        # this recursively walks through the entire model tree
-        for name, module in model.named_modules():
+        # check if this module is a linear layer
+        # isinstance checks if module is of type nn.Linear
+        # we only quantize linear layers (not embeddings, not norms)
+        if isinstance(module, nn.Linear):
             
-            # check if this module is a linear layer
-            # isinstance checks if module is of type nn.Linear
-            # we only quantize linear layers (not embeddings, not norms)
-            if isinstance(module, nn.Linear):
-                
-                # we need to replace this layer in its parent module
-                # example: "layers.0.attention.wq" 
-                #   parent_name = "layers.0.attention"
-                #   attr_name = "wq"
-                # we use rsplit('.', 1) to split from the right, only once
-                # this gives us the last part (attribute) and everything before 
-                # (parent path)
-                if '.' in name:
-                    parent_name = name.rsplit('.', 1)[0]
-                    attr_name = name.rsplit('.', 1)[1]
-                else:
-                    # if no dot, it's a top-level module (rare in our models)
-                    parent_name = ''
-                    attr_name = name
-                
-                # skip if no parent (shouldn't happen but just in case)
-                if not parent_name:
-                    continue
-                
-                # now we need to get the actual parent module object
-                # we start from the root model and walk down the path
-                # example: "layers.0.attention" → model.layers[0].attention
-                parent = model
-                for part in parent_name.split('.'):
-                    # getattr gets an attribute by name
-                    # if part is "0", getattr will get model.layers, then we need to handle indexing
-                    # but in pytorch, layers are attributes, so this works
-                    parent = getattr(parent, part)
-                
-                # now we quantize this linear layer's weights
-                # module.weight.data is the actual weight tensor
-                # we get back: quantized version (int8), scale, and zero_point
-                quantized_weight, scale, zero_point = quantize_weight(module.weight.data)
-                
-                # create a new QuantizedLinear layer to replace the old one
-                # we pass the quantized weights, bias (if exists), scale, and zero_point
-                # module.bias.data if module.bias is not None else None handles layers without bias
-                quantized_layer = QuantizedLinear(
-                    weight=quantized_weight,
-                    bias=module.bias.data if module.bias is not None else None,
-                    scale=scale,
-                    zero_point=zero_point
-                )
-                
-                # replace the old layer with our new quantized layer
-                # setattr sets an attribute by name on the parent object
-                # this is like doing: parent.wq = quantized_layer
-                setattr(parent, attr_name, quantized_layer)
-                
-                # print what we quantized for monitoring
-                print(f"Quantized: {name} | Shape: {module.weight.shape}")
-        
-        print("\nQuantization complete!")
-        print("Model now uses ~4x less memory for weights")
-        print("All linear layers compressed from fp16 to int8")
-        
-        return model
+            # we need to replace this layer in its parent module
+            # example: "layers.0.attention.wq" 
+            #   parent_name = "layers.0.attention"
+            #   attr_name = "wq"
+            # we use rsplit('.', 1) to split from the right, only once
+            # this gives us the last part (attribute) and everything before 
+            # (parent path)
+            if '.' in name:
+                parent_name = name.rsplit('.', 1)[0]
+                attr_name = name.rsplit('.', 1)[1]
+            else:
+                # if no dot, it's a top-level module (rare in our models)
+                parent_name = ''
+                attr_name = name
+            
+            # skip if no parent (shouldn't happen but just in case)
+            if not parent_name:
+                continue
+            
+            # now we need to get the actual parent module object
+            # we start from the root model and walk down the path
+            # example: "layers.0.attention" → model.layers[0].attention
+            parent = model
+            for part in parent_name.split('.'):
+                # getattr gets an attribute by name
+                # if part is "0", getattr will get model.layers, then we need to handle indexing
+                # but in pytorch, layers are attributes, so this works
+                parent = getattr(parent, part)
+            
+            # now we quantize this linear layer's weights
+            # module.weight.data is the actual weight tensor
+            # we get back: quantized version (int8), scale, and zero_point
+            quantized_weight, scale, zero_point = quantize_weight(module.weight.data)
+            
+            # create a new QuantizedLinear layer to replace the old one
+            # we pass the quantized weights, bias (if exists), scale, and zero_point
+            # module.bias.data if module.bias is not None else None handles layers without bias
+            quantized_layer = QuantizedLinear(
+                weight=quantized_weight,
+                bias=module.bias.data if module.bias is not None else None,
+                scale=scale,
+                zero_point=zero_point
+            )
+            
+            # replace the old layer with our new quantized layer
+            # setattr sets an attribute by name on the parent object
+            # this is like doing: parent.wq = quantized_layer
+            setattr(parent, attr_name, quantized_layer)
+            
+            # print what we quantized for monitoring
+            print(f"Quantized: {name} | Shape: {module.weight.shape}")
+    
+    print("\nQuantization complete!")
+    print("Model now uses ~4x less memory for weights")
+    print("All linear layers compressed from fp16 to int8")
+    
+    return model
 
 
 # 1. SCALE (the stretch/compress factor):

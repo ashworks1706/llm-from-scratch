@@ -1,8 +1,3 @@
-# A comprehension transforms or filters an iterable in one expression, and a generator expression
-# does the same lazily. sorted(data, key=f) orders items by f(item), not by the item itself, and
-# max(records, key=f) returns the whole record with the greatest f(record). list.sort() mutates the
-# list and returns None, while sorted() returns a new list. Use a tuple as the key to order by
-# several columns.
 
 
 # Problem 1: sort orders by quantity then price.
@@ -16,8 +11,13 @@
 # gives the order quantity 3 price 2, then quantity 3 price 9, then quantity 1 price 5.
 #
 # Aim for one call to sorted with a tuple key.
-def descending_by_quantity(orders: list[dict]) -> list[dict]:
-    pass
+def descending_by_quantity(orders):
+    return sorted(
+        orders,
+        key=lambda order: (-order["quantity"], order["price"])
+    )
+
+      
 
 
 # Problem 2: the most valuable order.
@@ -29,9 +29,11 @@ def descending_by_quantity(orders: list[dict]) -> list[dict]:
 #
 # Example: [{"price": 2, "quantity": 5}, {"price": 4, "quantity": 3}] gives the second order because
 # 12 is larger than 10. An empty list gives None.
-def most_valuable_order(orders: list[dict]) -> dict | None:
-    pass
+def most_valuable_order(orders):
+    if not orders:
+        return None
 
+    return max(orders, key=lambda x: x["price"] * x["quantity"])
 
 # Problem 3: prices of sufficiently large orders.
 #
@@ -44,5 +46,5 @@ def most_valuable_order(orders: list[dict]) -> dict | None:
 # and minimum 5, the result is [3.0, 2.5].
 #
 # Aim for a single list comprehension.
-def active_prices(orders: list[dict], minimum: int) -> list[float]:
-    pass
+def active_prices(orders, minimum):
+    return [ order["price"] for order in orders if order["quantity"] >= minimum]

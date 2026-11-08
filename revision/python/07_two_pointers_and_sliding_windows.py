@@ -1,9 +1,3 @@
-# Two pointers avoid rescanning when a range can only move in one direction. A sliding window keeps
-# a running summary of the active range, adding the element that enters and removing the one that
-# leaves. A fixed size window can be done in O(n) when each step costs O(1). State the invariant you
-# maintain, for example that current_sum always equals the sum of the active window.
-
-
 # Problem 1: pair with a given sum.
 #
 # The function takes sorted_nums, a list of ints in ascending order (duplicates allowed), and
@@ -16,7 +10,19 @@
 #
 # Aim for O(n) with a left and a right pointer moving inward. Do not use nested loops.
 def has_pair_sum(sorted_nums: list[int], target: int) -> bool:
-    pass
+    left, right = 0, len(sorted_nums) - 1
+
+    while left < right:
+        diff = target - (sorted_nums[left] + sorted_nums[right])
+
+        if diff == 0:
+            return True
+        elif diff > 0:
+            left += 1
+        else:
+            right -= 1
+
+    return False
 
 
 # Problem 2: maximum sum of a fixed size window.
@@ -31,7 +37,18 @@ def has_pair_sum(sorted_nums: list[int], target: int) -> bool:
 #
 # Aim for O(n): compute the first window once, then slide by adding one element and removing one.
 def maximum_window_sum(nums: list[int], k: int) -> int | None:
-    pass
+    if k <= 0 or k > len(nums):
+        return None
+
+    window_sum = sum(nums[:k])
+    max_sum = window_sum
+
+    for i in range(k, len(nums)):
+        window_sum -= nums[i-k]
+        window_sum += nums[i]
+        max_sum = max(max_sum, window_sum)
+
+    return max_sum
 
 
 # Problem 3: longest substring without repeated characters.
@@ -44,4 +61,18 @@ def maximum_window_sum(nums: list[int], k: int) -> int | None:
 #
 # Aim for O(n) with a moving window and a dict holding each character's most recent index.
 def longest_distinct_substring(text: str) -> int:
-    pass
+    seen = {}
+    left = 0
+    max_length = 0
+
+    for right, char in enumerate(text):
+
+        if char in seen and seen[char] >= left:
+            left = seen[char] + 1
+
+        seen[char] = right
+
+        current_length = right - left + 1
+        max_length = max(max_length, current_length)
+
+    return max_length

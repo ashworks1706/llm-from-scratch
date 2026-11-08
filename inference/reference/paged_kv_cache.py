@@ -2,7 +2,6 @@ import torch
 import math 
 
 class PhysicalTokenBlock:
-    # UPDATED: Changed __init__ to take explicit args so it matches how you call it below
     def __init__(self, block_number, block_size, head_dim, num_heads, device):
         # this is a single chunk of physical memory on the GPU
         # this holds the block_size tokens
@@ -61,7 +60,6 @@ class KVBlockManager:
 
         return block
 
-    # --- NEW: The Forking Mechanism ---
     def fork_sequence(self, parent_id, child_id):
         # Creates a new sequence (child) that shares the memory of the parent.
         # Used when Beam Search decides to split 1 path into 2.

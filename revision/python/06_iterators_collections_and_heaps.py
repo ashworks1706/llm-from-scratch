@@ -1,12 +1,18 @@
-# Counter counts occurrences, and defaultdict builds a default value when a missing key is read.
-# deque supports fast append and pop at both ends, whereas list.pop(0) shifts every remaining item.
-# heapq implements a MIN heap, and pushing or popping costs O(log n). A heap is useful when the
-# smallest item is needed again and again as data arrives. These classes come from Python's standard
-# library.
-
 from collections import Counter, defaultdict, deque
 import heapq
 
+
+# markets = ["BTC", "ETH", "BTC", "SOL", "ETH", "BTC"]
+# Expected output: "BTC"
+
+# Given:
+# asks = [    {"price": 0.70, "quantity": 10},    {"price": 0.40, "quantity": 20},    {"price": 0.60, "quantity": 15},    {"price": 0.30, "quantity": 5}]
+# Expected:
+# cheapest_k(asks, 2)
+# [
+#     {"price": 0.30, "quantity": 5},
+#     {"price": 0.40, "quantity": 20}
+# ]
 
 # Problem 1: most common market.
 #
@@ -16,7 +22,11 @@ import heapq
 #
 # Example: ["BTC", "ETH", "BTC"] gives "BTC". [] gives None.
 def most_common_market(markets: list[str]) -> str | None:
-    pass
+    if not markets:
+        return None
+
+    c = Counter(markets)
+    return c.most_common(1)[0][0]
 
 
 # Problem 2: the k cheapest asks.
@@ -31,4 +41,5 @@ def most_common_market(markets: list[str]) -> str | None:
 #
 # Aim for O(n log k) using a heap of size k. Do not sort the whole list.
 def cheapest_k(asks: list[dict], k: int) -> list[dict]:
-    pass
+    sor = sorted(asks, key=lambda x: x["price"])
+    return sor[:max(0, k)]

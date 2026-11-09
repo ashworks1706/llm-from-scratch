@@ -70,14 +70,24 @@ tutorial and gpt from scratch notebooks are end to end walkthroughs for building
 
 TODO - 
 
+[ ] Python Revision
+
+[ ] Rust Revision
+
+[ ] ML Revision
+
+[ ] Cuda Revision
+
+[ ] Systems Revision
+
+[ ] continue inference
+
 [ ] EBT/EBRM
-
-[ ] DLM
-
-[ ] JEPA
 
 [ ] DQN
 
 [ ] REINFORCE
 
 [ ] SAC 
+
+[ ] world models: JEPA, VJEPA

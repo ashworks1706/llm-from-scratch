@@ -1,107 +1,141 @@
 this repository is where i build machine learning models from scratch to deeply understand how they work. everything is implemented from the ground up with detailed notes explaining the math, intuition and design choices behind each component.
 
-the goal is complete ml engineering knowledge covering architectures, training pipelines, optimization techniques and deployment.
+the focus is on three areas, inference, alignment and generalization. foundations, models and training are the shared base that all three build on.
 
-## architectures
+## layout
 
-llama3 is the baseline transformer decoder with grouped query attention and rotary embeddings. this is the foundation that most modern llms build on.
+foundations has the basics, pytorch, einops, tokenizers, huggingface, cnn, lstm, vae and the end to end tutorial notebooks.
 
-mixtral8x7b adds sparse mixture of experts where only some experts activate per token. this dramatically increases model capacity without proportional compute increase.
+models has the architecture implementations, from llama3, mixtral, deepseekv3 and paligemma2 to the 2026 hybrids like qwen35, deepseekv4, gemma4 and mamba2, plus diffusion models like dit.
 
-deepseekv3 implements multi head latent attention which compresses the kv cache for efficient long context. uses mixture of experts with load balancing.
+training covers pretraining, sft, lora, rl, distillation and the training systems around them like evals, scaling laws, data curation and distributed training.
 
-deepseekr1 builds on the transformer stack for reasoning models with reward modeling and reinforcement learning style training loops.
+inference covers practical model execution after training. the python reference files introduce quantization, batching and paged kv caches while the numbered rust track uses candle for real model execution, systems lessons for scheduling and serving, and cudarc gpu work for kernels.
 
-kimik2 focuses on extreme long context by optimizing rope parameters and attention patterns for sequences up to millions of tokens.
+alignment covers mechanistic interpretability with patching, probes, saes, steering and model diffing, and alignment with reward hacking, emergent misalignment, cot monitoring, ai control and model organisms.
 
-paligemma2 is a vision language model that processes both images and text using a shared transformer architecture.
+generalization covers going beyond next token imitation with energy based transformers, jepa world models, video world models and test time compute.
 
-stable diffusion implements diffusion models for image generation starting from noise and iteratively denoising.
+extras holds useful topics outside the main focus like mlops, embeddings, speech codecs and transfusion.
 
-## training pipelines
+revision has short problem sets for brushing up python, rust, typescript, dsa, ml, cuda and systems. data, utils, assets and guide are shared helpers.
 
-pretraining trains models on massive text corpora to predict next tokens. this is where models learn language patterns, facts and reasoning.
+all todos live here, in the order to go through them.
 
-sft does supervised finetuning on instruction response pairs to teach models to follow instructions and have conversations. only computes loss on responses not instructions.
+TODO -
 
-rl implements direct preference optimization to align models with human preferences using chosen vs rejected response pairs. simpler and more stable.
+1. Unblockers (other lessons need these)
 
-rl also includes ppo and grpo training paths for comparing classic policy optimization, reward driven updates and group relative preference learning.
+[ ] fix broken files
+- [ ] training/sft/train.py syntax error at line 190, training/sft/dataset.py pass stub
+- [ ] models/paligemma2/processor.py indentation error at line 20
+- [ ] foundations/tutorial.py syntax error at line 68
+- [ ] models/deepseekv3/inference.py imports a config.py that does not exist
 
-distillation compresses a large teacher model into a smaller student by training on soft probability distributions rather than hard labels.
+[ ] training/evals: 01 bits per byte, 02 few shot harness, 03 error bars, 05 llm judge pitfalls
 
-data contains dataset and packing utilities for turning raw examples into efficient training batches. packing matters because wasted padding directly becomes wasted compute.
+[ ] training/rl: reinforce, ppo, grpo with dapo / gspo / cispo options, rlvr rewards (dpo done)
 
-## optimization techniques
+2. Alignment
 
-lora is parameter efficient finetuning using low rank matrices. trains less than 1 percent of parameters by injecting small adapters into attention layers.
+[ ] interp: 01 activation patching, 02 attribution patching, 03 linear probes, 04 lenses, 05 induction heads
 
-inference covers practical model execution after training. the python files introduce quantization, batching and paged kv caches while the numbered rust track uses candle for real model execution, systems lessons for scheduling and serving, targeted cudarc gpu work for measured bottlenecks, and triton literacy for reading modern inference kernels.
+[ ] sae: 02 superposition and sae variants, 05 evaluation and baselines, 06 feature steering, 07 transcoders, 08 attribution graphs
 
-efficiency is where lower level performance work belongs, especially rust implementations, kernels and attention optimizations in the language they are usually written in.
+[ ] steering: 01 caa, 02 refusal direction, 03 persona vectors and sycophancy, 04 steering reliability
 
-einops covers readable tensor manipulation. rearrange, reduce, repeat and einsum make shape changes explicit which is important when implementing attention and multi head models.
+[ ] safety: 01 reward hacking, 02 emergent misalignment, 03 harmful finetuning, 04 unlearning vs filtering
 
-tokenizers covers how text becomes model inputs. includes bpe, sentencepiece, tiktoken usage and training a tokenizer from scratch.
+[ ] oversight: 01 cot monitoring, 04 sleeper agents, 05 sandbagging, 03 probe classifiers, 02 ai control, 06 auditing model organisms
 
-huggingface covers the practical ecosystem around modern models including transformers, datasets, generation, trainer and accelerate.
+[ ] later: diffing, params, interp 06 thought anchors, safety 05 character training, safety 06 weak to strong
 
-## research experiments
+3. Inference (in parallel with alignment)
 
-ebt explores energy based transformers where predictions are refined by minimizing an energy score instead of only doing one feed forward token prediction. the notebook uses gsm8k style reasoning data and inspects energy traces, btr style variants and failure cases.
+[ ] gpu 13 host file (the run list uses 13_reductions_and_shared_memory_host but it does not exist)
 
-dlm studies diffusion language model behavior by running real prompt suites across different generation schedules. the analysis focuses on generated completions, answer extraction, schedule comparisons and hidden state geometry of responses.
+[ ] gpu 16, 17 (missing files)
 
-explanability studies dataset and model behavior through data distribution, semantic patterns, linguistic features and token relationships.
+[ ] systems 21-25: batching and streaming, prefill decode scheduler, kv cache policy, server and api, metrics (20 done)
 
-## fundamentals
+[ ] gpu 28 flash attention, 29 paged attention (kernels empty)
 
-pytorch implements core concepts from scratch including tensors, autograd, modules, optimizers and training loops. understanding these is essential for everything else.
+[ ] gpu 30 quantized attention kernel, 31 gptq / awq / kv quantization, 32 sparse attention (30 and 32 missing files)
 
-cnn covers convolutional networks for vision including convolution, pooling, resnet blocks and image classification on cifar10.
+[ ] systems 33 speculative decoding, 34 prefix caching, 35 disaggregated serving, 36 moe serving
 
-lstm implements recurrent networks for sequences including vanilla rnn, lstm cells, sequence prediction and sentiment analysis.
+4. Models (build each one when an inference lesson needs it)
 
-vae covers variational autoencoders for generative modeling with latent spaces and generation of new samples.
+[ ] gemma4, before systems 23 kv cache policy: sliding window and global layers, qk norm, cross layer kv sharing, k=v, per layer embeddings, encoder free vision
 
-sae covers sparse autoencoders for mechanistic interpretability with latent space. 
+[ ] deepseekv4, before gpu 32 sparse attention: lightning indexer, csa and hca compressed attention, mhc, attention residuals, engram, muon
 
-tutorial and gpt from scratch notebooks are end to end walkthroughs for building transformer language models from raw text through tokenization, training and generation.
+[ ] qwen35: gated deltanet hybrid with chunkwise training, gated attention, partial rope, mtp, kimi delta attention extension
 
-TODO - 
+[ ] mamba2: state space duality, selective scan, latent moe, nemotron 3 style hybrid
 
-Revision / Brush Up Phase
+[ ] dlm: masked diffusion (llada) and block diffusion (diffusiongemma)
 
-[ ] Python Revision
+[ ] paligemma2: native resolution vit upgrade
 
-[ ] Rust Revision
+[ ] stablediffusion: clip, encoder, decoder, unet as .py files (only the notebook has code)
 
-[ ] ML Revision
+5. Generalization
 
-[ ] Cuda Revision
+[ ] testtimecompute: self consistency, best of n with verifier, beam search, compute optimal allocation
 
-[ ] Systems Revision
+[ ] ebt: energy based transformers and energy based reward models (only the notebook exists)
 
-[ ] backlog model implementations; RL, SAE
+[ ] vjepa: image jepa, video tubelets, ema target, sigreg, action conditioned world model with cem planning
 
-Inference Engineering Phase
+[ ] dit: adaln zero, flow matching, mmdit, single stream dit, repa, meanflow, diffusionnft
 
-[ ] continue and finish learning inference
+[ ] videodiffusion: 3d causal vae, video dit, diffusion forcing, self forcing
 
-Generalization / World Models Phase
+6. Training (whenever there is time)
 
-[ ] EBT/EBRM
+[ ] training/rl rest: rollout correction, length control, generative reward models, agentic rl
 
-[ ] world models: JEPA, VJEPA (vjepa: image jepa first, then video tubelets, ema target encoder, attentive probe)
+[ ] training/deepseekr1: all files are scaffold only
 
-Continued Models Phase
+[ ] training/distillation: on-policy distillation, multi teacher distillation
 
-[ ] qwen3next: hybrid linear attention, gated deltanet with chunkwise training, gated attention, kimi delta attention extension
+[ ] training/evals: 04 contamination checks
 
-[ ] deepseekv4: lightning indexer sparse attention from v3.2, csa and hca compressed attention, mhc hyper connections, muon
+[ ] speedrun: modded nanogpt tricks one at a time, muon / soap / schedule free
 
-[ ] dit: diffusion transformer with adaln zero, flow matching, euler sampler, mmdit
+[ ] scalinglaws: isoflop sweep, fitting laws, mup, completep
 
-[ ] gptoss: sliding window and full attention, attention sinks, qk norm, mxfp4 experts
+[ ] datacuration: html extraction, quality classifier, minhash dedup, pii filters, decontamination
 
-[ ] mamba2: state space duality, selective scan, nemotron style hybrid (compare with qwen3next)
+[ ] distributed: ddp, zero / fsdp, tensor parallel, activation checkpointing, fp8 training
+
+[ ] longcontext: rope scaling (pi, ntk, yarn, abf), long data mixing, needle and ruler evals, context parallelism
+
+[ ] data: datasets, packing
+
+[ ] foundations/pytorch/01_tensors.py todo 5
+
+7. Extras (only if curious)
+
+[ ] embeddings: infonce, llm to embedder, matryoshka, reranker, ann search
+
+[ ] speechcodec: rvq codec, semantic codebook, audio encoder asr, thinker talker
+
+[ ] transfusion: one model for text next token and image flow matching
+
+Revision (alongside the matching track, rust and cuda with inference, ml with training)
+
+[ ] Python Revision (01-07 done, 08-24 left)
+
+[ ] Rust Revision (01-22 left)
+
+[ ] TypeScript Revision (01-17 left)
+
+[ ] DSA Revision (01-10 left)
+
+[ ] ML Revision (01-11 left)
+
+[ ] Cuda Revision (01-10 left, kernel bodies empty)
+
+[ ] Systems Revision (01-06 left)

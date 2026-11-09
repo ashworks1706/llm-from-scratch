@@ -1,0 +1,9 @@
+qwen 3.5 is a hybrid model that mixes linear attention with regular softmax attention. it takes the design from qwen3 next into the main qwen line, so every block of four layers has three gated deltanet layers followed by one gated attention layer. the deltanet layers do not keep a kv cache that grows with every token, instead they keep a fixed size memory matrix per head that gets updated as tokens come in.
+
+gated deltanet is linear attention with the delta rule. plain linear attention just keeps adding key value outer products into the state which means old memories never get removed. the delta rule first reads what the state currently predicts for the key, then writes only the correction, scaled by a learned beta. on top of that a learned alpha gate decays the whole state so the model can forget old information when the context changes.
+
+training cannot run the recurrence token by token because that would be too slow, so the sequence is split into chunks. inside a chunk the math is done in parallel like attention and between chunks the state is passed forward like an rnn. at inference time we switch to the recurrent form and decoding becomes constant memory per layer.
+
+the full attention layers stay because a fixed size state cannot remember everything exactly. gated attention is normal attention with qk norm, partial rope on a quarter of the head dim and a sigmoid gate on the output. the feedforward is a high sparsity mixture of experts with a shared expert, and there is one multi token prediction layer.
+
+kimi k3 and glm 5.3 flash use the same three to one idea but with kimi delta attention, which has a per channel gate instead of a per head gate, and mla with no positional encoding in the full layers. that version is in kimi_delta_attention.py as an extension.

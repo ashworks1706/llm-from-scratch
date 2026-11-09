@@ -70,6 +70,8 @@ tutorial and gpt from scratch notebooks are end to end walkthroughs for building
 
 TODO - 
 
+Revision / Brush Up Phase
+
 [ ] Python Revision
 
 [ ] Rust Revision
@@ -80,14 +82,26 @@ TODO -
 
 [ ] Systems Revision
 
-[ ] continue inference
+[ ] backlog model implementations; RL, SAE
+
+Inference Engineering Phase
+
+[ ] continue and finish learning inference
+
+Generalization / World Models Phase
 
 [ ] EBT/EBRM
 
-[ ] DQN
+[ ] world models: JEPA, VJEPA (vjepa: image jepa first, then video tubelets, ema target encoder, attentive probe)
 
-[ ] REINFORCE
+Continued Models Phase
 
-[ ] SAC 
+[ ] qwen3next: hybrid linear attention, gated deltanet with chunkwise training, gated attention, kimi delta attention extension
 
-[ ] world models: JEPA, VJEPA
+[ ] deepseekv4: lightning indexer sparse attention from v3.2, csa and hca compressed attention, mhc hyper connections, muon
+
+[ ] dit: diffusion transformer with adaln zero, flow matching, euler sampler, mmdit
+
+[ ] gptoss: sliding window and full attention, attention sinks, qk norm, mxfp4 experts
+
+[ ] mamba2: state space duality, selective scan, nemotron style hybrid (compare with qwen3next)

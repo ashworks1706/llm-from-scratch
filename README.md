@@ -18,7 +18,7 @@ generalization covers going beyond next token imitation with energy based transf
 
 extras holds useful topics outside the main focus like mlops, embeddings, speech codecs and transfusion.
 
-revision has short problem sets for brushing up python, rust, typescript, dsa, ml, cuda and systems. data, utils, assets and guide are shared helpers.
+revision has short problem sets grouped by concept (concurrency, searching, transactions, gpu kernels and so on), each folder mixing python, rust, typescript and cuda files. data, utils, assets and guide are shared helpers.
 
 all todos live here, in the order to go through them.
 
@@ -124,18 +124,36 @@ TODO -
 
 [ ] transfusion: one model for text next token and image flow matching
 
-Revision (alongside the matching track, rust and cuda with inference, ml with training)
+Revision (by concept, in this order; rust and cuda alongside inference, ml alongside training)
 
-[ ] Python Revision (01-07 done, 08-24 left)
+[ ] language_basics (01-06 done, 07-11 left)
 
-[ ] Rust Revision (01-22 left)
+[ ] arrays_and_windows (02 done, 01 and 03 left, binary search lesson deleted)
 
-[ ] TypeScript Revision (01-17 left)
+[ ] trees_and_graphs (01-05 left)
 
-[ ] DSA Revision (01-10 left)
+[ ] recursion_and_dp (01-03 left)
 
-[ ] ML Revision (01-11 left)
+[ ] ownership_and_mutation (01-04 left)
 
-[ ] Cuda Revision (01-10 left, kernel bodies empty)
+[ ] types_and_errors (01-07 left)
 
-[ ] Systems Revision (01-06 left)
+[ ] concurrency (01-10 left)
+
+[ ] retries_limits_and_caching (01-06 left)
+
+[ ] transactions_and_idempotency (01-07 left)
+
+[ ] queries_and_aggregation (01-04 left)
+
+[ ] auth_and_policy (01-04 left)
+
+[ ] search_and_retrieval (01-04 left)
+
+[ ] agents (01-04 left)
+
+[ ] ml_training (01-10 left)
+
+[ ] ml_inference (01-08 left)
+
+[ ] gpu_kernels (01-10 left, kernel bodies empty)

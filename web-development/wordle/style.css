@@ -1,0 +1,197 @@
+@font-face {
+    font-family: satisfy;
+    src: url(Fonts/Satisfy-Regular.ttf);
+  }
+  body {
+    text-align: center;
+    /* background-image: url('https://wallpaperaccess.com/full/6114988.jpg'); */
+    background-image: url('https://wallpapercave.com/wp/wp6748359.jpg');
+    background-size: cover;
+  }
+  
+  hr {
+    width: 500px;
+  }
+  
+  #title {
+    font-family: satisfy;
+    font-size: 36px;
+    font-weight: bold;
+}
+
+#board {
+    width: 350px;
+    height: 420px;
+    margin: 0 auto;
+    margin-top: 3px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.tile {
+    /* Box */
+    border: 2px solid lightgray;
+    width: 60px;
+    height: 60px;
+    margin: 2.5px;
+
+    /* Text */
+    color: black;
+    font-size: 36px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.correct {
+  transition: 0.5s ease-in;
+  background-color: #6AAA64;
+  color: white;
+  border-color: white;
+}
+
+.present {
+  transition: 0.5s ease-in;
+    background-color: #C9B458;
+    color: white;
+    border-color: white;
+  }
+  
+  .absent {
+  transition: 0.5s ease-in;
+    background-color: #787C7E;
+    color: white;
+    border-color:white;
+}
+
+
+.keyboard-row {
+  background-image: url('https://wallpapercave.com/wp/wp6748359.jpg');
+  display: flex;
+  background-size: 100%;
+    width: 400px;
+    margin: 0 auto;
+    margin-bottom: 2px;
+    position: inherit;
+    flex-wrap: wrap;
+}
+
+.key-tile {
+    width: 36px;
+    height: 40px;
+    margin: 1px;
+    border: 1px solid lightgray;
+
+    /* Text */
+    cursor: pointer;
+    font-size: 20px;
+    font-family:sans-serif;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.enter-key-tile {
+  width: 76px;
+  cursor: pointer;
+    height: 40px;
+    margin: 1px;
+    border: 1px solid lightgray;
+
+    /* Text */
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#answer{
+  font-size: 25px;
+  transition: 1s ease-in;
+  color: red;
+}
+
+.container{
+  flex-wrap: wrap;
+  transition: ease-in 0.3s;
+  animation: fadein 0.4s;
+}
+@keyframes fadein{
+  0%{
+    transform: scale(0);
+  }
+  100%{
+    transform: scale(1);
+  }
+}
+
+.aboutcontainer{
+  font-size: 30px;
+  /* margin-top: 110px; */
+  background-color: black;
+  color: white;
+}
+.aboutcontainer h1{
+  font-family: cursive;
+  padding: 15px 10px;
+  font-size: 50px;
+  font-family: lato;
+}
+
+.info{
+
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 30px;
+  padding-left: 10px;
+}
+
+.social {
+  animation: slideright 1s linear forwards;
+}
+@keyframes slideright {
+  0% {
+    transform: translate(100px, 0);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(0px);
+    opacity: 1;
+  }
+}
+
+.social img {
+  margin-top: 60px;
+  width: 70px;
+}
+.social a {
+  text-decoration: none;
+} 
+#twitter{
+  filter: invert(1);
+}
+
+.aboutpage{
+    opacity:0;
+  font-size: 10px;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 400px;
+  background-color: black;
+  text-align: center;
+  transform: 0.800s ease;
+  display: flex;
+}
+
+.aboutpage > .navbar{
+  text-decoration: none;
+}
+
+@media (min-width: 799px){
+  .aboutpage{
+    opacity: 1;
+  }
+}

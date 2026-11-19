@@ -1,0 +1,201 @@
+
+body {
+  transition: 0.5s ease-in-out;
+  
+  font-family: monospace;
+    background-color: #242518;
+  }
+  
+  .App {
+    animation: fadein 2s ease-in-out;
+    text-align: center;
+    margin: 0 auto;
+  }
+  @keyframes fadein {
+    0%{
+      opacity: 0;
+    }
+    100%{
+      opacity: 1;
+    }
+  }
+  .header{
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .App header {
+    background-color: transparent;
+    height: 10vh;
+    min-height: 50px;
+    color: white;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 99;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  
+  .App section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: rgb(52, 53, 37);
+  }
+  
+  main {
+    padding: 100px;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    background-image: linear-gradient(black 1%, rgb(64, 75, 6) 100%);
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+  
+  main::-webkit-scrollbar {
+    width: 0.25rem;
+  }
+  
+  main::-webkit-scrollbar-track {
+    background: #1e1e24;
+  }
+  
+  main::-webkit-scrollbar-thumb {
+    background: #6649b8;
+  }
+  
+  form {
+    height: 7vh;
+    bottom: 0;
+    background-color: rgba(24, 23, 23, 0.377);
+    width: 100%;
+    display: flex;
+    z-index: 1;
+    font-size: 1rem;
+    position: fixed;
+  }
+  
+  form button {
+    width: 20%;
+    background-color: rgb(56, 56, 143);
+  }
+  .center{
+    align-items: center;
+    justify-content: center;
+  }
+  
+  input {
+    line-height: 1.5;
+    width: 100%;
+    font-size: 1rem;
+    background: rgba(58, 58, 58, 0.404);
+    color: white;
+    outline: none;
+    border: none;
+    padding: 0 10px;
+  }
+  
+  button {
+    background-color: #282c34; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    font-size: 1.25rem;
+  }
+  
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  
+  .sign-in {
+    color: yellow;
+    background: black;
+    animation: fadein 2s ease-in-out;
+
+    max-width: 400px;
+    margin: 0 auto;
+    border-radius: 50px;
+  }
+
+  .sign-in:hover{
+    background-color: rgb(56, 54, 54);
+  }
+  
+  
+  
+  
+  ul, li {
+    text-align: left;
+    list-style: none;
+  }
+  
+  p {
+    margin-bottom: 20px;
+    line-height: 24px;
+    padding: 10px 20px;
+    border-radius: 25px;
+    position: relative;
+    text-align: center;
+  }
+  
+  .message {
+    display: flex;
+    align-items: center;
+  }
+  
+  
+  .sent {
+    flex-direction: row-reverse;
+    animation: in 0.5s ease-in-out;
+  }
+  
+  .sent p {
+    color: white;
+    background: rgba(0, 0, 0, 0.404);
+    align-self: flex-end;
+  }
+  .received p {
+    animation: out 0.5s ease-in-out;
+    color: yellow;
+    background: rgba(0, 0, 0, 0.11);
+  }
+  @keyframes out {
+    0%{
+      opacity: 0;
+      transform: translateX(-100px);
+    }
+    100%{
+      opacity: 1;
+      transform: translateX(0);
+      
+    }
+  }
+  @keyframes in {
+    0%{
+      opacity: 0;
+      transform: translateX(100px);
+    }
+    100%{
+      opacity: 1;
+      transform: translateX(0);
+      
+    }
+  }
+  img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin: 2px 5px;
+  }

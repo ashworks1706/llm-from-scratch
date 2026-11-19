@@ -20,6 +20,8 @@ extras holds useful topics outside the main focus like mlops, embeddings, speech
 
 revision has short problem sets grouped by concept (concurrency, searching, transactions, gpu kernels and so on), each folder mixing python, rust, typescript and cuda files. data, utils, assets and guide are shared helpers.
 
+[web-development](web-development/) contains standalone JavaScript projects for browser and full-stack practice.
+
 all todos live here, in the order to go through them.
 
 TODO -

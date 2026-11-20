@@ -41,6 +41,6 @@ if __name__ == '__main__':
     # ts = [threading.Thread(target=increment_unsafe, args=(path, barrier)) for _ in range(2)]
     # [t.start() for t in ts]; [t.join() for t in ts]
     # print(sqlite3.connect(path).execute("select n from counter").fetchone())   # (1,)  lost update
-    # print(increment_optimistic(path, 3))          # True
+    # assert increment_optimistic(path, 3) is True
     # print(insert_once(path, "e1"), insert_once(path, "e1"))                    # True False
     pass

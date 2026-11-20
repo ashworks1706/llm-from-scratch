@@ -41,13 +41,13 @@ class SlidingWindowLog:
 if __name__ == '__main__':
     # t = [0.0]
     # tb = TokenBucket(5, 1, lambda: t[0])
-    # print([tb.allow() for _ in range(6)])         # [True, True, True, True, True, False]
-    # print(tb.retry_after())                       # 1.0
+    # assert [tb.allow() for _ in range(6)] == [True, True, True, True, True, False]
+    # assert abs(tb.retry_after() - 1.0) < 1e-6
     # t[0] = 0.5
-    # print(tb.retry_after())                       # 0.5
+    # assert abs(tb.retry_after() - 0.5) < 1e-6
     # t2 = [0.0]
     # sw = SlidingWindowLog(2, 10, lambda: t2[0])
     # out = []
     # for t2[0] in (0, 1, 2, 10): out.append(sw.allow())
-    # print(out)                                    # [True, True, False, True]
+    # assert out == [True, True, False, True]
     pass

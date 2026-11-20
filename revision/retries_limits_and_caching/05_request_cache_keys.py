@@ -42,5 +42,5 @@ if __name__ == "__main__":
     # pc.set("k", 1, 10, now=0)
     # print(pc.get("k", now=9), pc.get("k", now=10))   # 1 None
     # pc.set("v1:a", 1, None, now=0); pc.set("v1:b", 2, None, now=0); pc.set("v2:a", 3, None, now=0)
-    # print(pc.invalidate_prefix("v1:"))               # 2
+    # assert pc.invalidate_prefix("v1:") == 2
     pass

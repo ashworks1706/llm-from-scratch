@@ -30,11 +30,11 @@ def cheapest_path_zero_one(grid: list[list[int]]) -> int:
 
 # ---- try it ----
 if __name__ == '__main__':
-    # print(number_of_islands([['1', '1', '0'], ['0', '0', '1']]))   # 2
-    # print(rotting_oranges([[2, 1, 1], [1, 1, 0], [0, 1, 1]]))      # 4
-    # print(rotting_oranges([[2, 1, 1], [0, 1, 1], [1, 0, 1]]))      # -1
-    # print(rotting_oranges([[0, 2]]))                               # 0
-    # print(rotting_oranges([[1]]))                                  # -1
-    # print(cheapest_path_zero_one([[0, 1, 1], [1, 1, 0], [1, 1, 0]]))  # 2
-    # print(cheapest_path_zero_one([[0, 0, 1], [1, 0, 1], [1, 0, 0]]))  # 0
+    # assert number_of_islands([['1', '1', '0'], ['0', '0', '1']]) == 2
+    # assert rotting_oranges([[2, 1, 1], [1, 1, 0], [0, 1, 1]]) == 4
+    # assert rotting_oranges([[2, 1, 1], [0, 1, 1], [1, 0, 1]]) == -1
+    # assert rotting_oranges([[0, 2]]) == 0
+    # assert rotting_oranges([[1]]) == -1
+    # assert cheapest_path_zero_one([[0, 1, 1], [1, 1, 0], [1, 1, 0]]) == 2
+    # assert cheapest_path_zero_one([[0, 0, 1], [1, 0, 1], [1, 0, 0]]) == 0
     pass

@@ -27,5 +27,5 @@ if __name__ == '__main__':
     # buf = DelayBuffer(2)
     # buf.push(np.array([0.]), np.array([1.]))
     # buf.push(np.array([1.]), np.array([2.]))
-    # print(buf.replay(lambda s, a: s + a))         # [3.]
+    # assert buf.replay(lambda s, a: s + a) == [3.]
     pass

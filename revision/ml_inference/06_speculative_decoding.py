@@ -23,11 +23,11 @@ def verify_step(p_draft: np.ndarray, p_target: np.ndarray, draft_tokens: list[in
 
 # ---- try it ----
 if __name__ == '__main__':
-    # print(expected_tokens_per_pass(0.5, 3))       # 1.875
-    # print(expected_tokens_per_pass(1.0, 4))       # 5.0
-    # print(expected_tokens_per_pass(0.0, 3))       # 1.0
+    # assert abs(expected_tokens_per_pass(0.5, 3) - 1.875) < 1e-6
+    # assert abs(expected_tokens_per_pass(1.0, 4) - 5.0) < 1e-6
+    # assert abs(expected_tokens_per_pass(0.0, 3) - 1.0) < 1e-6
     # p_draft = np.array([[0.5, 0.5]])
     # p_target = np.array([[0.0, 1.0], [1.0, 0.0]])
-    # print(verify_step(p_draft, p_target, [0], np.random.default_rng(0)))  # [1]
-    # print(verify_step(p_draft, p_target, [1], np.random.default_rng(0)))  # [1, 0]
+    # assert verify_step(p_draft, p_target, [0], np.random.default_rng(0)) == [1]
+    # assert verify_step(p_draft, p_target, [1], np.random.default_rng(0)) == [1, 0]
     pass

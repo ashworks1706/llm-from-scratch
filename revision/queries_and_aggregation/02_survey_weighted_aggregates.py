@@ -30,8 +30,8 @@ def weighted_shares(distribution):
 if __name__ == '__main__':
     recs = [{"size": 2, "w": 1.5}, {"size": 2, "w": 2.0}, {"size": 3, "w": 4.0}, {"size": 0, "w": 9.0}]
     ages = [{"age": 10, "w": 1}, {"age": 40, "w": 3}]
-    # print(weighted_distribution(recs, "size", "w", lambda r: r["size"] == 0))  # {2: 3.5, 3: 4.0}
-    # print(weighted_mean(ages, "age", "w"))                                     # 32.5
-    # print(weighted_shares({"a": 1.0, "b": 3.0}))                               # {'a': 0.25, 'b': 0.75}
-    # print(weighted_shares({}))                                                 # {}
+    # assert weighted_distribution(recs, "size", "w", lambda r: r["size"] == 0) == {2: 3.5, 3: 4.0}
+    # assert abs(weighted_mean(ages, "age", "w") - 32.5) < 1e-6
+    # assert weighted_shares({"a": 1.0, "b": 3.0}) == {'a': 0.25, 'b': 0.75}
+    # assert weighted_shares({}) == {}
     pass

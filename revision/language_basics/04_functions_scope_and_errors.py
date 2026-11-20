@@ -36,7 +36,7 @@ def normalize_event(event: dict) -> dict:
 # ---- try it ----
 if __name__ == "__main__":
     # print(safe_ratio(6, 3), safe_ratio(0, 5), safe_ratio(1, 0))   # 2.0 0.0 None
-    # print(normalize_event({"id": "e1", "quantity": 3}))           # {'id': 'e1', 'quantity': 3}
+    # assert normalize_event({"id": "e1", "quantity": 3}) == {'id': 'e1', 'quantity': 3}
     # normalize_event({"id": "e1", "quantity": -1})                 # raises ValueError
     # normalize_event({"quantity": 3})                              # raises ValueError
     pass

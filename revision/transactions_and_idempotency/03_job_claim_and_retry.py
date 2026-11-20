@@ -35,9 +35,9 @@ def backoff(attempt: int, base: float = 2.0, cap: float = 60.0) -> float:
 if __name__ == '__main__':
     # q = make_queue()
     # q.execute("insert into jobs(name) values ('a')"); q.execute("insert into jobs(name) values ('b')")
-    # print(q.execute("select status, attempts from jobs where id = 1").fetchone())  # ('todo', 0)
+    # assert q.execute("select status, attempts from jobs where id = 1").fetchone() == ('todo', 0)
     # print(claim(q), claim(q), claim(q))           # 1 2 None
-    # print(q.execute("select status, attempts from jobs where id = 1").fetchone())  # ('doing', 1)
+    # assert q.execute("select status, attempts from jobs where id = 1").fetchone() == ('doing', 1)
     # print(finish(q, 1, False, 3))                 # todo
     # q.execute("update jobs set attempts = 3 where id = 1")
     # print(finish(q, 1, False, 3))                 # failed

@@ -41,10 +41,10 @@ class BoundedBuffer:
 # ---- try it ----
 if __name__ == '__main__':
     # sem = MySemaphore(1)
-    # print(sem.acquire())                          # True
+    # assert sem.acquire() is True
     # print(sem.acquire(timeout=0.1))               # False (after ~0.1s)
     # sem.release()
-    # print(sem.acquire())                          # True
+    # assert sem.acquire() is True
     # buf = BoundedBuffer(2)
     # buf.put(1); buf.put(2)
     # print(buf.get(), buf.get())                   # 1 2

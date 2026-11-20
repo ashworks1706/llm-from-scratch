@@ -60,15 +60,15 @@ def longest_distinct_substring(text: str) -> int:
 
 # ---- try it ----
 if __name__ == "__main__":
-    # print(has_pair_sum([1, 2, 4, 7, 11], 9))      # True
-    # print(has_pair_sum([1, 2, 4, 7, 11], 100))    # False
-    # print(has_pair_sum([3, 3], 6))                # True
-    # print(has_pair_sum([5], 10))                  # False
-    # print(maximum_window_sum([1, 2, 3, 4], 2))    # 7
-    # print(maximum_window_sum([-3, -1, -2], 2))    # -3
-    # print(maximum_window_sum([1, 2], 5))          # None
-    # print(maximum_window_sum([1, 2], 0))          # None
+    # assert has_pair_sum([1, 2, 4, 7, 11], 9) is True
+    # assert has_pair_sum([1, 2, 4, 7, 11], 100) is False
+    # assert has_pair_sum([3, 3], 6) is True
+    # assert has_pair_sum([5], 10) is False
+    # assert maximum_window_sum([1, 2, 3, 4], 2) == 7
+    # assert maximum_window_sum([-3, -1, -2], 2) == -3
+    # assert maximum_window_sum([1, 2], 5) is None
+    # assert maximum_window_sum([1, 2], 0) is None
     # print(longest_distinct_substring("abcabcbb")) # 3
-    # print(longest_distinct_substring("bbbb"))     # 1
-    # print(longest_distinct_substring("pwwkew"))   # 3
+    # assert longest_distinct_substring("bbbb") == 1
+    # assert longest_distinct_substring("pwwkew") == 3
     pass

@@ -28,7 +28,7 @@ def lis_length(nums: list[int]) -> int:
 # ---- try it ----
 if __name__ == '__main__':
     # print(edit_distance("horse", "ros"), edit_distance("", "abc"), edit_distance("abc", "abc"))  # 3 3 0
-    # print(knapsack_01([1, 3, 4, 5], [1, 4, 5, 7], 7))     # 9
-    # print(knapsack_01([5], [10], 4))                      # 0
+    # assert knapsack_01([1, 3, 4, 5], [1, 4, 5, 7], 7) == 9
+    # assert knapsack_01([5], [10], 4) == 0
     # print(lis_length([10, 9, 2, 5, 3, 7, 101, 18]), lis_length([2, 2, 2]))  # 4 1
     pass

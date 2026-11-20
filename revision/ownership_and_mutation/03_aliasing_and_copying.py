@@ -34,6 +34,6 @@ if __name__ == '__main__':
     # print(append_item(3, existing) is existing, existing)   # True [1, 2, 3]
     # cfg = {"a": [1, 2]}
     # snapshot(cfg)["a"].append(3)
-    # print(cfg)                                    # {'a': [1, 2]}
+    # assert cfg == {'a': [1, 2]}
     # print(make_adders(3)[2](10), make_adders(3)[0](10))     # 12 10
     pass

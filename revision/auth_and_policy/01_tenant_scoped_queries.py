@@ -36,7 +36,7 @@ if __name__ == '__main__':
     # db = make_db()
     # db.executemany("insert into pods values (?, ?, ?)", [(1, "p1", "alpha"), (2, "p1", "beta"), (1, "p2", "gamma")])
     # db.execute("insert into pods values (1, 'p1', 'x')")      # raises sqlite3.IntegrityError
-    # print(get_pod(db, 1, "p1"))                   # {'org_id': 1, 'pod_id': 'p1', 'name': 'alpha'}
+    # assert get_pod(db, 1, "p1") == {'org_id': 1, 'pod_id': 'p1', 'name': 'alpha'}
     # print(get_many(db, 1, ["p2", "p1"]))          # rows p1 then p2 (org 1)
     # get_pod(db, 1, "zzz")                         # raises NotFound
     # get_many(db, 1, ["p1", "p9"])                 # raises NotFound naming p9

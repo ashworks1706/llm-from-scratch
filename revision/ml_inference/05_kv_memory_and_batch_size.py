@@ -27,8 +27,8 @@ def max_sequences(total_pages: int, prompt: int, max_new: int, page_size: int) -
 # ---- try it ----
 if __name__ == '__main__':
     # print(pages_needed(1000, 16), pages_needed(0, 16), pages_needed(16, 16), pages_needed(17, 16))  # 63 0 1 2
-    # print(blocks_within(21474836480, 131072, 16))  # 10240
-    # print(blocks_within(1000, 131072, 16))         # 0
-    # print(max_sequences(10240, 1000, 500, 16))     # 108
-    # print(max_sequences(50, 1000, 500, 16))        # 0
+    # assert blocks_within(21474836480, 131072, 16) == 10240
+    # assert blocks_within(1000, 131072, 16) == 0
+    # assert max_sequences(10240, 1000, 500, 16) == 108
+    # assert max_sequences(50, 1000, 500, 16) == 0
     pass

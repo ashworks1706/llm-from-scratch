@@ -20,8 +20,8 @@ def decode_step_estimate(params: float, bytes_per_param: float, batch: int, peak
 
 # ---- try it ----
 if __name__ == '__main__':
-    # print(attainable_flops(100, 1e15, 3e12))      # 3e14
-    # print(attainable_flops(1000, 1e15, 3e12))     # 1e15
+    # assert abs(attainable_flops(100, 1e15, 3e12) - 3e14) < 1e-6
+    # assert abs(attainable_flops(1000, 1e15, 3e12) - 1e15) < 1e-6
     # print(decode_step_estimate(8e9, 2, 1, 1e15, 3e12))     # intensity 1.0, 'memory', ~5.33e-3
     # print(decode_step_estimate(8e9, 2, 2048, 1e15, 3e12))  # intensity 2048, 'compute', 0.032768
     pass

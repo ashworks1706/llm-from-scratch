@@ -38,9 +38,9 @@ if __name__ == '__main__':
     # print(safe_username("!!!"))                   # user
     # print(safe_username("a" * 30))                # "a" * 22
     # cert = Cert("k1", ("pod-a",), 1000, 2000, None)
-    # print(accepts(cert, "pod-a", 999))            # False
-    # print(accepts(cert, "pod-a", 1000))           # True
-    # print(accepts(cert, "pod-a", 1999))           # True
-    # print(accepts(cert, "pod-a", 2000))           # False
-    # print(accepts(cert, "pod-b", 1500))           # False
+    # assert accepts(cert, "pod-a", 999) is False
+    # assert accepts(cert, "pod-a", 1000) is True
+    # assert accepts(cert, "pod-a", 1999) is True
+    # assert accepts(cert, "pod-a", 2000) is False
+    # assert accepts(cert, "pod-b", 1500) is False
     pass

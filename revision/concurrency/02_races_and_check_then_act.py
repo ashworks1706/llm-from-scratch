@@ -33,9 +33,9 @@ def safe_get_or_create(registry: dict, key: str, factory, lock: threading.Lock):
 # ---- try it ----
 if __name__ == '__main__':
     # a = AtomicInt(5)
-    # print(a.compare_and_swap(5, 6))               # True
-    # print(a.compare_and_swap(5, 7))               # False
-    # print(a.increment())                          # 7
+    # assert a.compare_and_swap(5, 6) is True
+    # assert a.compare_and_swap(5, 7) is False
+    # assert a.increment() == 7
     # import time
     # calls = []
     # def factory():

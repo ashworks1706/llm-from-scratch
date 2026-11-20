@@ -41,8 +41,8 @@ def max_context(c: Cfg, gpu_bytes: int, batch: int, weight_bytes_per_param: int 
 if __name__ == '__main__':
     tiny = Cfg(vocab=10, dim=4, layers=1, n_heads=2, n_kv_heads=1, ffn_hidden=8)
     llama = Cfg(128256, 4096, 32, 32, 8, 14336)
-    # print(param_count(tiny))                      # 236
-    # print(param_count(Cfg(10, 4, 1, 2, 1, 8, tied_embeddings=True)))  # 196
-    # print(param_count(llama))                     # 8030261248
-    # print(max_context(tiny, 10000, 2))            # 533
+    # assert param_count(tiny) == 236
+    # assert param_count(Cfg(10, 4, 1, 2, 1, 8, tied_embeddings=True)) == 196
+    # assert param_count(llama) == 8030261248
+    # assert max_context(tiny, 10000, 2) == 533
     pass

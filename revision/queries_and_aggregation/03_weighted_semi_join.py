@@ -32,9 +32,9 @@ if __name__ == '__main__':
     # build_schema(conn)
     # conn.execute("insert into units values (1, 3, 10)")
     # conn.executemany("insert into members values (1, ?, 1)", [(30,), (40,), (50,)])
-    # print(naive_weighted_total(conn, 18))         # 30
-    # print(semi_join_weighted_total(conn, 18))     # 10
-    # print(semi_join_weighted_total(conn, 99))     # 0
+    # assert naive_weighted_total(conn, 18) == 30
+    # assert semi_join_weighted_total(conn, 18) == 10
+    # assert semi_join_weighted_total(conn, 99) == 0
     # conn.execute("insert into units values (2, 1, 5)")   # ok: a unit with no members
     # conn.execute("pragma foreign_keys = on")
     # conn.execute("insert into members values (99, 30, 1)")  # raises sqlite3.IntegrityError: unknown unit_id

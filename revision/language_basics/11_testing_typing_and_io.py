@@ -12,6 +12,6 @@ def weighted_average(trades: list[dict]) -> float | None:
 
 # ---- try it ----
 if __name__ == '__main__':
-    # print(weighted_average([{"price": 10, "quantity": 1}, {"price": 20, "quantity": 3}]))  # 17.5
-    # print(weighted_average([]))                   # None
+    # assert abs(weighted_average([{"price": 10, "quantity": 1}, {"price": 20, "quantity": 3}]) - 17.5) < 1e-6
+    # assert weighted_average([]) is None
     pass

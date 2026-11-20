@@ -35,10 +35,10 @@ def moving_pairs(items: list[int]) -> list[tuple[int, int]]:
 
 # ---- try it ----
 if __name__ == "__main__":
-    # print(reverse_copy([1, 2, 3]))                # [3, 2, 1]
-    # print(rotate_right([1, 2, 3, 4, 5], 2))       # [4, 5, 1, 2, 3]
-    # print(rotate_right([1, 2, 3, 4, 5], 7))       # [4, 5, 1, 2, 3]
-    # print(rotate_right([1, 2, 3, 4, 5], -1))      # [2, 3, 4, 5, 1]
-    # print(moving_pairs([1, 2, 3, 4]))             # [(1, 2), (2, 3), (3, 4)]
-    # print(moving_pairs([7]))                      # []
+    # assert reverse_copy([1, 2, 3]) == [3, 2, 1]
+    # assert rotate_right([1, 2, 3, 4, 5], 2) == [4, 5, 1, 2, 3]
+    # assert rotate_right([1, 2, 3, 4, 5], 7) == [4, 5, 1, 2, 3]
+    # assert rotate_right([1, 2, 3, 4, 5], -1) == [2, 3, 4, 5, 1]
+    # assert moving_pairs([1, 2, 3, 4]) == [(1, 2), (2, 3), (3, 4)]
+    # assert moving_pairs([7]) == []
     pass

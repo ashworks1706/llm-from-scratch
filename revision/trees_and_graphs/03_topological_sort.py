@@ -29,10 +29,10 @@ def longest_chain(nodes: list[str], edges: list[tuple[str, str]]) -> int:
 
 # ---- try it ----
 if __name__ == '__main__':
-    # print(can_finish(2, [(1, 0), (0, 1)]))                         # False
-    # print(can_finish(1, [(0, 0)]))                                 # False
-    # print(can_finish(4, [(1, 0), (2, 0), (3, 1), (3, 2)]))         # True
-    # print(topo_order(['a', 'b', 'c', 'd'], [('a', 'c'), ('b', 'c')]))  # ['a', 'b', 'c', 'd']
-    # print(topo_order(['a', 'b'], [('a', 'b'), ('b', 'a')]))        # []
-    # print(longest_chain(['a', 'b', 'c', 'd'], [('a', 'b'), ('b', 'c'), ('a', 'd')]))  # 3
+    # assert can_finish(2, [(1, 0), (0, 1)]) is False
+    # assert can_finish(1, [(0, 0)]) is False
+    # assert can_finish(4, [(1, 0), (2, 0), (3, 1), (3, 2)]) is True
+    # assert topo_order(['a', 'b', 'c', 'd'], [('a', 'c'), ('b', 'c')]) == ['a', 'b', 'c', 'd']
+    # assert topo_order(['a', 'b'], [('a', 'b'), ('b', 'a')]) == []
+    # assert longest_chain(['a', 'b', 'c', 'd'], [('a', 'b'), ('b', 'c'), ('a', 'd')]) == 3
     pass

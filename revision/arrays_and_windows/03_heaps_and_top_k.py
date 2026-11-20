@@ -30,12 +30,12 @@ class MedianStream:
 
 # ---- try it ----
 if __name__ == '__main__':
-    # print(top_k_pairs([(0.5, 1), (0.9, 2), (0.9, 1), (0.1, 3)], 2))  # [(0.9, 1), (0.9, 2)]
-    # print(merge_k_sorted([[1, 4], [], [2, 3]]))   # [1, 2, 3, 4]
-    # print(merge_k_sorted([]))                     # []
+    # assert top_k_pairs([(0.5, 1), (0.9, 2), (0.9, 1), (0.1, 3)], 2) == [(0.9, 1), (0.9, 2)]
+    # assert merge_k_sorted([[1, 4], [], [2, 3]]) == [1, 2, 3, 4]
+    # assert merge_k_sorted([]) == []
     # ms = MedianStream()
     # for x in (5, 1, 3): ms.add(x)
-    # print(ms.median())                            # 3.0
+    # assert abs(ms.median() - 3.0) < 1e-6
     # ms.add(2)
-    # print(ms.median())                            # 2.5
+    # assert abs(ms.median() - 2.5) < 1e-6
     pass

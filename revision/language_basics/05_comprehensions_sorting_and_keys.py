@@ -34,6 +34,6 @@ def active_prices(orders, minimum):
 if __name__ == "__main__":
     # orders = [{"quantity": 1, "price": 5}, {"quantity": 3, "price": 9}, {"quantity": 3, "price": 2}]
     # print(descending_by_quantity(orders))         # (q3, p2), (q3, p9), (q1, p5)
-    # print(most_valuable_order([{"price": 2, "quantity": 5}, {"price": 4, "quantity": 3}]))  # {'price': 4, 'quantity': 3}
-    # print(active_prices([{"price": 1.5, "quantity": 2}, {"price": 3.0, "quantity": 5}, {"price": 2.5, "quantity": 5}], 5))  # [3.0, 2.5]
+    # assert most_valuable_order([{"price": 2, "quantity": 5}, {"price": 4, "quantity": 3}]) == {'price': 4, 'quantity': 3}
+    # assert active_prices([{"price": 1.5, "quantity": 2}, {"price": 3.0, "quantity": 5}, {"price": 2.5, "quantity": 5}], 5) == [3.0, 2.5]
     pass

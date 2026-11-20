@@ -33,12 +33,12 @@ def uses_primary_key(conn: sqlite3.Connection, sql: str, params: list) -> bool:
 
 # ---- try it ----
 if __name__ == '__main__':
-    # print(parse_year_ranges(["2020", "2018-2022"]))        # [(2020, 2020), (2018, 2022)]
+    # assert parse_year_ranges(["2020", "2018-2022"]) == [(2020, 2020), (2018, 2022)]
     # parse_year_ranges(["2022-2018"])                       # raises ValueError
     # print(build_query(["A", "B"], [], []))                 # (sql with metric_code IN (?, ?), ['A', 'B'])
     # print(build_query(["A"], [], [(2020, 2020)]))          # adds (start_year = ? AND end_year = ?), params ['A', 2020, 2020]
     # conn = sqlite3.connect(":memory:")
     # conn.execute("create table facts(metric_code, place_name, start_year, end_year, value, primary key (metric_code, place_name, start_year, end_year)) without rowid")
-    # print(uses_primary_key(conn, "select * from facts where metric_code = ?", ["A"]))  # True
-    # print(uses_primary_key(conn, "select * from facts where value = ?", [1]))          # False
+    # assert uses_primary_key(conn, "select * from facts where metric_code = ?", ["A"]) is True
+    # assert uses_primary_key(conn, "select * from facts where value = ?", [1]) is False
     pass

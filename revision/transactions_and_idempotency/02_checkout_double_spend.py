@@ -35,7 +35,7 @@ if __name__ == '__main__':
                      "create table ledger(user_id integer, amount real);"
                      "create table orders(id integer primary key, user_id integer, total real);"
                      "insert into products values (1, 10, 5); insert into ledger values (7, 100);")
-    # print(price_items(db, [(1, 2), (1, 3)]))      # 50.0
+    # assert abs(price_items(db, [(1, 2), (1, 3)]) - 50.0) < 1e-6
     # price_items(db, [(1, 3), (1, 3)])             # raises StoreError (6 > 5)
     # price_items(db, [(99, 1)])                    # raises StoreError
     # print(place_order(db, 7, [(1, 3)]))           # 30.0  (stock 5 -> 2, balance 100 -> 70)

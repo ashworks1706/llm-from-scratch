@@ -24,10 +24,10 @@ def gqa_scores(q: torch.Tensor, k: torch.Tensor) -> torch.Tensor:
 if __name__ == '__main__':
     # x = torch.tensor([[[[1., 2.], [3., 4.]]]])
     # print(repeat_kv(x, 2))                        # shape (1, 1, 4, 2): heads [1,2], [1,2], [3,4], [3,4]
-    # print(repeat_kv(torch.randn(2, 5, 8, 64), 4).shape)  # (2, 5, 32, 64)
+    # assert repeat_kv(torch.randn(2, 5, 8, 64), 4).shape == (2, 5, 32, 64)
     # q = torch.tensor([[[[1., 1., 1., 1.], [2., 2., 2., 2.]]]])
     # k = torch.ones(1, 1, 1, 4)
     # print(gqa_scores(q, k))                       # shape (1, 2, 1, 1): [2.0, 4.0]
-    # print(gqa_scores(torch.randn(2, 5, 8, 64), torch.randn(2, 7, 2, 64)).shape)  # (2, 8, 5, 7)
+    # assert gqa_scores(torch.randn(2, 5, 8, 64), torch.randn(2, 7, 2, 64)).shape == (2, 8, 5, 7)
     # gqa_scores(torch.randn(1, 1, 8, 4), torch.randn(1, 1, 3, 4))  # raises ValueError
     pass

@@ -30,8 +30,8 @@ def a_star_grid(grid: list[list[int]], start: tuple[int, int], goal: tuple[int, 
 # ---- try it ----
 if __name__ == '__main__':
     # g = {'a': [('b', 1), ('c', 4)], 'b': [('c', 2), ('d', 6)], 'c': [('d', 3)]}
-    # print(dijkstra(g, 'a'))                       # {'a': 0, 'b': 1, 'c': 3, 'd': 6}
-    # print(network_delay_time([(2, 1, 1), (2, 3, 1), (3, 4, 1)], 4, 2))  # 2
-    # print(network_delay_time([(1, 2, 1)], 2, 2))                        # -1
-    # print(a_star_grid([[0, 0, 0], [1, 1, 0], [0, 0, 0]], (0, 0), (2, 0)))  # 6
+    # assert dijkstra(g, 'a') == {'a': 0, 'b': 1, 'c': 3, 'd': 6}
+    # assert network_delay_time([(2, 1, 1), (2, 3, 1), (3, 4, 1)], 4, 2) == 2
+    # assert network_delay_time([(1, 2, 1)], 2, 2) == -1
+    # assert a_star_grid([[0, 0, 0], [1, 1, 0], [0, 0, 0]], (0, 0), (2, 0)) == 6
     pass

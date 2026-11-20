@@ -44,9 +44,9 @@ def first_repeated(items: list[str]) -> str | None:
 if __name__ == "__main__":
     trades = [{"market": "BTC", "quantity": 2}, {"market": "ETH", "quantity": 1},
               {"market": "BTC", "quantity": 3}]
-    # print(count_by_market(trades))                        # {'BTC': 5, 'ETH': 1}
-    # print(count_by_market([]))                            # {}
-    # print(unique_in_order(["a", "b", "a", "c", "b"]))     # ['a', 'b', 'c']
+    # assert count_by_market(trades) == {'BTC': 5, 'ETH': 1}
+    # assert count_by_market([]) == {}
+    # assert unique_in_order(["a", "b", "a", "c", "b"]) == ['a', 'b', 'c']
     # print(first_repeated(["a", "b", "b", "a"]))           # b
-    # print(first_repeated(["a", "b", "c"]))                # None
+    # assert first_repeated(["a", "b", "c"]) is None
     pass

@@ -37,8 +37,8 @@ def kruskal_mst(n: int, edges: list[tuple[int, int, int]]) -> int | None:
 if __name__ == '__main__':
     # uf = UnionFind(3)
     # print(uf.union(0, 1), uf.union(1, 0), uf.count)   # True False 2
-    # print(redundant_connection([(1, 2), (1, 3), (2, 3)]))                     # (2, 3)
-    # print(redundant_connection([(1, 2), (2, 3), (3, 4), (1, 4), (1, 5)]))     # (1, 4)
-    # print(kruskal_mst(4, [(0, 1, 1), (1, 2, 2), (2, 3, 3), (0, 3, 10), (0, 2, 5)]))  # 6
-    # print(kruskal_mst(4, [(0, 1, 1), (2, 3, 1)]))                             # None
+    # assert redundant_connection([(1, 2), (1, 3), (2, 3)]) == (2, 3)
+    # assert redundant_connection([(1, 2), (2, 3), (3, 4), (1, 4), (1, 5)]) == (1, 4)
+    # assert kruskal_mst(4, [(0, 1, 1), (1, 2, 2), (2, 3, 3), (0, 3, 10), (0, 2, 5)]) == 6
+    # assert kruskal_mst(4, [(0, 1, 1), (2, 3, 1)]) is None
     pass

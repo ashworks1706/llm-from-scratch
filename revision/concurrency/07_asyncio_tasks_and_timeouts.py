@@ -34,9 +34,9 @@ async def hold_resource(log: list[str]) -> None:
 if __name__ == "__main__":
     # async def double(x):
     #     await asyncio.sleep(0.01); return 2 * x
-    # print(asyncio.run(map_limited([1, 2, 3], 2, double)))         # [2, 4, 6]
-    # print(asyncio.run(with_deadline(double(1), 1)))               # 2
-    # print(asyncio.run(with_deadline(asyncio.sleep(10), 0.01)))    # None
+    # assert asyncio.run(map_limited([1, 2, 3], 2, double)) == [2, 4, 6]
+    # assert asyncio.run(with_deadline(double(1), 1)) == 2
+    # assert asyncio.run(with_deadline(asyncio.sleep(10), 0.01)) is None
     # async def demo_hold():
     #     log = []
     #     t = asyncio.create_task(hold_resource(log))

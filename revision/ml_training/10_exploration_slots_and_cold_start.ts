@@ -21,11 +21,12 @@ export function applyExplorationSlots(sorted: Item[], nowMs: number, slots: numb
 }
 
 // ---- try it ----
+import assert from "node:assert/strict";
 const DAY = 86400000, now = 100 * DAY;
 const items: Item[] = ["a", "b", "c", "d", "e"].map((id) => ({ id, createdAtMs: now - 30 * DAY }));
 items[3].createdAtMs = now - 1 * DAY;  // d: 1 day old
 items[4].createdAtMs = now - 0 * DAY;  // e: 0 days old
-// bucketOf("alice").then(console.log);                                        // 24
-// bucketOf("user-42").then(console.log);                                      // 41
-// console.log(applyExplorationSlots(items, now, [0, 2], 7).map((i) => i.id)); // [ 'e', 'a', 'd', 'b', 'c' ]
-// console.log(applyExplorationSlots(items, now, [], 7).map((i) => i.id));     // [ 'a', 'b', 'c', 'd', 'e' ]
+// assert.deepEqual(await bucketOf("alice"), 24);
+// assert.deepEqual(await bucketOf("user-42"), 41);
+// assert.deepEqual(applyExplorationSlots(items, now, [0, 2], 7).map((i) => i.id), ["e", "a", "d", "b", "c"]);
+// assert.deepEqual(applyExplorationSlots(items, now, [], 7).map((i) => i.id), ["a", "b", "c", "d", "e"]);

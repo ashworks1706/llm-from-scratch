@@ -28,10 +28,11 @@ export function refundEligibility(row: Row): Eligibility {
 }
 
 // ---- try it ----
+import assert from "node:assert/strict";
 const ledger = new Ledger();
-// console.log(ledger.apply("spend:j1", -5));   // { applied: true, balance: -5 }
-// console.log(ledger.apply("spend:j1", -5));   // { applied: false, balance: -5 }
-// console.log(ledger.apply("refund:j1", 5));   // { applied: true, balance: 0 }
-// console.log(refundEligibility({ status: "completed", spendCost: 5, deductTransactionId: "t1", refundTransactionId: null })); // { reason: 'not_failed' }
-// console.log(refundEligibility({ status: "failed", spendCost: 5, deductTransactionId: "t1", refundTransactionId: null }));    // { reason: 'eligible', cost: 5 }
-// console.log(refundEligibility({ status: "failed", spendCost: null, deductTransactionId: null, refundTransactionId: null })); // { reason: 'not_charged' }
+// assert.deepEqual(ledger.apply("spend:j1", -5), { applied: true, balance: -5 });
+// assert.deepEqual(ledger.apply("spend:j1", -5), { applied: false, balance: -5 });
+// assert.deepEqual(ledger.apply("refund:j1", 5), { applied: true, balance: 0 });
+// assert.deepEqual(refundEligibility({ status: "completed", spendCost: 5, deductTransactionId: "t1", refundTransactionId: null }), { reason: "not_failed" });
+// assert.deepEqual(refundEligibility({ status: "failed", spendCost: 5, deductTransactionId: "t1", refundTransactionId: null }), { reason: "eligible", cost: 5 });
+// assert.deepEqual(refundEligibility({ status: "failed", spendCost: null, deductTransactionId: null, refundTransactionId: null }), { reason: "not_charged" });

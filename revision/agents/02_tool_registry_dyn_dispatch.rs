@@ -47,7 +47,7 @@ fn main() {
     let mut tools = ToolSet::default();
     tools.tools.insert("b_search".to_string(), Arc::new(Echo { name: "b_search", on: true }));
     tools.tools.insert("a_calc".to_string(), Arc::new(Echo { name: "a_calc", on: false }));
-    // println!("{:?}", tools.definitions());          // only b_search (a_calc unavailable)
-    // println!("{:?}", tools.dispatch("a_calc", "hi")); // Ok("hi"), unavailable still callable
-    // println!("{:?}", tools.dispatch("nope", ""));    // Err("unknown tool: nope")
+    // assert_eq!(tools.definitions(), vec![ToolDefinition { name: "b_search".to_string(), description: "echoes".to_string() }]); // a_calc unavailable
+    // assert_eq!(tools.dispatch("a_calc", "hi"), Ok("hi".to_string())); // unavailable still callable
+    // assert_eq!(tools.dispatch("nope", ""), Err("unknown tool: nope".to_string()));
 }

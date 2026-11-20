@@ -13,7 +13,8 @@ export async function fetchJsonWithTimeout(
 }
 
 // ---- try it ----
+import assert from "node:assert/strict";
 // needs a url to hit; start a local server first, e.g. in another shell: python3 -m http.server 8000
-// fetchJsonWithTimeout("http://localhost:8000/data.json", 1000).then(console.log);   // { a: 1 } (put {"a":1} in data.json first)
-// fetchJsonWithTimeout("http://localhost:8000/", 1000).then(console.log, (e) => console.log("rejected:", e.message)); // rejects (html, not json)
-// fetchJsonWithTimeout("http://localhost:1/", 500).then(console.log, (e) => console.log("rejected:", e.message));      // rejects (connection refused)
+// assert.deepEqual(await fetchJsonWithTimeout("http://localhost:8000/data.json", 1000), { a: 1 }); // put {"a":1} in data.json first
+// await assert.rejects(fetchJsonWithTimeout("http://localhost:8000/", 1000)); // html, not json
+// await assert.rejects(fetchJsonWithTimeout("http://localhost:1/", 500));      // connection refused

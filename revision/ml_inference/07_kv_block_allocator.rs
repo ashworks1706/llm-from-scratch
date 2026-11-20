@@ -39,14 +39,15 @@ impl Pool {
 
 // ---- try it ----
 fn main() {
-    // println!("{}", blocks_within(2, 4, 64, 2, 1048576, 16)); // 32
-    // println!("{}", blocks_within(2, 4, 64, 2, 40000, 16));   // 1
-    // println!("{}", blocks_within(2, 4, 64, 2, 1048576, 0));  // 0
+    // assert_eq!(blocks_within(2, 4, 64, 2, 1048576, 16), 32);
+    // assert_eq!(blocks_within(2, 4, 64, 2, 40000, 16), 1);
+    // assert_eq!(blocks_within(2, 4, 64, 2, 1048576, 0), 0);
     let mut pool = Pool { refcounts: vec![0; 5], free: vec![0, 1], evictable: VecDeque::new(), published: vec![false; 5] };
-    // println!("{:?} {:?} {:?}", pool.take_block(), pool.take_block(), pool.take_block()); // Some(1) Some(0) None
+    // assert_eq!((pool.take_block(), pool.take_block(), pool.take_block()), (Some(1), Some(0), None));
     // pool.evictable.push_back(4); pool.published[4] = true;
-    // println!("{:?} {}", pool.take_block(), pool.published[4]); // Some(4) false
+    // assert_eq!((pool.take_block(), pool.published[4]), (Some(4), false));
     let mut p2 = Pool { refcounts: vec![1, 1, 1], free: vec![], evictable: VecDeque::new(), published: vec![true, false, true] };
     // p2.release(&[0, 1, 2]);
-    // println!("{:?} {:?}", p2.evictable, p2.free); // [2, 0] [1]
+    // assert_eq!(p2.evictable, [2, 0]);
+    // assert_eq!(p2.free, vec![1]);
 }

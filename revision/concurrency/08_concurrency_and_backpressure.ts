@@ -16,7 +16,8 @@ export async function mapWithLimit<T, R>(
 }
 
 // ---- try it ----
+import assert from "node:assert/strict";
 const double = async (n: number) => n * 2;
-// mapWithLimit([1, 2, 3], 2, double).then(console.log);                 // [ 2, 4, 6 ]
-// mapWithLimit([], 2, double).then(console.log);                        // []
-// mapWithLimit([1], 0, double).catch((e) => console.log("rejected:", e.message)); // rejected: ...
+// assert.deepEqual(await mapWithLimit([1, 2, 3], 2, double), [2, 4, 6]);
+// assert.deepEqual(await mapWithLimit([], 2, double), []);
+// await assert.rejects(mapWithLimit([1], 0, double));

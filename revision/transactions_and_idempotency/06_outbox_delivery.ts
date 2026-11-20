@@ -29,9 +29,10 @@ export function settle(failure: SendFailure, previousSendAttempts: number, now: 
 }
 
 // ---- try it ----
-// console.log(backoffFor(1), backoffFor(3), backoffFor(5), backoffFor(20));   // 60000 1800000 28800000 28800000
-// console.log(settle({ reason: "Timeout" }, 0, 1000));                        // { status: 'ambiguous', ... }
-// console.log(settle({ reason: "UnexpectedStatus", status: 503 }, 0, 1000));  // { status: 'pending', nextAttemptAt: 61000, ... }
-// console.log(settle({ reason: "NotConfigured" }, 2, 1000));                  // { status: 'pending', nextAttemptAt: 1801000, ... }
-// console.log(settle({ reason: "UnexpectedStatus", status: 500 }, 7, 1000));  // { status: 'failed', ... }
-// console.log(settle({ reason: "Rejected" }, 0, 1000));                       // { status: 'failed', ... }
+import assert from "node:assert/strict";
+// assert.deepEqual([backoffFor(1), backoffFor(3), backoffFor(5), backoffFor(20)], [60000, 1800000, 28800000, 28800000]);
+// assert.equal(settle({ reason: "Timeout" }, 0, 1000).status, "ambiguous");
+// { const r: any = settle({ reason: "UnexpectedStatus", status: 503 }, 0, 1000); assert.deepEqual([r.status, r.nextAttemptAt], ["pending", 61000]); }
+// { const r: any = settle({ reason: "NotConfigured" }, 2, 1000); assert.deepEqual([r.status, r.nextAttemptAt], ["pending", 1801000]); }
+// assert.equal(settle({ reason: "UnexpectedStatus", status: 500 }, 7, 1000).status, "failed");
+// assert.equal(settle({ reason: "Rejected" }, 0, 1000).status, "failed");

@@ -49,14 +49,14 @@ fn main() {
         length: Duration::from_secs(3600),
         state: Arc::new(Mutex::new(Window { started: Instant::now(), counts: HashMap::new() })),
     };
-    // println!("{} {} {}", limiter.allow("a"), limiter.allow("a"), limiter.allow("a")); // true true false
-    // println!("{}", limiter.allow("b"));                                               // true
+    // assert_eq!((limiter.allow("a"), limiter.allow("a"), limiter.allow("a")), (true, true, false));
+    // assert!(limiter.allow("b"));
     // let tiny = FixedWindowLimiter { per_window: 1, length: Duration::from_millis(50), state: Arc::new(Mutex::new(Window { started: Instant::now(), counts: HashMap::new() })) };
-    // println!("{} {}", tiny.allow("a"), tiny.allow("a")); // true false
+    // assert_eq!((tiny.allow("a"), tiny.allow("a")), (true, false));
     // std::thread::sleep(Duration::from_millis(60));
-    // println!("{}", tiny.allow("a"));                    // true (window reset)
+    // assert!(tiny.allow("a")); // window reset
     let threshold = SharedThreshold { inner: Arc::new(RwLock::new(5)) };
-    // println!("{}", threshold.raise_to(7)); // true
-    // println!("{}", threshold.raise_to(7)); // false
-    // println!("{}", threshold.raise_to(3)); // false
+    // assert!(threshold.raise_to(7));
+    // assert!(!threshold.raise_to(7));
+    // assert!(!threshold.raise_to(3));
 }

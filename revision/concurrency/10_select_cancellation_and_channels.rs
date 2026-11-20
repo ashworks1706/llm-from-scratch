@@ -37,13 +37,13 @@ async fn first_n_done(delays_ms: Vec<u64>, n: usize) -> Vec<u64> {
 async fn main() {
     let token = CancellationToken::new();
     // let r = run_with_deadline(&token, Duration::from_millis(100), async { tokio::time::sleep(Duration::from_millis(10)).await; 42 }).await;
-    // println!("{}", matches!(r, Ok(42)));                  // true
+    // assert!(matches!(r, Ok(42)));
     // let r = run_with_deadline(&token, Duration::from_millis(50), async { tokio::time::sleep(Duration::from_secs(1)).await; 42 }).await;
-    // println!("{}", matches!(r, Err(Stopped::TimedOut)));  // true
+    // assert!(matches!(r, Err(Stopped::TimedOut)));
     // token.cancel();
     // let r = run_with_deadline(&token, Duration::from_millis(50), async { 42 }).await;
-    // println!("{}", matches!(r, Err(Stopped::Cancelled))); // true
-    // println!("{:?}", first_n_done(vec![300, 100, 200, 50], 2).await); // [50, 100]
-    // println!("{:?}", first_n_done(vec![30, 10], 5).await);            // [10, 30]
-    // println!("{:?}", first_n_done(vec![10], 0).await);                // []
+    // assert!(matches!(r, Err(Stopped::Cancelled)));
+    // assert_eq!(first_n_done(vec![300, 100, 200, 50], 2).await, vec![50, 100]);
+    // assert_eq!(first_n_done(vec![30, 10], 5).await, vec![10, 30]);
+    // assert_eq!(first_n_done(vec![10], 0).await, Vec::<u64>::new());
 }

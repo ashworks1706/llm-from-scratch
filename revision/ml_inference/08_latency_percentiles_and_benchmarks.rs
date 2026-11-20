@@ -21,14 +21,14 @@ fn decode_tokens_per_second(completion_tokens: usize, ttft: Option<Duration>, to
 // ---- try it ----
 fn main() {
     let v = [1.0, 2.0, 3.0, 4.0];
-    // println!("{:?}", percentile(&v, 0.5));        // Some(2.5)
-    // println!("{:?}", percentile(&v, 0.95));       // ~Some(3.85)
-    // println!("{:?}", percentile(&v, 0.0));        // Some(1.0)
-    // println!("{:?}", percentile(&v, 1.0));        // Some(4.0)
-    // println!("{:?}", percentile(&[], 0.5));       // None
-    // println!("{:?}", percentile(&[1.0, 2.0], 1.5)); // None
-    // println!("{:?}", decode_tokens_per_second(11, Some(Duration::from_millis(200)), Duration::from_millis(1200))); // Some(10.0)
-    // println!("{:?}", decode_tokens_per_second(11, None, Duration::from_millis(1200)));  // None
-    // println!("{:?}", decode_tokens_per_second(1, Some(Duration::from_millis(200)), Duration::from_millis(1200))); // None
-    // println!("{:?}", decode_tokens_per_second(11, Some(Duration::from_millis(500)), Duration::from_millis(500))); // None
+    // assert!((percentile(&v, 0.5).unwrap() - 2.5).abs() < 1e-6);
+    // assert!((percentile(&v, 0.95).unwrap() - 3.85).abs() < 1e-2);
+    // assert!((percentile(&v, 0.0).unwrap() - 1.0).abs() < 1e-6);
+    // assert!((percentile(&v, 1.0).unwrap() - 4.0).abs() < 1e-6);
+    // assert!(percentile(&[], 0.5).is_none());
+    // assert!(percentile(&[1.0, 2.0], 1.5).is_none());
+    // assert!((decode_tokens_per_second(11, Some(Duration::from_millis(200)), Duration::from_millis(1200)).unwrap() - 10.0).abs() < 1e-6);
+    // assert!(decode_tokens_per_second(11, None, Duration::from_millis(1200)).is_none());
+    // assert!(decode_tokens_per_second(1, Some(Duration::from_millis(200)), Duration::from_millis(1200)).is_none());
+    // assert!(decode_tokens_per_second(11, Some(Duration::from_millis(500)), Duration::from_millis(500)).is_none());
 }

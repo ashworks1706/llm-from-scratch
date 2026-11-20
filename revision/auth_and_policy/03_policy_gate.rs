@@ -43,13 +43,13 @@ fn main() {
     let officer = Ctx { roles: vec!["member".to_string(), "officer".to_string()], private: true };
     let nobody = Ctx { roles: vec![], private: true };
     let public = Ctx { roles: vec![], private: false };
-    // println!("{}", policy.may_write(&officer));                              // true
-    // println!("{}", policy.may_write(&nobody));                               // false
-    // println!("{:?}", policy.authorize(&officer, RiskClass::ReadPublic));     // Allow
-    // println!("{:?}", policy.authorize(&officer, RiskClass::Destructive));    // Confirm
-    // println!("{:?}", policy.authorize(&officer, RiskClass::Forbidden));      // Deny(..)
-    // println!("{:?}", policy.authorize(&nobody, RiskClass::ExternalWrite));   // Deny(..)
-    // println!("{:?}", policy.authorize(&public, RiskClass::ReadAuthenticated)); // Deny(..)
+    // assert!(policy.may_write(&officer));
+    // assert!(!policy.may_write(&nobody));
+    // assert_eq!(policy.authorize(&officer, RiskClass::ReadPublic), Decision::Allow);
+    // assert_eq!(policy.authorize(&officer, RiskClass::Destructive), Decision::Confirm);
+    // assert!(matches!(policy.authorize(&officer, RiskClass::Forbidden), Decision::Deny(_)));
+    // assert!(matches!(policy.authorize(&nobody, RiskClass::ExternalWrite), Decision::Deny(_)));
+    // assert!(matches!(policy.authorize(&public, RiskClass::ReadAuthenticated), Decision::Deny(_)));
     // let lax = RiskPolicy { confirm_from: RiskClass::Destructive, ..policy };
-    // println!("{:?}", lax.authorize(&officer, RiskClass::ExternalWrite));     // Allow
+    // assert_eq!(lax.authorize(&officer, RiskClass::ExternalWrite), Decision::Allow);
 }

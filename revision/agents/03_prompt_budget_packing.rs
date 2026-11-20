@@ -28,11 +28,12 @@ fn history_within(history: &[Msg], budget: usize, cpt: usize) -> (Vec<Msg>, usiz
 fn msg(role: Role) -> Msg { Msg { role, text: "abcdefgh".to_string() } } // 8 bytes = 6 tokens at cpt 4
 
 fn main() {
-    // println!("{}", estimate("abcdefgh", 4));  // 6
-    // println!("{}", estimate("", 4));          // 4
-    // println!("{}", estimate("abcd", 0));      // 8
-    // println!("{:?}", history_within(&[msg(Role::User), msg(Role::Assistant), msg(Role::User)], 13, 4)); // last two, 12
-    // println!("{:?}", history_within(&[msg(Role::User), msg(Role::Assistant), msg(Role::User)], 5, 4));  // ([], 0)
-    // println!("{:?}", history_within(&[msg(Role::User), msg(Role::Assistant), msg(Role::Tool), msg(Role::User)], 12, 4)); // ([User], 6)
-    // println!("{:?}", history_within(&[msg(Role::Summary), msg(Role::User), msg(Role::Assistant)], 14, 4)); // ([Summary, Assistant], 12)
+    // let roles = |r: (Vec<Msg>, usize)| (r.0.iter().map(|m| m.role).collect::<Vec<Role>>(), r.1);
+    // assert_eq!(estimate("abcdefgh", 4), 6);
+    // assert_eq!(estimate("", 4), 4);
+    // assert_eq!(estimate("abcd", 0), 8);
+    // assert_eq!(roles(history_within(&[msg(Role::User), msg(Role::Assistant), msg(Role::User)], 13, 4)), (vec![Role::Assistant, Role::User], 12)); // last two
+    // assert_eq!(roles(history_within(&[msg(Role::User), msg(Role::Assistant), msg(Role::User)], 5, 4)), (vec![], 0));
+    // assert_eq!(roles(history_within(&[msg(Role::User), msg(Role::Assistant), msg(Role::Tool), msg(Role::User)], 12, 4)), (vec![Role::User], 6));
+    // assert_eq!(roles(history_within(&[msg(Role::Summary), msg(Role::User), msg(Role::Assistant)], 14, 4)), (vec![Role::Summary, Role::Assistant], 12));
 }

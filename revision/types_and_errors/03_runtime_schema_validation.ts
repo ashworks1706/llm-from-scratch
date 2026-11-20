@@ -31,14 +31,15 @@ export function object<S extends Record<string, Schema<unknown>>>(shape: S): Sch
 }
 
 // ---- try it ----
+import assert from "node:assert/strict";
 const num: Schema<number> = {
   parse: (x) => (typeof x === "number" ? { ok: true, value: x } : { ok: false, issues: ["expected number"] }),
 };
-// console.log(array(num).parse([1, 2, 3]));            // { ok: true, value: [ 1, 2, 3 ] }
-// console.log(array(num).parse([1, "x", 3, "y"]));     // { ok: false, issues: [ '[1] ...', '[3] ...' ] }
-// console.log(array(num).parse("nope"));               // { ok: false, issues: [ one issue ] }
-// console.log(object({ a: num }).parse({ a: 1, extra: true }));          // { ok: true, value: { a: 1 } }
-// console.log(object({ a: num, b: num }).parse({ a: 1 }));               // { ok: false, issues: [ ...mentions b ] }
-// console.log(object({ items: array(object({ price: num })) }).parse({ items: [{ price: 1 }, { price: "x" }] })); // issue starts items[1].price
-// console.log(object({ a: num }).parse(null));                           // { ok: false, ... }
-// console.log(object({ a: num }).parse([1]));                            // { ok: false, ... }
+// assert.deepEqual(array(num).parse([1, 2, 3]), { ok: true, value: [1, 2, 3] });
+// { const r: any = array(num).parse([1, "x", 3, "y"]); assert.ok(!r.ok && r.issues.length === 2 && r.issues[0].startsWith("[1]") && r.issues[1].startsWith("[3]")); }
+// { const r: any = array(num).parse("nope"); assert.ok(!r.ok && r.issues.length === 1); }
+// assert.deepEqual(object({ a: num }).parse({ a: 1, extra: true }), { ok: true, value: { a: 1 } });
+// { const r: any = object({ a: num, b: num }).parse({ a: 1 }); assert.ok(!r.ok && r.issues.some((i: string) => i.includes("b"))); }
+// { const r: any = object({ items: array(object({ price: num })) }).parse({ items: [{ price: 1 }, { price: "x" }] }); assert.ok(!r.ok && r.issues[0].startsWith("items[1].price")); }
+// assert.equal(object({ a: num }).parse(null).ok, false);
+// assert.equal(object({ a: num }).parse([1]).ok, false);

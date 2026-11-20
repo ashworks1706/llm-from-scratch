@@ -31,12 +31,12 @@ fn main() {
     let t0 = Instant::now();
     let mut store = Store::default();
     // store.hold(7, "ann", "send_email", "h1", Duration::from_secs(60), t0);
-    // println!("{:?}", store.claim(7, "bob", t0));                           // None
-    // println!("{:?}", store.claim(7, "ann", t0 + Duration::from_secs(10))); // Some("send_email")
-    // println!("{:?}", store.claim(7, "ann", t0 + Duration::from_secs(10))); // None (already claimed)
+    // assert_eq!(store.claim(7, "bob", t0), None);
+    // assert_eq!(store.claim(7, "ann", t0 + Duration::from_secs(10)), Some("send_email".to_string()));
+    // assert_eq!(store.claim(7, "ann", t0 + Duration::from_secs(10)), None); // already claimed
     // store.hold(8, "ann", "send_email", "h1", Duration::from_secs(60), t0);
-    // println!("{:?}", store.claim(8, "ann", t0 + Duration::from_secs(60))); // None (expired)
+    // assert_eq!(store.claim(8, "ann", t0 + Duration::from_secs(60)), None); // expired
     // store.hold(7, "ann", "a", "h1", Duration::from_secs(60), t0);
     // store.hold(7, "ann", "b", "h2", Duration::from_secs(60), t0);
-    // println!("{:?}", store.claim(7, "ann", t0));                           // Some("b")
+    // assert_eq!(store.claim(7, "ann", t0), Some("b".to_string()));
 }

@@ -43,11 +43,10 @@ fn parse_port(text: &str) -> Result<u16, LoadError> {
 
 // ---- try it ----
 fn main() {
-    // println!("{:?}", parse_port(" 8080 "));  // Ok(8080)
-    // match parse_port("80x") {
-    //     Err(e) => println!("{} | source: {:?}", e, e.source().map(|s| s.to_string())),  // invalid port: 80x | source: Some("invalid number: ...")
-    //     Ok(p) => println!("unexpected {}", p),
-    // }
-    // println!("{}", parse_port("70000").is_err());  // true
-    // println!("{}", parse_port("").is_err());       // true
+    // assert!(matches!(parse_port(" 8080 "), Ok(8080)));
+    // let e = parse_port("80x").unwrap_err();
+    // assert_eq!(e.to_string(), "invalid port: 80x");
+    // assert!(e.source().map(|s| s.to_string()).unwrap().starts_with("invalid number"));
+    // assert!(parse_port("70000").is_err());
+    // assert!(parse_port("").is_err());
 }

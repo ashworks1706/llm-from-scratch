@@ -36,5 +36,5 @@ fn main() {
     // book.add(Order { side: Side::Buy, price: -1.0, quantity: 9 });      // dropped
     // book.add(Order { side: Side::Sell, price: f64::NAN, quantity: 3 }); // dropped
     // book.add(Order { side: Side::Sell, price: 4.0, quantity: 0 });      // dropped
-    // println!("{} {} {}", book.orders.len(), book.total_quantity(Side::Buy), book.total_quantity(Side::Sell)); // 3 8 4
+    // assert_eq!((book.orders.len(), book.total_quantity(Side::Buy), book.total_quantity(Side::Sell)), (3, 8, 4));
 }

@@ -22,8 +22,8 @@ fn unique_in_order(words: &[String]) -> Vec<String> {
 // ---- try it ----
 fn main() {
     let s = |v: &[&str]| v.iter().map(|x| x.to_string()).collect::<Vec<String>>();
-    // println!("{:?}", count_words(&s(&["a", "b", "a"])));        // {"a": 2, "b": 1} (any order)
-    // println!("{:?}", count_words(&s(&["A", "a"])));             // {"A": 1, "a": 1} (any order)
-    // println!("{:?}", count_words(&[]));                         // {}
-    // println!("{:?}", unique_in_order(&s(&["b", "a", "b", "c", "a"]))); // ["b", "a", "c"]
+    // assert_eq!(count_words(&s(&["a", "b", "a"])), HashMap::from([("a".to_string(), 2), ("b".to_string(), 1)]));
+    // assert_eq!(count_words(&s(&["A", "a"])), HashMap::from([("A".to_string(), 1), ("a".to_string(), 1)]));
+    // assert_eq!(count_words(&[]), HashMap::new());
+    // assert_eq!(unique_in_order(&s(&["b", "a", "b", "c", "a"])), s(&["b", "a", "c"]));
 }

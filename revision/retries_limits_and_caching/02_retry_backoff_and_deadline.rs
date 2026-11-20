@@ -22,10 +22,10 @@ fn should_retry(retryable: bool, attempt: u32, max_retries: u32) -> bool {
 // ---- try it ----
 fn main() {
     let ten_s = Duration::from_secs(10);
-    // println!("{:?}", backoff(0, 5, ten_s, 100, 1000));                       // 93ms
-    // println!("{:?}", backoff(3, 7, ten_s, 100, 1000));                       // 707ms
-    // println!("{:?}", backoff(10, 0, ten_s, 100, 1000));                      // 875ms
-    // println!("{:?}", backoff(0, 5, Duration::from_millis(50), 100, 1000));   // 50ms
-    // println!("{} {}", should_retry(true, 0, 2), should_retry(true, 1, 2));   // true true
-    // println!("{} {}", should_retry(true, 2, 2), should_retry(false, 0, 2));  // false false
+    // assert_eq!(backoff(0, 5, ten_s, 100, 1000), Duration::from_millis(93));
+    // assert_eq!(backoff(3, 7, ten_s, 100, 1000), Duration::from_millis(707));
+    // assert_eq!(backoff(10, 0, ten_s, 100, 1000), Duration::from_millis(875));
+    // assert_eq!(backoff(0, 5, Duration::from_millis(50), 100, 1000), Duration::from_millis(50));
+    // assert_eq!((should_retry(true, 0, 2), should_retry(true, 1, 2)), (true, true));
+    // assert_eq!((should_retry(true, 2, 2), should_retry(false, 0, 2)), (false, false));
 }

@@ -15,7 +15,8 @@ export function parseTrade(value: unknown): Result<Trade> {
 }
 
 // ---- try it ----
-// console.log(parseTrade({ market: "BTC", price: 100, quantity: 2 }));  // { ok: true, value: { market: 'BTC', price: 100, quantity: 2 } }
-// console.log(parseTrade({ market: "BTC", price: -1, quantity: 2 }));   // { ok: false, error: ... }
-// console.log(parseTrade({ market: "BTC", price: 0, quantity: 0 }));    // ok: true (0 is valid)
-// console.log(parseTrade(null));                                        // { ok: false, error: ... }
+import assert from "node:assert/strict";
+// assert.deepEqual(parseTrade({ market: "BTC", price: 100, quantity: 2 }), { ok: true, value: { market: "BTC", price: 100, quantity: 2 } });
+// assert.equal(parseTrade({ market: "BTC", price: -1, quantity: 2 }).ok, false);
+// assert.equal(parseTrade({ market: "BTC", price: 0, quantity: 0 }).ok, true); // 0 is valid
+// assert.equal(parseTrade(null).ok, false);

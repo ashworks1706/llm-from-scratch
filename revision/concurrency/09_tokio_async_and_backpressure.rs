@@ -16,6 +16,6 @@ async fn bounded_process(items: Vec<u64>, max_in_flight: usize) -> Vec<u64> {
 // ---- try it ----
 #[tokio::main]
 async fn main() {
-    // println!("{:?}", bounded_process(vec![1, 2, 3], 2).await); // [2, 4, 6]
-    // println!("{:?}", bounded_process(vec![], 3).await);        // []
+    // assert_eq!(bounded_process(vec![1, 2, 3], 2).await, vec![2, 4, 6]);
+    // assert_eq!(bounded_process(vec![], 3).await, Vec::<u64>::new());
 }

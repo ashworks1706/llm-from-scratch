@@ -31,14 +31,14 @@ fn run_loop(
 
 // ---- try it ----
 fn main() {
-    // println!("{:?}", check_limits(true, 0, 9, 5));    // Some(Cancelled)
-    // println!("{:?}", check_limits(false, 0, 9, 5));   // Some(Deadline)
-    // println!("{:?}", check_limits(false, 100, 5, 5)); // Some(StepLimit)
-    // println!("{:?}", check_limits(false, 100, 4, 5)); // None
-    // println!("{:?}", check_limits(false, 100, 0, 0)); // Some(StepLimit), cap 0 allows no steps
-    // println!("{:?}", run_loop(|_| Ok(StepOutcome::Continue), 3, || 1000));  // (StepLimit, 3)
-    // println!("{:?}", run_loop(|n| Ok(if n == 2 { StepOutcome::Stop(RunStatus::Answered) } else { StepOutcome::Continue }), 5, || 1000)); // (Answered, 2)
-    // println!("{:?}", run_loop(|_| Err("boom".to_string()), 5, || 1000));    // (Error, 1)
-    // println!("{:?}", run_loop(|_| Ok(StepOutcome::Continue), 5, || 0));     // (Deadline, 0)
-    // println!("{:?}", run_loop(|_| Ok(StepOutcome::Continue), 0, || 1000));  // (StepLimit, 0)
+    // assert_eq!(check_limits(true, 0, 9, 5), Some(RunStatus::Cancelled));
+    // assert_eq!(check_limits(false, 0, 9, 5), Some(RunStatus::Deadline));
+    // assert_eq!(check_limits(false, 100, 5, 5), Some(RunStatus::StepLimit));
+    // assert_eq!(check_limits(false, 100, 4, 5), None);
+    // assert_eq!(check_limits(false, 100, 0, 0), Some(RunStatus::StepLimit)); // cap 0 allows no steps
+    // assert_eq!(run_loop(|_| Ok(StepOutcome::Continue), 3, || 1000), (RunStatus::StepLimit, 3));
+    // assert_eq!(run_loop(|n| Ok(if n == 2 { StepOutcome::Stop(RunStatus::Answered) } else { StepOutcome::Continue }), 5, || 1000), (RunStatus::Answered, 2));
+    // assert_eq!(run_loop(|_| Err("boom".to_string()), 5, || 1000), (RunStatus::Error, 1));
+    // assert_eq!(run_loop(|_| Ok(StepOutcome::Continue), 5, || 0), (RunStatus::Deadline, 0));
+    // assert_eq!(run_loop(|_| Ok(StepOutcome::Continue), 0, || 1000), (RunStatus::StepLimit, 0));
 }

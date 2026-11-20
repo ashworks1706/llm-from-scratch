@@ -27,13 +27,14 @@ export function mergeRows(plan: Plan, responses: Record<string, Observation[]>):
 }
 
 // ---- try it ----
+import assert from "node:assert/strict";
 const specs: Record<string, IndicatorSpec> = {
   gdp: { key: "gdp", endpoint: "/wb", code: "NY.GDP", years: ["2020", "2021"] },
   pop: { key: "pop", endpoint: "/wb", code: "SP.POP", years: ["2021"] },
 };
-// console.log(buildPlan(["gdp", "pop", "nope"], specs));  // { '/wb': { codes: Set {NY.GDP, SP.POP}, years: Set {2020, 2021}, keysByCode: Map {NY.GDP -> [gdp], SP.POP -> [pop]} } }
-// console.log(mergeRows(buildPlan(["gdp", "pop"], specs), { "/wb": [
+// assert.deepEqual(buildPlan(["gdp", "pop", "nope"], specs), { "/wb": { codes: new Set(["NY.GDP", "SP.POP"]), years: new Set(["2020", "2021"]), keysByCode: new Map([["NY.GDP", ["gdp"]], ["SP.POP", ["pop"]]]) } });
+// assert.deepEqual(mergeRows(buildPlan(["gdp", "pop"], specs), { "/wb": [
 //   { code: "NY.GDP", place: "Oslo", startYear: 2021, value: 5 },
 //   { code: "NY.GDP", place: "Oslo", startYear: 2020, value: 3 },
 //   { code: "SP.POP", place: "Oslo", startYear: 2021, value: null },
-// ] }));                                                   // { Oslo: { gdp: 5, pop: null } }
+// ] }), { Oslo: { gdp: 5, pop: null } });

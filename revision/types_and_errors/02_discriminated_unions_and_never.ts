@@ -36,11 +36,12 @@ export function nextPayment(payment: Payment, event: PaymentEvent): Payment {
 }
 
 // ---- try it ----
-// try { assertNever({ kind: "hex" } as never); } catch (e) { console.log(e instanceof TypeError, (e as Error).message); } // true ...{"kind":"hex"}
-// console.log(area({ kind: "rect", width: 2, height: 3 }));      // 6
-// console.log(area({ kind: "triangle", base: 4, height: 3 }));   // 6
-// console.log(area({ kind: "circle", radius: 1 }));              // 3.141592653589793
-// console.log(nextPayment({ status: "pending", id: "p1" }, { type: "settle", at: 10 }));                      // { status: 'settled', id: 'p1', settledAt: 10 }
-// console.log(nextPayment({ status: "failed", id: "p1", reason: "card" }, { type: "retry" }));                // { status: 'pending', id: 'p1' }
+import assert from "node:assert/strict";
+// assert.throws(() => assertNever({ kind: "hex" } as never), (e: Error) => e instanceof TypeError && e.message.includes('{"kind":"hex"}'));
+// assert.deepEqual(area({ kind: "rect", width: 2, height: 3 }), 6);
+// assert.deepEqual(area({ kind: "triangle", base: 4, height: 3 }), 6);
+// assert.ok(Math.abs(area({ kind: "circle", radius: 1 }) - 3.141592653589793) < 1e-6);
+// assert.deepEqual(nextPayment({ status: "pending", id: "p1" }, { type: "settle", at: 10 }), { status: "settled", id: "p1", settledAt: 10 });
+// assert.deepEqual(nextPayment({ status: "failed", id: "p1", reason: "card" }, { type: "retry" }), { status: "pending", id: "p1" });
 // const settled = { status: "settled" as const, id: "p1", settledAt: 10 };
-// console.log(nextPayment(settled, { type: "retry" }) === settled);                                            // true
+// assert.ok(nextPayment(settled, { type: "retry" }) === settled);

@@ -31,10 +31,10 @@ fn top_k(scores: &[f32], k: usize) -> Vec<(u32, f32)> {
 
 // ---- try it ----
 fn main() {
-    // println!("{}", Candidate { score: 0.2, id: 5 } > Candidate { score: 0.9, id: 1 }); // true
-    // println!("{}", Candidate { score: 0.5, id: 7 } > Candidate { score: 0.5, id: 3 }); // true
-    // println!("{:?}", top_k(&[0.5, 0.9, 0.1, 0.9], 2));    // [(1, 0.9), (3, 0.9)]
-    // println!("{:?}", top_k(&[0.5, 0.9, 0.1, 0.9], 3));    // [(1, 0.9), (3, 0.9), (0, 0.5)]
-    // println!("{:?}", top_k(&[f32::NAN, 0.2], 5));         // [(1, 0.2)]
-    // println!("{:?}", top_k(&[0.5, 0.9], 0));              // []
+    // assert!(Candidate { score: 0.2, id: 5 } > Candidate { score: 0.9, id: 1 });
+    // assert!(Candidate { score: 0.5, id: 7 } > Candidate { score: 0.5, id: 3 });
+    // assert_eq!(top_k(&[0.5, 0.9, 0.1, 0.9], 2), vec![(1, 0.9), (3, 0.9)]);
+    // assert_eq!(top_k(&[0.5, 0.9, 0.1, 0.9], 3), vec![(1, 0.9), (3, 0.9), (0, 0.5)]);
+    // assert_eq!(top_k(&[f32::NAN, 0.2], 5), vec![(1, 0.2)]);
+    // assert_eq!(top_k(&[0.5, 0.9], 0), vec![]);
 }

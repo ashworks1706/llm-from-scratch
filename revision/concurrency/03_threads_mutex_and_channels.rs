@@ -14,7 +14,7 @@ fn shared_counter(worker_count: usize, increments: usize) -> usize {
 
 // ---- try it ----
 fn main() {
-    // println!("{}", shared_counter(4, 1000)); // 4000
-    // println!("{}", shared_counter(0, 10));   // 0
-    // println!("{}", shared_counter(3, 0));    // 0
+    // assert_eq!(shared_counter(4, 1000), 4000);
+    // assert_eq!(shared_counter(0, 10), 0);
+    // assert_eq!(shared_counter(3, 0), 0);
 }

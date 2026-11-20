@@ -42,13 +42,13 @@ fn open(wal: &Wal, durable: &Durable) -> Result<HashSet<u64>, String> {
 fn main() {
     let entries = vec![Entry::Insert { id: 1, seq: 1 }, Entry::Insert { id: 2, seq: 2 }, Entry::Delete { id: 1, seq: 3 }];
     let wal = Wal { version: WAL_VERSION, entries: entries.clone(), next_seq: 4 };
-    // println!("{:?}", wal.replay(1)); // Ok([Insert { id: 2, seq: 2 }, Delete { id: 1, seq: 3 }])
-    // println!("{:?}", Wal { version: 2, entries: entries.clone(), next_seq: 4 }.replay(0)); // Err(..)
+    // assert_eq!(wal.replay(1), Ok(vec![Entry::Insert { id: 2, seq: 2 }, Entry::Delete { id: 1, seq: 3 }]));
+    // assert!(Wal { version: 2, entries: entries.clone(), next_seq: 4 }.replay(0).is_err());
     let mut wal2 = Wal { version: WAL_VERSION, entries: entries.clone(), next_seq: 4 };
     let mut durable = Durable { snapshot: HashSet::new(), last_seq: 0 };
     // checkpoint(&mut wal2, &mut durable, &HashSet::from([2]));
-    // println!("{:?} {} {} {}", durable.snapshot, durable.last_seq, wal2.entries.len(), wal2.next_seq); // {2} 3 0 4
+    // assert_eq!((durable.snapshot.clone(), durable.last_seq, wal2.entries.len(), wal2.next_seq), (HashSet::from([2]), 3, 0, 4));
     let wal3 = Wal { version: WAL_VERSION, entries: vec![Entry::Insert { id: 9, seq: 3 }, Entry::Delete { id: 1, seq: 4 }, Entry::Insert { id: 5, seq: 5 }], next_seq: 6 };
     let d3 = Durable { snapshot: HashSet::from([1, 2]), last_seq: 3 };
-    // println!("{:?}", open(&wal3, &d3)); // Ok({2, 5}) (any order)
+    // assert_eq!(open(&wal3, &d3), Ok(HashSet::from([2, 5])));
 }

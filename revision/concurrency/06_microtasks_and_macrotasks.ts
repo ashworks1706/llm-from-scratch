@@ -28,6 +28,7 @@ export async function collect(puzzle: (log: Log) => void): Promise<string[]> {
 }
 
 // ---- try it ----
+import assert from "node:assert/strict";
 // console.log(predictions());                                   // { puzzle1: [ five labels ] }
 // collect(puzzle1).then(console.log);                           // compare with your prediction
-// collect((log) => { log("x"); setTimeout(() => log("y"), 0); }).then(console.log); // [ 'x', 'y' ]
+// assert.deepEqual(await collect((log) => { log("x"); setTimeout(() => log("y"), 0); }), ["x", "y"]);

@@ -24,11 +24,11 @@ struct Score(f64);
 impl Metric for Score { fn value(&self) -> f64 { self.0 } }
 
 fn main() {
-    // println!("{}", longer("apple", "fig"));  // apple
-    // println!("{}", longer("ab", "cd"));      // ab
-    // println!("{}", longer("", "x"));         // x
-    // println!("{:?}", maximum_metric(&[Score(1.0), Score(3.0), Score(2.0)]).map(|s| s.0)); // Some(3.0)
+    // assert_eq!(longer("apple", "fig"), "apple");
+    // assert_eq!(longer("ab", "cd"), "ab");
+    // assert_eq!(longer("", "x"), "x");
+    // assert_eq!(maximum_metric(&[Score(1.0), Score(3.0), Score(2.0)]).map(|s| s.0), Some(3.0));
     // let t = [Score(2.0), Score(2.0)];
-    // println!("{}", std::ptr::eq(maximum_metric(&t).unwrap(), &t[0]));                  // true (tie -> first)
-    // println!("{:?}", maximum_metric::<Score>(&[]).map(|s| s.0));                          // None
+    // assert!(std::ptr::eq(maximum_metric(&t).unwrap(), &t[0])); // tie -> first
+    // assert_eq!(maximum_metric::<Score>(&[]).map(|s| s.0), None);
 }

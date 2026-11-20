@@ -19,13 +19,13 @@ fn parse_trade(raw: &str) -> Result<Trade, String> {
 
 // ---- try it ----
 fn main() {
-    // println!("{:?}", parse_trade("101.5,20"));  // Ok(Trade { price: 101.5, quantity: 20 })
-    // println!("{:?}", parse_trade(" 3 , 7 "));    // Ok(Trade { price: 3.0, quantity: 7 })
-    // println!("{:?}", parse_trade("-1,5"));       // Err(..)
-    // println!("{:?}", parse_trade("NaN,5"));      // Err(..)
-    // println!("{:?}", parse_trade("inf,5"));      // Err(..)
-    // println!("{:?}", parse_trade("abc,5"));      // Err(..)
-    // println!("{:?}", parse_trade("1.0"));        // Err(..)
-    // println!("{:?}", parse_trade("1.0,2,3"));    // Err(..)
-    // println!("{:?}", parse_trade("1.0,-2"));     // Err(..)
+    // assert!(matches!(parse_trade("101.5,20"), Ok(Trade { price, quantity: 20 }) if (price - 101.5).abs() < 1e-6));
+    // assert!(matches!(parse_trade(" 3 , 7 "), Ok(Trade { price, quantity: 7 }) if (price - 3.0).abs() < 1e-6));
+    // assert!(parse_trade("-1,5").is_err());
+    // assert!(parse_trade("NaN,5").is_err());
+    // assert!(parse_trade("inf,5").is_err());
+    // assert!(parse_trade("abc,5").is_err());
+    // assert!(parse_trade("1.0").is_err());
+    // assert!(parse_trade("1.0,2,3").is_err());
+    // assert!(parse_trade("1.0,-2").is_err());
 }

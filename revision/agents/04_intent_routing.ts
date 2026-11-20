@@ -25,13 +25,14 @@ export function routeImage(operation: "text_to_image" | "image_edit", plannedFam
 }
 
 // ---- try it ----
+import assert from "node:assert/strict";
 const req: Request = { prompt: "make it red", modality: "auto", imageUris: [] };
 const turns: Turn[] = [
   { status: "completed", kind: "image", outputUrl: "u1" },
   { status: "failed", kind: "image", outputUrl: null },
 ];
 const endpoints = { flux: { edit: "/flux/edit", textToImage: "/flux/t2i" } };
-// console.log(withContinuity(req, turns));                                  // imageUris: ["u1"]
-// console.log(withContinuity({ ...req, imageUris: ["mine"] }, turns));      // imageUris: ["mine"]
-// console.log(routeImage("image_edit", "flux", endpoints, "flux"));         // { endpoint: "/flux/edit", family: "flux", reason: ...planned used }
-// console.log(routeImage("text_to_image", "nope", endpoints, "flux"));      // { endpoint: "/flux/t2i", family: "flux", reason: ...fallback }
+// assert.deepEqual(withContinuity(req, turns).imageUris, ["u1"]);
+// assert.deepEqual(withContinuity({ ...req, imageUris: ["mine"] }, turns).imageUris, ["mine"]);
+// { const r = routeImage("image_edit", "flux", endpoints, "flux"); assert.deepEqual([r.endpoint, r.family], ["/flux/edit", "flux"]); } // reason: planned used
+// { const r = routeImage("text_to_image", "nope", endpoints, "flux"); assert.deepEqual([r.endpoint, r.family], ["/flux/t2i", "flux"]); } // reason: fallback

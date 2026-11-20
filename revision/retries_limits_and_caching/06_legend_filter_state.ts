@@ -27,12 +27,13 @@ export function visibleSeries<T extends { key: string }>(series: readonly T[], v
 }
 
 // ---- try it ----
+import assert from "node:assert/strict";
 const keys = ["a", "b", "c"];
-// console.log(onLegendClick(new Set(keys), keys, "b"));                     // Set(1) { 'b' }
-// console.log(onLegendClick(new Set(["b"]), keys, "a"));                    // Set(2) { 'b', 'a' }
-// console.log(onLegendClick(new Set(["b"]), keys, "b"));                    // Set(1) { 'b' }
-// console.log(onLegendClick(new Set(["b"]), keys, "z"));                    // Set(1) { 'b' }
-// console.log(filterKey("tab", { region: ["b", "a"] }) === filterKey("tab", { region: ["a", "b"] }));          // true
-// console.log(filterKey("tab", { region: ["a"], year: [] }) === filterKey("tab", { region: ["a"] }));          // true
-// console.log(filterKey("tab", { region: [], year: undefined }));          // null
-// console.log(visibleSeries([{ key: "a" }, { key: "b" }, { key: "c" }], new Set(["c", "a"])));                 // [ { key: 'a' }, { key: 'c' } ]
+// assert.deepEqual(onLegendClick(new Set(keys), keys, "b"), new Set(["b"]));
+// assert.deepEqual(onLegendClick(new Set(["b"]), keys, "a"), new Set(["b", "a"]));
+// assert.deepEqual(onLegendClick(new Set(["b"]), keys, "b"), new Set(["b"]));
+// assert.deepEqual(onLegendClick(new Set(["b"]), keys, "z"), new Set(["b"]));
+// assert.ok(filterKey("tab", { region: ["b", "a"] }) === filterKey("tab", { region: ["a", "b"] }));
+// assert.ok(filterKey("tab", { region: ["a"], year: [] }) === filterKey("tab", { region: ["a"] }));
+// assert.equal(filterKey("tab", { region: [], year: undefined }), null);
+// assert.deepEqual(visibleSeries([{ key: "a" }, { key: "b" }, { key: "c" }], new Set(["c", "a"])), [{ key: "a" }, { key: "c" }]);

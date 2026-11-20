@@ -25,14 +25,15 @@ export function combineOrders(verdicts: Verdict[]): "win" | "loss" | "tie" | "fa
 }
 
 // ---- try it ----
+import assert from "node:assert/strict";
 const full: Rubric = { changeAccuracy: { score1To5: 4 }, preservationFidelity: { score1To5: 5 }, restraint: { score1To5: 3 }, integrity: { score1To5: 5 } };
-// console.log(weightedScore(full));                                              // 86
-// console.log(weightedScore({ ...full, restraint: { score1To5: null } }));       // ~90.59
-// console.log(weightedScore({ ...full, changeAccuracy: { score1To5: 1.5 } }));   // 0
-// console.log(weightedScore({ restraint: { score1To5: 3 } }));                   // null
-// console.log(combineOrders([{ outcome: "judged", winner: "b" }, { outcome: "judged", winner: "b" }])); // win
-// console.log(combineOrders([{ outcome: "judged", winner: "b" }, { outcome: "judged", winner: "a" }])); // tie
-// console.log(combineOrders([{ outcome: "judged", winner: "a" }, { outcome: "judged", winner: "a" }])); // loss
-// console.log(combineOrders([{ outcome: "judged", winner: "b" }, { outcome: "judged", winner: "tie" }])); // tie
-// console.log(combineOrders([{ outcome: "judged", winner: "b" }, { outcome: "failed" }]));              // failed
-// console.log(combineOrders([]));                                                                        // failed
+// assert.deepEqual(weightedScore(full), 86);
+// assert.ok(Math.abs(weightedScore({ ...full, restraint: { score1To5: null } })! - 90.59) < 0.01);
+// assert.deepEqual(weightedScore({ ...full, changeAccuracy: { score1To5: 1.5 } }), 0);
+// assert.deepEqual(weightedScore({ restraint: { score1To5: 3 } }), null);
+// assert.deepEqual(combineOrders([{ outcome: "judged", winner: "b" }, { outcome: "judged", winner: "b" }]), "win");
+// assert.deepEqual(combineOrders([{ outcome: "judged", winner: "b" }, { outcome: "judged", winner: "a" }]), "tie");
+// assert.deepEqual(combineOrders([{ outcome: "judged", winner: "a" }, { outcome: "judged", winner: "a" }]), "loss");
+// assert.deepEqual(combineOrders([{ outcome: "judged", winner: "b" }, { outcome: "judged", winner: "tie" }]), "tie");
+// assert.deepEqual(combineOrders([{ outcome: "judged", winner: "b" }, { outcome: "failed" }]), "failed");
+// assert.deepEqual(combineOrders([]), "failed");

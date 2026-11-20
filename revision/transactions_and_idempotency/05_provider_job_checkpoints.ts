@@ -25,9 +25,10 @@ export function resumeAction(state: State): Resume {
 }
 
 // ---- try it ----
-// console.log(decodeState({ provider: null, providerJobId: null, providerJobModel: null })); // { _tag: 'NoIntent' }
-// console.log(decodeState({ provider: "fal", providerJobId: null, providerJobModel: "m1" })); // { _tag: 'Armed', model: 'm1' }
-// console.log(decodeState({ provider: "fal", providerJobId: "r9", providerJobModel: "m1" })); // { _tag: 'Submitted', model: 'm1', requestId: 'r9' }
-// console.log(decodeState({ provider: "fal", providerJobId: "r9", providerJobModel: null })); // throws CorruptJobRow
-// console.log(resumeAction({ _tag: "Armed", model: "m1" }));                                  // blocked_needs_operator
-// console.log(resumeAction({ _tag: "NoIntent" }));                                            // submit_fresh
+import assert from "node:assert/strict";
+// assert.deepEqual(decodeState({ provider: null, providerJobId: null, providerJobModel: null }), { _tag: "NoIntent" });
+// assert.deepEqual(decodeState({ provider: "fal", providerJobId: null, providerJobModel: "m1" }), { _tag: "Armed", model: "m1" });
+// assert.deepEqual(decodeState({ provider: "fal", providerJobId: "r9", providerJobModel: "m1" }), { _tag: "Submitted", model: "m1", requestId: "r9" });
+// assert.throws(() => decodeState({ provider: "fal", providerJobId: "r9", providerJobModel: null })); // CorruptJobRow
+// assert.deepEqual(resumeAction({ _tag: "Armed", model: "m1" }), "blocked_needs_operator");
+// assert.deepEqual(resumeAction({ _tag: "NoIntent" }), "submit_fresh");

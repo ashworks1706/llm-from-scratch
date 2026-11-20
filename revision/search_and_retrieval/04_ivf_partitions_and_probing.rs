@@ -84,29 +84,34 @@ fn recall_at_k(exact: &[u32], approx: &[u32]) -> f32 {
 fn main() {
     let cents = [0.0, 0.0, 10.0, 0.0, 0.0, 10.0];
     let rows = [0.0, 0.0, 1.0, 0.0, 10.0, 0.0, 10.0, 1.0];
-    // println!("{:?}", nearest_lists(&[9.0, 1.0], &cents, 2, 2));  // [1, 0]
-    // println!("{:?}", nearest_lists(&[9.0, 1.0], &cents, 2, 5));  // [1, 0, 2]
-    // println!("{:?}", nearest_lists(&[5.0, 5.0], &cents, 2, 3));  // [0, 1, 2]
-    // println!("{:?}", seed_farthest_first(&rows, 2, 2));          // Some([0.0, 0.0, 10.0, 1.0])
-    // println!("{:?}", seed_farthest_first(&rows, 2, 3));          // Some([0.0, 0.0, 10.0, 1.0, 1.0, 0.0])
-    // println!("{:?}", seed_farthest_first(&rows, 2, 5));          // None
-    // println!("{:?}", seed_farthest_first(&rows, 2, 0));          // None
+    // assert_eq!(nearest_lists(&[9.0, 1.0], &cents, 2, 2), vec![1, 0]);
+    // assert_eq!(nearest_lists(&[9.0, 1.0], &cents, 2, 5), vec![1, 0, 2]);
+    // assert_eq!(nearest_lists(&[5.0, 5.0], &cents, 2, 3), vec![0, 1, 2]);
+    // assert_eq!(seed_farthest_first(&rows, 2, 2), Some(vec![0.0, 0.0, 10.0, 1.0]));
+    // assert_eq!(seed_farthest_first(&rows, 2, 3), Some(vec![0.0, 0.0, 10.0, 1.0, 1.0, 0.0]));
+    // assert_eq!(seed_farthest_first(&rows, 2, 5), None);
+    // assert_eq!(seed_farthest_first(&rows, 2, 0), None);
     // let mut c = [0.0, 0.0, 10.0, 1.0];
-    // println!("{:?} {:?}", lloyd_step(&rows, 2, &mut c), c);      // [0, 0, 1, 1] [0.5, 0.0, 10.0, 0.5]
+    // assert_eq!(lloyd_step(&rows, 2, &mut c), vec![0, 0, 1, 1]);
+    // assert_eq!(c, [0.5, 0.0, 10.0, 0.5]);
     // let mut c2 = [0.0, 0.0, 10.0, 1.0, 100.0, 100.0];
-    // println!("{:?} {:?}", lloyd_step(&rows, 2, &mut c2), c2);    // [0, 0, 1, 1] [0.5, 0.0, 10.0, 0.5, 100.0, 100.0]
-    // println!("{:?}", train(&rows, 2, 2, 20));                    // Some([0.5, 0.0, 10.0, 0.5])
-    // println!("{:?}", train(&rows, 2, 2, 0));                     // Some([0.0, 0.0, 10.0, 1.0])
+    // assert_eq!(lloyd_step(&rows, 2, &mut c2), vec![0, 0, 1, 1]);
+    // assert_eq!(c2, [0.5, 0.0, 10.0, 0.5, 100.0, 100.0]);
+    // assert_eq!(train(&rows, 2, 2, 20), Some(vec![0.5, 0.0, 10.0, 0.5]));
+    // assert_eq!(train(&rows, 2, 2, 0), Some(vec![0.0, 0.0, 10.0, 1.0]));
     // let mut parts = Partitions { lists: vec![vec![], vec![]], slots: HashMap::new() };
     // parts.assign(5, 1);
-    // println!("{:?} {:?}", parts.lists, parts.slots.get(&5));     // [[], [5]] Some((1, 0))
+    // assert_eq!(parts.lists, vec![vec![], vec![5]]);
+    // assert_eq!(parts.slots.get(&5), Some(&(1, 0)));
     // let mut p2 = Partitions { lists: vec![vec![]], slots: HashMap::new() };
     // for r in [3, 5, 8] { p2.assign(r, 0); }
-    // println!("{} {:?} {:?}", p2.remove(3), p2.lists, p2.slots.get(&8)); // true [[8, 5]] Some((0, 0))
-    // println!("{}", p2.remove(3));                                // false
+    // assert!(p2.remove(3));
+    // assert_eq!(p2.lists, vec![vec![8, 5]]);
+    // assert_eq!(p2.slots.get(&8), Some(&(0, 0)));
+    // assert!(!p2.remove(3));
     let sc = [0.5, 0.0, 10.0, 0.5];
     let parts = Partitions { lists: vec![vec![0, 1], vec![2, 3]], slots: HashMap::new() };
-    // println!("{:?}", search(&[9.0, 0.0], &rows, 2, &sc, &parts, 1, 3));  // [(2, 1.0), (3, 2.0)]
-    // println!("{:?}", search(&[9.0, 0.0], &rows, 2, &sc, &parts, 2, 3));  // [(2, 1.0), (3, 2.0), (1, 64.0)]
-    // println!("{}", recall_at_k(&[1, 2, 3, 4], &[2, 9, 4, 7]));           // 0.5
+    // assert_eq!(search(&[9.0, 0.0], &rows, 2, &sc, &parts, 1, 3), vec![(2, 1.0), (3, 2.0)]);
+    // assert_eq!(search(&[9.0, 0.0], &rows, 2, &sc, &parts, 2, 3), vec![(2, 1.0), (3, 2.0), (1, 64.0)]);
+    // assert!((recall_at_k(&[1, 2, 3, 4], &[2, 9, 4, 7]) - 0.5).abs() < 1e-6);
 }

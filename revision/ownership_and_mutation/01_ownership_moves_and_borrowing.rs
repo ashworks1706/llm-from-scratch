@@ -16,12 +16,12 @@ fn append_item(values: &mut Vec<i32>, new_value: i32) {
 
 // ---- try it ----
 fn main() {
-    // println!("{}", total(&[1, 2, 3]));  // 6
-    // println!("{}", total(&[]));         // 0
+    // assert_eq!(total(&[1, 2, 3]), 6);
+    // assert_eq!(total(&[]), 0);
     // let mut v = vec![1, 2];
     // append_item(&mut v, 3);
-    // println!("{:?}", v);                // [1, 2, 3]
+    // assert_eq!(v, vec![1, 2, 3]);
     // let mut e: Vec<i32> = vec![];
     // append_item(&mut e, 9);
-    // println!("{:?}", e);                // [9]
+    // assert_eq!(e, vec![9]);
 }

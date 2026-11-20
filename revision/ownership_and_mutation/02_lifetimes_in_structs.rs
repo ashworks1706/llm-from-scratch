@@ -31,10 +31,10 @@ fn split_pair<'a>(text: &'a str, sep: char) -> Option<(&'a str, &'a str)> {
 // ---- try it ----
 fn main() {
     // let mut c = WordCursor::new("  hello   world ");
-    // println!("{:?} {:?} {:?}", c.next_word(), c.next_word(), c.next_word()); // Some("hello") Some("world") None
-    // println!("{:?}", WordCursor::new("").next_word());                       // None
-    // println!("{:?}", split_pair("key=value", '='));  // Some(("key", "value"))
-    // println!("{:?}", split_pair("a=b=c", '='));      // Some(("a", "b=c"))
-    // println!("{:?}", split_pair("=x", '='));         // Some(("", "x"))
-    // println!("{:?}", split_pair("novalue", '='));    // None
+    // assert_eq!((c.next_word(), c.next_word(), c.next_word()), (Some("hello"), Some("world"), None));
+    // assert_eq!(WordCursor::new("").next_word(), None);
+    // assert_eq!(split_pair("key=value", '='), Some(("key", "value")));
+    // assert_eq!(split_pair("a=b=c", '='), Some(("a", "b=c")));
+    // assert_eq!(split_pair("=x", '='), Some(("", "x")));
+    // assert_eq!(split_pair("novalue", '='), None);
 }

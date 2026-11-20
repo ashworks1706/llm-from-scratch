@@ -11,7 +11,8 @@ export async function successfulValues<T>(jobs: Array<() => Promise<T>>): Promis
 }
 
 // ---- try it ----
+import assert from "node:assert/strict";
 const later = <T>(ms: number, v: T) => () => new Promise<T>((r) => setTimeout(() => r(v), ms));
-// successfulValues([() => Promise.resolve(1), () => Promise.reject(new Error("x")), () => Promise.resolve(3)]).then(console.log); // [ 1, 3 ]
-// successfulValues([later(50, "a"), later(10, "b")]).then(console.log); // [ 'a', 'b' ]
-// successfulValues([]).then(console.log);                               // []
+// assert.deepEqual(await successfulValues([() => Promise.resolve(1), () => Promise.reject(new Error("x")), () => Promise.resolve(3)]), [1, 3]);
+// assert.deepEqual(await successfulValues([later(50, "a"), later(10, "b")]), ["a", "b"]);
+// assert.deepEqual(await successfulValues([]), []);

@@ -3,7 +3,6 @@
 
 use std::collections::HashSet;
 
-// Insert/Delete add/remove an id; Checkpoint marks a snapshot. all carry seq.
 #[derive(Debug, Clone, PartialEq)]
 enum Entry { Insert { id: u64, seq: u64 }, Delete { id: u64, seq: u64 }, Checkpoint { seq: u64 } }
 
@@ -19,9 +18,6 @@ impl Wal {
     // 1. replay
     // entries with seq > min_seq, in order (Checkpoint filtered the same way).
     // version != WAL_VERSION -> Err naming the unknown version, no entries.
-    // ex: [Insert 1 seq 1, Insert 2 seq 2, Delete 1 seq 3], replay(1)
-    //     -> Ok([Insert 2 seq 2, Delete 1 seq 3])
-    //     version 2 -> Err for any min_seq
     fn replay(&self, min_seq: u64) -> Result<Vec<Entry>, String> {
         todo!()
     }
@@ -30,7 +26,6 @@ impl Wal {
 // 2. checkpoint
 // first: durable.snapshot = copy of state, durable.last_seq = wal.next_seq.saturating_sub(1).
 // only then clear wal.entries. never reset next_seq.
-// ex: next_seq 4, 3 entries, state {2} -> snapshot {2}, last_seq 3, entries [], next_seq 4
 fn checkpoint(wal: &mut Wal, durable: &mut Durable, state: &HashSet<u64>) {
     todo!()
 }
@@ -39,7 +34,21 @@ fn checkpoint(wal: &mut Wal, durable: &mut Durable, state: &HashSet<u64>) {
 // start from a copy of durable.snapshot, apply replay(durable.last_seq) in order:
 // Insert adds, Delete removes, Checkpoint no-op. replay Err -> return it.
 // must be correct after a crash between snapshot and log clear: never apply seq <= last_seq.
-// ex: snapshot {1, 2}, last_seq 3, [Insert 9 seq 3, Delete 1 seq 4, Insert 5 seq 5] -> Ok({2, 5})
 fn open(wal: &Wal, durable: &Durable) -> Result<HashSet<u64>, String> {
     todo!()
+}
+
+// ---- try it ----
+fn main() {
+    let entries = vec![Entry::Insert { id: 1, seq: 1 }, Entry::Insert { id: 2, seq: 2 }, Entry::Delete { id: 1, seq: 3 }];
+    let wal = Wal { version: WAL_VERSION, entries: entries.clone(), next_seq: 4 };
+    // println!("{:?}", wal.replay(1)); // Ok([Insert { id: 2, seq: 2 }, Delete { id: 1, seq: 3 }])
+    // println!("{:?}", Wal { version: 2, entries: entries.clone(), next_seq: 4 }.replay(0)); // Err(..)
+    let mut wal2 = Wal { version: WAL_VERSION, entries: entries.clone(), next_seq: 4 };
+    let mut durable = Durable { snapshot: HashSet::new(), last_seq: 0 };
+    // checkpoint(&mut wal2, &mut durable, &HashSet::from([2]));
+    // println!("{:?} {} {} {}", durable.snapshot, durable.last_seq, wal2.entries.len(), wal2.next_seq); // {2} 3 0 4
+    let wal3 = Wal { version: WAL_VERSION, entries: vec![Entry::Insert { id: 9, seq: 3 }, Entry::Delete { id: 1, seq: 4 }, Entry::Insert { id: 5, seq: 5 }], next_seq: 6 };
+    let d3 = Durable { snapshot: HashSet::from([1, 2]), last_seq: 3 };
+    // println!("{:?}", open(&wal3, &d3)); // Ok({2, 5}) (any order)
 }

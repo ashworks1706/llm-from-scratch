@@ -10,8 +10,12 @@ type Trade = { market: string; price: number; quantity: number };
 // reject non-objects (null, numbers, strings, undefined), missing fields, wrong field types.
 // price and quantity must be finite and >= 0: reject NaN, ±Infinity, negatives; 0 is valid.
 // never throw on bad input; no type assertion to skip checks.
-// ex: { market: "BTC", price: 100, quantity: 2 } -> { ok: true, value: <same three fields> }
-//     { market: "BTC", price: -1, quantity: 2 } -> { ok: false, error },  null -> ok false
 export function parseTrade(value: unknown): Result<Trade> {
   throw new Error("not implemented");
 }
+
+// ---- try it ----
+// console.log(parseTrade({ market: "BTC", price: 100, quantity: 2 }));  // { ok: true, value: { market: 'BTC', price: 100, quantity: 2 } }
+// console.log(parseTrade({ market: "BTC", price: -1, quantity: 2 }));   // { ok: false, error: ... }
+// console.log(parseTrade({ market: "BTC", price: 0, quantity: 0 }));    // ok: true (0 is valid)
+// console.log(parseTrade(null));                                        // { ok: false, error: ... }

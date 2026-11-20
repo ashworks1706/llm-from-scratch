@@ -11,7 +11,6 @@ enum RiskClass { ReadPublic, ReadAuthenticated, PrepareWrite, ExternalWrite, Des
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum Decision { Allow, Deny(String), Confirm }
 
-// private: true in a private place, false in public.
 struct Ctx { roles: Vec<String>, private: bool }
 
 // write_roles empty = nobody writes. allow_authenticated_reads: ReadAuthenticated ok in public.
@@ -21,7 +20,6 @@ struct RiskPolicy { write_roles: Vec<String>, allow_authenticated_reads: bool, c
 impl RiskPolicy {
     // 1. may_write
     // true if the caller holds any role in write_roles. empty write_roles or no roles -> false.
-    // ex: write_roles ["officer"]: ["member", "officer"] -> true, ["member"] -> false
     fn may_write(&self, ctx: &Ctx) -> bool {
         todo!()
     }
@@ -34,11 +32,24 @@ impl RiskPolicy {
     //   4) risk >= confirm_from -> Confirm
     //   5) Allow
     // Deny text says why (the model reads it).
-    // ex: policy write_roles ["officer"], auth reads false, confirm_from ExternalWrite:
-    //     private officer: ReadPublic -> Allow, Destructive -> Confirm, Forbidden -> Deny
-    //     private, no roles: ExternalWrite -> Deny.  public caller: ReadAuthenticated -> Deny
-    //     confirm_from Destructive, private officer: ExternalWrite -> Allow
     fn authorize(&self, ctx: &Ctx, risk: RiskClass) -> Decision {
         todo!()
     }
+}
+
+// ---- try it ----
+fn main() {
+    let policy = RiskPolicy { write_roles: vec!["officer".to_string()], allow_authenticated_reads: false, confirm_from: RiskClass::ExternalWrite };
+    let officer = Ctx { roles: vec!["member".to_string(), "officer".to_string()], private: true };
+    let nobody = Ctx { roles: vec![], private: true };
+    let public = Ctx { roles: vec![], private: false };
+    // println!("{}", policy.may_write(&officer));                              // true
+    // println!("{}", policy.may_write(&nobody));                               // false
+    // println!("{:?}", policy.authorize(&officer, RiskClass::ReadPublic));     // Allow
+    // println!("{:?}", policy.authorize(&officer, RiskClass::Destructive));    // Confirm
+    // println!("{:?}", policy.authorize(&officer, RiskClass::Forbidden));      // Deny(..)
+    // println!("{:?}", policy.authorize(&nobody, RiskClass::ExternalWrite));   // Deny(..)
+    // println!("{:?}", policy.authorize(&public, RiskClass::ReadAuthenticated)); // Deny(..)
+    // let lax = RiskPolicy { confirm_from: RiskClass::Destructive, ..policy };
+    // println!("{:?}", lax.authorize(&officer, RiskClass::ExternalWrite));     // Allow
 }

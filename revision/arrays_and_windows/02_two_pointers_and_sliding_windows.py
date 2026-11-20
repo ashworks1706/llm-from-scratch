@@ -1,8 +1,6 @@
 # 1. has_pair_sum
 # sorted_nums ascending (dups allowed). True if two different positions sum to target.
 # same position can't be reused; equal values at different positions can. < 2 elements -> False.
-# ex: ([1, 2, 4, 7, 11], 9) -> True (2 + 7), target 100 -> False
-#     ([3, 3], 6) -> True, ([5], 10) -> False
 # O(n) with two pointers moving inward, no nested loops.
 def has_pair_sum(sorted_nums: list[int], target: int) -> bool:
     left, right = 0, len(sorted_nums) - 1
@@ -12,7 +10,7 @@ def has_pair_sum(sorted_nums: list[int], target: int) -> bool:
 
         if diff == 0:
             return True
-        elif diff > 0:
+        elif diff > 0: 
             left += 1
         else:
             right -= 1
@@ -23,7 +21,6 @@ def has_pair_sum(sorted_nums: list[int], target: int) -> bool:
 # 2. maximum_window_sum
 # return the max sum of k consecutive elements (nums may be negative).
 # k <= 0 or k > len(nums) -> None. don't seed best with 0: all-negative windows give a negative.
-# ex: ([1, 2, 3, 4], 2) -> 7, ([-3, -1, -2], 2) -> -3, k=0 -> None, ([1, 2], 5) -> None
 # O(n): sum the first window, then slide (add one, drop one).
 def maximum_window_sum(nums: list[int], k: int) -> int | None:
     if k <= 0 or k > len(nums):
@@ -42,7 +39,6 @@ def maximum_window_sum(nums: list[int], k: int) -> int | None:
 
 # 3. longest_distinct_substring
 # return the length of the longest contiguous substring with no repeated char. "" -> 0.
-# ex: "abcabcbb" -> 3 ("abc"), "bbbb" -> 1, "pwwkew" -> 3 ("wke")
 # O(n) sliding window + dict of each char's most recent index.
 def longest_distinct_substring(text: str) -> int:
     seen = {}
@@ -60,3 +56,19 @@ def longest_distinct_substring(text: str) -> int:
         max_length = max(max_length, current_length)
 
     return max_length
+
+
+# ---- try it ----
+if __name__ == "__main__":
+    # print(has_pair_sum([1, 2, 4, 7, 11], 9))      # True
+    # print(has_pair_sum([1, 2, 4, 7, 11], 100))    # False
+    # print(has_pair_sum([3, 3], 6))                # True
+    # print(has_pair_sum([5], 10))                  # False
+    # print(maximum_window_sum([1, 2, 3, 4], 2))    # 7
+    # print(maximum_window_sum([-3, -1, -2], 2))    # -3
+    # print(maximum_window_sum([1, 2], 5))          # None
+    # print(maximum_window_sum([1, 2], 0))          # None
+    # print(longest_distinct_substring("abcabcbb")) # 3
+    # print(longest_distinct_substring("bbbb"))     # 1
+    # print(longest_distinct_substring("pwwkew"))   # 3
+    pass

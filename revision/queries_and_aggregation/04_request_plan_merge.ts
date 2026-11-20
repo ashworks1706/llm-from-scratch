@@ -11,9 +11,6 @@ export type Plan = Record<string, Bucket>;
 // codes: codes to request (each once); years: all years needed, deduped across the endpoint;
 // keysByCode: code -> selected keys using it, in selection order (shared code lists both keys).
 // skip selected keys with no spec. [] -> {}.
-// ex: [gdp, pop, nope], gdp: /wb NY.GDP [2020, 2021], pop: /wb SP.POP [2021], nope: no spec
-//     -> { "/wb": codes {NY.GDP, SP.POP}, years {2020, 2021},
-//          keysByCode NY.GDP -> [gdp], SP.POP -> [pop] }
 export function buildPlan(selected: readonly string[], specs: Record<string, IndicatorSpec>): Plan {
   throw new Error("not implemented");
 }
@@ -24,10 +21,19 @@ export function buildPlan(selected: readonly string[], specs: Record<string, Ind
 // process each response in ascending startYear so later periods overwrite earlier (same place+key).
 // a place gets a row only if it appears in some observation. null stays null, never 0.
 // sort a copy; don't mutate the response arrays.
-// ex (code, place, startYear, value): plan above,
-//     { "/wb": [(NY.GDP, Oslo, 2021, 5), (NY.GDP, Oslo, 2020, 3), (SP.POP, Oslo, 2021, null)] }
-//     -> { Oslo: { gdp: 5, pop: null } }
 // O(n log n) from the sort.
 export function mergeRows(plan: Plan, responses: Record<string, Observation[]>): Record<string, Record<string, number | null>> {
   throw new Error("not implemented");
 }
+
+// ---- try it ----
+const specs: Record<string, IndicatorSpec> = {
+  gdp: { key: "gdp", endpoint: "/wb", code: "NY.GDP", years: ["2020", "2021"] },
+  pop: { key: "pop", endpoint: "/wb", code: "SP.POP", years: ["2021"] },
+};
+// console.log(buildPlan(["gdp", "pop", "nope"], specs));  // { '/wb': { codes: Set {NY.GDP, SP.POP}, years: Set {2020, 2021}, keysByCode: Map {NY.GDP -> [gdp], SP.POP -> [pop]} } }
+// console.log(mergeRows(buildPlan(["gdp", "pop"], specs), { "/wb": [
+//   { code: "NY.GDP", place: "Oslo", startYear: 2021, value: 5 },
+//   { code: "NY.GDP", place: "Oslo", startYear: 2020, value: 3 },
+//   { code: "SP.POP", place: "Oslo", startYear: 2021, value: null },
+// ] }));                                                   // { Oslo: { gdp: 5, pop: null } }

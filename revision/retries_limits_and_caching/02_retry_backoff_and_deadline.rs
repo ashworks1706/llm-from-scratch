@@ -8,10 +8,6 @@ use std::time::Duration;
 //   doubled = min(base_ms * 2^min(attempt, 6), cap_ms), saturating multiply (no overflow)
 //   spread = doubled / 4;  offset = request_id % max(spread, 1)
 //   wait = doubled - spread / 2 + offset, clamped to <= remaining
-// ex: (0, 5, 10s, 100, 1000) -> 93ms (doubled 100, spread 25, offset 5: 100 - 12 + 5)
-//     (3, 7, 10s, 100, 1000) -> 707ms (doubled 800, spread 200)
-//     (10, 0, 10s, 100, 1000) -> 875ms (shift capped at 6: 6400 -> 1000, spread 250)
-//     (0, 5, 50ms, 100, 1000) -> 50ms (clamped to remaining)
 fn backoff(attempt: u32, request_id: u128, remaining: Duration, base_ms: u64, cap_ms: u64) -> Duration {
     todo!()
 }
@@ -19,7 +15,17 @@ fn backoff(attempt: u32, request_id: u128, remaining: Duration, base_ms: u64, ca
 // 2. should_retry
 // true only when retryable && attempt < max_retries. attempt = failures so far (from 0);
 // max_retries counts retries after the first call (2 -> 3 calls total).
-// ex: (true, 0, 2), (true, 1, 2) -> true;  (true, 2, 2), (false, 0, 2) -> false
 fn should_retry(retryable: bool, attempt: u32, max_retries: u32) -> bool {
     todo!()
+}
+
+// ---- try it ----
+fn main() {
+    let ten_s = Duration::from_secs(10);
+    // println!("{:?}", backoff(0, 5, ten_s, 100, 1000));                       // 93ms
+    // println!("{:?}", backoff(3, 7, ten_s, 100, 1000));                       // 707ms
+    // println!("{:?}", backoff(10, 0, ten_s, 100, 1000));                      // 875ms
+    // println!("{:?}", backoff(0, 5, Duration::from_millis(50), 100, 1000));   // 50ms
+    // println!("{} {}", should_retry(true, 0, 2), should_retry(true, 1, 2));   // true true
+    // println!("{} {}", should_retry(true, 2, 2), should_retry(false, 0, 2));  // false false
 }

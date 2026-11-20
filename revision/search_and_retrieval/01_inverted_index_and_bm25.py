@@ -8,7 +8,6 @@ from collections import defaultdict
 
 # 1. tokenize
 # lowercase, split on runs of non-letter/non-digit chars, drop empties. '' -> [].
-# ex: tokenize('Hello, World! 42') -> ['hello', 'world', '42']
 def tokenize(text: str) -> list[str]:
     pass
 
@@ -30,14 +29,17 @@ class InvertedIndex:
 
     # up to k (doc_id, score), best first, ties -> smaller doc id. only docs with >= 1 query term.
     # repeated query term counts once. empty index, empty query, or k <= 0 -> [].
-    # ex: d1 'apple pie', d2 'apple tart', d3 'zebra pie'; 'zebra apple' -> d3 (rare term),
-    #     then d1, d2 (tied)
-    # ex: d1 'cat', d2 'cat dog bird'; 'cat' -> d1 above d2 (same tf, longer doc scores lower)
     def search(self, query: str, k: int) -> list[tuple[str, float]]:
         pass
 
 
+# ---- try it ----
 if __name__ == '__main__':
-    # tiny corpus: doc with the rare term outranks the one with the common term.
-    # longer doc with the same tf scores lower.
+    # print(tokenize("Hello, World! 42"))           # ['hello', 'world', '42']
+    # idx = InvertedIndex()
+    # idx.add("d1", "apple pie"); idx.add("d2", "apple tart"); idx.add("d3", "zebra pie")
+    # print(idx.search("zebra apple", 3))           # d3 first, then d1, d2 (tied)
+    # idx2 = InvertedIndex()
+    # idx2.add("d1", "cat"); idx2.add("d2", "cat dog bird")
+    # print(idx2.search("cat", 2))                  # d1 above d2
     pass

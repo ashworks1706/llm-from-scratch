@@ -22,8 +22,12 @@ export function predictions(): Record<"puzzle1", string[]> {
 // 2. collect
 // run puzzle with a log that records labels, wait until every timer it started has fired and every
 // microtask has run, return the labels in logged order. nothing scheduled -> just the direct logs.
-// ex: puzzle logs "x" directly and "y" from setTimeout 0 -> ["x", "y"]
 // then compare collect(puzzle1) with predictions().puzzle1 and explain any difference.
 export async function collect(puzzle: (log: Log) => void): Promise<string[]> {
   throw new Error("not implemented");
 }
+
+// ---- try it ----
+// console.log(predictions());                                   // { puzzle1: [ five labels ] }
+// collect(puzzle1).then(console.log);                           // compare with your prediction
+// collect((log) => { log("x"); setTimeout(() => log("y"), 0); }).then(console.log); // [ 'x', 'y' ]

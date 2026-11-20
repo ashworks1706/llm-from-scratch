@@ -8,8 +8,14 @@
 // job: tokio::time::sleep briefly, then return item * 2.
 // at most max_in_flight jobs running at once (Semaphore or equivalent); no unbounded spawning.
 // max_in_flight 0 must not hang: pick a policy (e.g. treat as 1) and state it in a comment.
-// ex: [1, 2, 3], 2 -> [2, 4, 6] with <= 2 running at once;  [], any -> []
 // think about what happens to the permit if a job is cancelled.
 async fn bounded_process(items: Vec<u64>, max_in_flight: usize) -> Vec<u64> {
     todo!()
+}
+
+// ---- try it ----
+#[tokio::main]
+async fn main() {
+    // println!("{:?}", bounded_process(vec![1, 2, 3], 2).await); // [2, 4, 6]
+    // println!("{:?}", bounded_process(vec![], 3).await);        // []
 }

@@ -12,9 +12,6 @@ const GATE_MAX = 1.5;
 // GATE missing or its score null -> null. gate score <= GATE_MAX -> 0 regardless of other axes.
 // else use axes that are in WEIGHTS with non-null scores (ignore the rest):
 // sum(weight * score) / sum(those weights) * 20, clamped to 0..100.
-// ex: changeAccuracy 4, preservationFidelity 5, restraint 3, integrity 5 -> 4.3 * 20 = 86
-//     same with restraint null -> 3.85 / 0.85 * 20 ≈ 90.59
-//     changeAccuracy 1.5 -> 0,  no changeAccuracy -> null
 export function weightedScore(rubric: Rubric): number | null {
   throw new Error("not implemented");
 }
@@ -23,8 +20,19 @@ export function weightedScore(rubric: Rubric): number | null {
 // one verdict per presentation order; a = baseline, b = candidate (already mapped back).
 // [] or any failed verdict -> "failed". all b -> "win", all a -> "loss", anything else
 // (any tie, or a mix of a and b) -> "tie".
-// ex: [b, b] -> "win", [a, a] -> "loss", [b, a] -> "tie", [b, tie] -> "tie"
-//     [] -> "failed", [judged b, failed] -> "failed"
 export function combineOrders(verdicts: Verdict[]): "win" | "loss" | "tie" | "failed" {
   throw new Error("not implemented");
 }
+
+// ---- try it ----
+const full: Rubric = { changeAccuracy: { score1To5: 4 }, preservationFidelity: { score1To5: 5 }, restraint: { score1To5: 3 }, integrity: { score1To5: 5 } };
+// console.log(weightedScore(full));                                              // 86
+// console.log(weightedScore({ ...full, restraint: { score1To5: null } }));       // ~90.59
+// console.log(weightedScore({ ...full, changeAccuracy: { score1To5: 1.5 } }));   // 0
+// console.log(weightedScore({ restraint: { score1To5: 3 } }));                   // null
+// console.log(combineOrders([{ outcome: "judged", winner: "b" }, { outcome: "judged", winner: "b" }])); // win
+// console.log(combineOrders([{ outcome: "judged", winner: "b" }, { outcome: "judged", winner: "a" }])); // tie
+// console.log(combineOrders([{ outcome: "judged", winner: "a" }, { outcome: "judged", winner: "a" }])); // loss
+// console.log(combineOrders([{ outcome: "judged", winner: "b" }, { outcome: "judged", winner: "tie" }])); // tie
+// console.log(combineOrders([{ outcome: "judged", winner: "b" }, { outcome: "failed" }]));              // failed
+// console.log(combineOrders([]));                                                                        // failed

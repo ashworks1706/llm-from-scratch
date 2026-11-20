@@ -14,8 +14,6 @@ class MySemaphore:
 
     # wait while count == 0, then decrement and return True. recheck in a while loop.
     # timeout runs out -> False, count unchanged. timeout None -> wait forever.
-    # ex: MySemaphore(1): acquire() -> True, acquire(timeout=0.1) -> False (~0.1s),
-    #     release(), acquire() -> True
     def acquire(self, timeout: float | None = None) -> bool:
         pass
 
@@ -36,12 +34,18 @@ class BoundedBuffer:
         pass
 
     # pop and return oldest item. while empty, wait. then wake one waiting producer.
-    # ex: put(1), put(2) -> get() -> 1, get() -> 2
     def get(self):
         pass
 
 
+# ---- try it ----
 if __name__ == '__main__':
-    # 4 producers x 250 distinct items, 3 consumers, capacity 5: all 1000 consumed exactly once,
-    # and size never exceeds capacity (sample while holding the buffer lock).
+    # sem = MySemaphore(1)
+    # print(sem.acquire())                          # True
+    # print(sem.acquire(timeout=0.1))               # False (after ~0.1s)
+    # sem.release()
+    # print(sem.acquire())                          # True
+    # buf = BoundedBuffer(2)
+    # buf.put(1); buf.put(2)
+    # print(buf.get(), buf.get())                   # 1 2
     pass

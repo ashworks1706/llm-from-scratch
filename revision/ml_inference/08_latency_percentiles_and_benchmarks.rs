@@ -7,8 +7,6 @@ use std::time::Duration;
 // sorted copy (f64::total_cmp, input untouched). rank = q * (n - 1); interpolate linearly between
 // values at floor and ceil of rank by its fractional part.
 // None if empty or q outside [0, 1] (NaN q is outside). single value -> it, for any valid q.
-// ex: [1, 2, 3, 4], 0.5 -> Some(2.5);  0.95 -> ~Some(3.85);  0 -> Some(1.0);  1 -> Some(4.0)
-//     [], 0.5 -> None;  [1, 2], 1.5 -> None
 fn percentile(values: &[f64], q: f64) -> Option<f64> {
     todo!()
 }
@@ -16,7 +14,21 @@ fn percentile(values: &[f64], q: f64) -> Option<f64> {
 // 2. decode_tokens_per_second
 // decode speed excluding time to first token: (completion_tokens - 1) / (total - ttft) in seconds.
 // None if ttft None, completion_tokens < 2, or total <= ttft. no subtraction that can panic.
-// ex: 11, 200ms, 1200ms -> Some(10.0);  ttft None -> None;  1 token -> None;  500ms, 500ms -> None
 fn decode_tokens_per_second(completion_tokens: usize, ttft: Option<Duration>, total: Duration) -> Option<f64> {
     todo!()
+}
+
+// ---- try it ----
+fn main() {
+    let v = [1.0, 2.0, 3.0, 4.0];
+    // println!("{:?}", percentile(&v, 0.5));        // Some(2.5)
+    // println!("{:?}", percentile(&v, 0.95));       // ~Some(3.85)
+    // println!("{:?}", percentile(&v, 0.0));        // Some(1.0)
+    // println!("{:?}", percentile(&v, 1.0));        // Some(4.0)
+    // println!("{:?}", percentile(&[], 0.5));       // None
+    // println!("{:?}", percentile(&[1.0, 2.0], 1.5)); // None
+    // println!("{:?}", decode_tokens_per_second(11, Some(Duration::from_millis(200)), Duration::from_millis(1200))); // Some(10.0)
+    // println!("{:?}", decode_tokens_per_second(11, None, Duration::from_millis(1200)));  // None
+    // println!("{:?}", decode_tokens_per_second(1, Some(Duration::from_millis(200)), Duration::from_millis(1200))); // None
+    // println!("{:?}", decode_tokens_per_second(11, Some(Duration::from_millis(500)), Duration::from_millis(500))); // None
 }

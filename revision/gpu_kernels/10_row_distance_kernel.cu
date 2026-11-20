@@ -10,7 +10,6 @@
 // one loop over i in [0, dim): dot(query, row) and row_norm_sq.
 // out[row] = dot / (sqrt(query_norm_sq) * sqrt(row_norm_sq)). zero denominator -> NaN.
 // row offset in 64-bit: (size_t)row * dim.
-// ex: dim 2, query [1, 0], norm_sq 1, rows [1, 0], [0, 1], [0, 0], [2, 2] -> [1, 0, NaN, 0.7071]
 __global__ void cosine_rows(const float* query, const float* slab, float* out,
                             unsigned int dim, unsigned int rows, float query_norm_sq) {
 }
@@ -18,7 +17,34 @@ __global__ void cosine_rows(const float* query, const float* slab, float* out,
 // 2. euclidean_squared_rows
 // same args, layout, launch and 64-bit row offset as cosine_rows. row >= rows does nothing.
 // out[row] = sum over i in [0, dim) of (query[i] - slab[row * dim + i])^2. no sqrt. dim 0 -> 0.
-// ex: dim 2, query [1, 2], rows [1, 2], [4, 6], [0, 0] -> [0, 25, 5]
 __global__ void euclidean_squared_rows(const float* query, const float* slab, float* out,
                                        unsigned int dim, unsigned int rows) {
+}
+
+// ---- try it ----
+#include <cstdio>
+#include <cuda_runtime.h>
+
+int main() {
+    unsigned int dim = 2, rows = 4;
+    float *query, *slab, *out;
+    cudaMallocManaged(&query, dim * sizeof(float));
+    cudaMallocManaged(&slab, rows * dim * sizeof(float));
+    cudaMallocManaged(&out, rows * sizeof(float));
+    float q[] = {1, 0}, s[] = {1, 0,  0, 1,  0, 0,  2, 2};
+    for (int i = 0; i < 2; i++) query[i] = q[i];
+    for (int i = 0; i < 8; i++) slab[i] = s[i];
+    cosine_rows<<<1, 32>>>(query, slab, out, dim, rows, 1.0f);
+    cudaDeviceSynchronize();
+    for (unsigned int r = 0; r < rows; r++) printf("%g ", out[r]);
+    printf("\n");  // expected: 1 0 nan 0.7071
+    float q2[] = {1, 2}, s2[] = {1, 2,  4, 6,  0, 0};
+    for (int i = 0; i < 2; i++) query[i] = q2[i];
+    for (int i = 0; i < 6; i++) slab[i] = s2[i];
+    euclidean_squared_rows<<<1, 32>>>(query, slab, out, dim, 3);
+    cudaDeviceSynchronize();
+    for (int r = 0; r < 3; r++) printf("%g ", out[r]);
+    printf("\n");  // expected: 0 25 5
+    cudaFree(query); cudaFree(slab); cudaFree(out);
+    return 0;
 }

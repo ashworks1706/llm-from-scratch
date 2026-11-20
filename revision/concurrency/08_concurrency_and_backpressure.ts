@@ -6,8 +6,6 @@
 // never more than limit unfinished worker calls; start the next value as soon as one finishes.
 // [] -> []. limit <= 0 -> rejected promise.
 // a worker rejection rejects the result with that error; start no new workers once it's seen.
-// ex: ([1, 2, 3], 2, double) -> [2, 4, 6]; 1 and 2 start first, 3 starts when one finishes
-//     limit 0 -> rejects
 // O(n): `limit` pulling loops sharing one index, not one promise per batch.
 export async function mapWithLimit<T, R>(
   values: T[],
@@ -16,3 +14,9 @@ export async function mapWithLimit<T, R>(
 ): Promise<R[]> {
   throw new Error("not implemented");
 }
+
+// ---- try it ----
+const double = async (n: number) => n * 2;
+// mapWithLimit([1, 2, 3], 2, double).then(console.log);                 // [ 2, 4, 6 ]
+// mapWithLimit([], 2, double).then(console.log);                        // []
+// mapWithLimit([1], 0, double).catch((e) => console.log("rejected:", e.message)); // rejected: ...

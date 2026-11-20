@@ -5,13 +5,11 @@ use std::collections::HashMap;
 use std::sync::{Arc, Mutex, RwLock};
 use std::time::{Duration, Instant};
 
-// started: when the current window began. counts: user -> calls this window.
 struct Window {
     started: Instant,
     counts: HashMap<String, u32>,
 }
 
-// per_window: calls per user per window (0 = unlimited). length: window duration.
 struct FixedWindowLimiter {
     per_window: u32,
     length: Duration,
@@ -25,8 +23,6 @@ impl FixedWindowLimiter {
     // per_window 0 -> true without counting. else count += 1, return count <= per_window.
     // refused calls still count. hold the guard only for this, release before returning.
     // poisoned lock: pick a policy (recover inner data or refuse) and state it in a comment.
-    // ex: per_window 2, long window: "a" -> true, true, false; "b" -> true
-    //     after length passes: "a" -> true again.  per_window 0 -> always true
     fn allow(&self, user: &str) -> bool {
         todo!()
     }
@@ -41,8 +37,26 @@ impl SharedThreshold {
     // 2. raise_to
     // set threshold to value only if value > current; return whether it changed.
     // check and update under the same write guard (no race).
-    // ex: at 5: raise_to(7) -> true (now 7); raise_to(7) -> false; raise_to(3) -> false
     fn raise_to(&self, value: u32) -> bool {
         todo!()
     }
+}
+
+// ---- try it ----
+fn main() {
+    let limiter = FixedWindowLimiter {
+        per_window: 2,
+        length: Duration::from_secs(3600),
+        state: Arc::new(Mutex::new(Window { started: Instant::now(), counts: HashMap::new() })),
+    };
+    // println!("{} {} {}", limiter.allow("a"), limiter.allow("a"), limiter.allow("a")); // true true false
+    // println!("{}", limiter.allow("b"));                                               // true
+    // let tiny = FixedWindowLimiter { per_window: 1, length: Duration::from_millis(50), state: Arc::new(Mutex::new(Window { started: Instant::now(), counts: HashMap::new() })) };
+    // println!("{} {}", tiny.allow("a"), tiny.allow("a")); // true false
+    // std::thread::sleep(Duration::from_millis(60));
+    // println!("{}", tiny.allow("a"));                    // true (window reset)
+    let threshold = SharedThreshold { inner: Arc::new(RwLock::new(5)) };
+    // println!("{}", threshold.raise_to(7)); // true
+    // println!("{}", threshold.raise_to(7)); // false
+    // println!("{}", threshold.raise_to(3)); // false
 }

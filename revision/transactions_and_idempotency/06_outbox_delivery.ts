@@ -14,7 +14,6 @@ const MAX_SEND_ATTEMPTS = 8;
 // 1. backoffFor
 // sendAttempts counts from 1: attempt n -> BACKOFF_MS[n - 1]. clamp: past the end -> last entry,
 // below 1 -> first entry.
-// ex: 1 -> 60000, 3 -> 1800000, 5 / 6 / 20 -> 28800000
 export function backoffFor(sendAttempts: number): number {
   throw new Error("not implemented");
 }
@@ -25,10 +24,14 @@ export function backoffFor(sendAttempts: number): number {
 // auto-retried regardless of attempts. Rejected -> failed at once.
 // NotConfigured, UnexpectedStatus: attempt < MAX_SEND_ATTEMPTS -> pending with
 // nextAttemptAt = now + backoffFor(attempt); else failed.
-// ex: { Timeout }, prev 0 -> ambiguous
-//     { UnexpectedStatus, 503 }, prev 0, now 1000 -> pending, nextAttemptAt 61000
-//     { NotConfigured }, prev 2, now 1000 -> pending, nextAttemptAt 1801000
-//     { UnexpectedStatus, 500 }, prev 7 -> failed (attempt 8 = MAX_SEND_ATTEMPTS)
 export function settle(failure: SendFailure, previousSendAttempts: number, now: number): Settled {
   throw new Error("not implemented");
 }
+
+// ---- try it ----
+// console.log(backoffFor(1), backoffFor(3), backoffFor(5), backoffFor(20));   // 60000 1800000 28800000 28800000
+// console.log(settle({ reason: "Timeout" }, 0, 1000));                        // { status: 'ambiguous', ... }
+// console.log(settle({ reason: "UnexpectedStatus", status: 503 }, 0, 1000));  // { status: 'pending', nextAttemptAt: 61000, ... }
+// console.log(settle({ reason: "NotConfigured" }, 2, 1000));                  // { status: 'pending', nextAttemptAt: 1801000, ... }
+// console.log(settle({ reason: "UnexpectedStatus", status: 500 }, 7, 1000));  // { status: 'failed', ... }
+// console.log(settle({ reason: "Rejected" }, 0, 1000));                       // { status: 'failed', ... }

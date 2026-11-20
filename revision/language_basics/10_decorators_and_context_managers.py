@@ -11,9 +11,6 @@ from typing import Any
 # listed exception and attempts left -> call again. unlisted exception -> propagate at once.
 # final attempt fails -> re-raise the last exception. success returns immediately.
 # wrapper keeps the original __name__ and __doc__.
-# ex: fn raising ValueError twice then "ok": retry(3, (ValueError,)) -> "ok",
-#     retry(2, (ValueError,)) -> ValueError after the 2nd call.
-#     fn raising KeyError under retry(3, (ValueError,)) -> called once, KeyError reaches the caller
 def retry(times: int, exceptions: tuple[type[BaseException], ...] = (Exception,)) -> Callable:
     pass
 
@@ -21,16 +18,40 @@ def retry(times: int, exceptions: tuple[type[BaseException], ...] = (Exception,)
 # 2. Transaction
 # `with Transaction(db) as conn:` binds db (has commit/rollback/close).
 # block ok -> commit; block raises -> rollback, exception propagates. close last, exactly once.
-# ex: normal block -> commit, close. RuntimeError -> rollback, close, RuntimeError reaches caller
 class Transaction:
-    # store db.
     def __init__(self, db: Any) -> None:
         pass
 
-    # return db.
     def __enter__(self) -> Any:
         pass
 
     # exc_type None -> commit, else rollback; always close; return False (don't swallow).
     def __exit__(self, exc_type, exc, tb) -> bool:
         pass
+
+
+# ---- try it ----
+if __name__ == "__main__":
+    # state = {"n": 0}
+    # @retry(3, (ValueError,))
+    # def flaky():
+    #     state["n"] += 1
+    #     if state["n"] < 3: raise ValueError("no")
+    #     return "ok"
+    # print(flaky(), state["n"])                    # ok 3
+    # state["n"] = 0
+    # @retry(2, (ValueError,))
+    # def always_fails():
+    #     state["n"] += 1
+    #     raise ValueError("no")
+    # always_fails()                                # raises ValueError, state["n"] == 2
+    # @retry(3, (ValueError,))
+    # def wrong_error(): raise KeyError("k")
+    # wrong_error()                                 # KeyError at once, no retry
+    # class FakeDb:
+    #     def commit(self): print("commit")
+    #     def rollback(self): print("rollback")
+    #     def close(self): print("close")
+    # with Transaction(FakeDb()) as conn: pass      # commit, close
+    # with Transaction(FakeDb()) as conn: raise RuntimeError("x")  # rollback, close, then RuntimeError
+    pass

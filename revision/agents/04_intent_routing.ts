@@ -11,9 +11,6 @@ type Request = { prompt: string; modality: "auto" | "image" | "video"; imageUris
 // source: image turn -> imageUris = [url], video turn -> videoUri = url.
 // if request.modality is "image", skip video turns and keep looking older.
 // no eligible turn -> request unchanged. never mutate the request.
-// ex: ({ prompt: "make it red", modality: "auto", imageUris: [] },
-//      [{ completed, image, "u1" }, { failed, image, null }]) -> imageUris ["u1"] (failed skipped)
-//     request with imageUris ["mine"] -> imageUris ["mine"]
 export function withContinuity(request: Request, turns: Turn[]): Request {
   throw new Error("not implemented");
 }
@@ -23,10 +20,18 @@ export function withContinuity(request: Request, turns: Turn[]): Request {
 // else use fallbackFamily, reason says planned was missing/unknown and the fallback was used.
 // fallbackFamily not in endpoints -> throw Error.
 // endpoint = family's edit url for image_edit, textToImage url for text_to_image.
-// ex: endpoints { flux: { edit: "/flux/edit", textToImage: "/flux/t2i" } }
-//     (image_edit, "flux") -> { endpoint: "/flux/edit", family: "flux", ... }
-//     (text_to_image, "nope", fallback "flux")
-//       -> { endpoint: "/flux/t2i", family: "flux", reason mentions fallback }
 export function routeImage(operation: "text_to_image" | "image_edit", plannedFamily: string | null, endpoints: Record<string, { edit: string; textToImage: string }>, fallbackFamily: string): { endpoint: string; family: string; reason: string } {
   throw new Error("not implemented");
 }
+
+// ---- try it ----
+const req: Request = { prompt: "make it red", modality: "auto", imageUris: [] };
+const turns: Turn[] = [
+  { status: "completed", kind: "image", outputUrl: "u1" },
+  { status: "failed", kind: "image", outputUrl: null },
+];
+const endpoints = { flux: { edit: "/flux/edit", textToImage: "/flux/t2i" } };
+// console.log(withContinuity(req, turns));                                  // imageUris: ["u1"]
+// console.log(withContinuity({ ...req, imageUris: ["mine"] }, turns));      // imageUris: ["mine"]
+// console.log(routeImage("image_edit", "flux", endpoints, "flux"));         // { endpoint: "/flux/edit", family: "flux", reason: ...planned used }
+// console.log(routeImage("text_to_image", "nope", endpoints, "flux"));      // { endpoint: "/flux/t2i", family: "flux", reason: ...fallback }

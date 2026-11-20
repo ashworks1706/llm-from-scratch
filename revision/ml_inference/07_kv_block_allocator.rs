@@ -9,8 +9,6 @@ use std::collections::VecDeque;
 // bytes/token = 2 * layers * kv_heads * head_dim * bytes_per_element (2 = k and v);
 // bytes/block = bytes/token * block_size. checked mul throughout.
 // overflow, block_size 0, or bytes/block 0 -> 0.
-// ex: (2, 4, 64, 2) -> 2048 B/token; block_size 16 -> 32768 B/block:
-//     budget 1048576 -> 32, budget 40000 -> 1.  block_size 0 -> 0
 fn blocks_within(
     layers: usize, kv_heads: usize, head_dim: usize, bytes_per_element: usize,
     budget_bytes: u64, block_size: usize,
@@ -18,7 +16,6 @@ fn blocks_within(
     todo!()
 }
 
-// all indexed by block id. refcounts: holders per block. free: stack of unused ids.
 // evictable: oldest-first queue of unheld blocks with a reusable prefix.
 // published: block holds such a prefix.
 struct Pool { refcounts: Vec<u32>, free: Vec<u32>, evictable: VecDeque<u32>, published: Vec<bool> }
@@ -27,8 +24,6 @@ impl Pool {
     // 2. take_block
     // free non-empty -> pop its last. else evictable non-empty -> pop front, set published = false.
     // set chosen refcount = 1, return Some(id). both empty -> None.
-    // ex: free [0, 1] -> Some(1), Some(0), None
-    //     free [], evictable [4] -> Some(4), published[4] = false
     fn take_block(&mut self) -> Option<u32> {
         todo!()
     }
@@ -37,9 +32,21 @@ impl Pool {
     // walk blocks in reverse (earlier blocks queued last, evicted last).
     // decrement refcount, never below 0. if it hits 0 in this step: published -> push back of
     // evictable, else push onto free. already-0 blocks are left alone, not re-queued.
-    // ex: refcounts 1 each, published [true, false, true], release(&[0, 1, 2])
-    //     -> walk 2, 1, 0: evictable [2, 0], free holds 1
     fn release(&mut self, blocks: &[u32]) {
         todo!()
     }
+}
+
+// ---- try it ----
+fn main() {
+    // println!("{}", blocks_within(2, 4, 64, 2, 1048576, 16)); // 32
+    // println!("{}", blocks_within(2, 4, 64, 2, 40000, 16));   // 1
+    // println!("{}", blocks_within(2, 4, 64, 2, 1048576, 0));  // 0
+    let mut pool = Pool { refcounts: vec![0; 5], free: vec![0, 1], evictable: VecDeque::new(), published: vec![false; 5] };
+    // println!("{:?} {:?} {:?}", pool.take_block(), pool.take_block(), pool.take_block()); // Some(1) Some(0) None
+    // pool.evictable.push_back(4); pool.published[4] = true;
+    // println!("{:?} {}", pool.take_block(), pool.published[4]); // Some(4) false
+    let mut p2 = Pool { refcounts: vec![1, 1, 1], free: vec![], evictable: VecDeque::new(), published: vec![true, false, true] };
+    // p2.release(&[0, 1, 2]);
+    // println!("{:?} {:?}", p2.evictable, p2.free); // [2, 0] [1]
 }

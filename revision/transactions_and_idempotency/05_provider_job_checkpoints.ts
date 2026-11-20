@@ -13,11 +13,6 @@ type Resume = "submit_fresh" | "poll_existing" | "blocked_needs_operator";
 // all three null -> NoIntent. model set, job id null -> Armed { model }.
 // job id and model set -> Submitted { model, requestId: job id }.
 // job id with no model is corrupt -> throw an Error with a specific name (e.g. CorruptJobRow).
-// ex (provider, providerJobId, providerJobModel):
-//     (null, null, null) -> { _tag: "NoIntent" }
-//     ("fal", null, "m1") -> { _tag: "Armed", model: "m1" }
-//     ("fal", "r9", "m1") -> { _tag: "Submitted", model: "m1", requestId: "r9" }
-//     ("fal", "r9", null) -> throws
 export function decodeState(row: Row): State {
   throw new Error("not implemented");
 }
@@ -25,7 +20,14 @@ export function decodeState(row: Row): State {
 // 2. resumeAction
 // NoIntent -> "submit_fresh", Submitted -> "poll_existing", Armed -> "blocked_needs_operator".
 // switch over _tag, no default that could hide a forgotten variant (new variant must not compile).
-// ex: { _tag: "Armed", model: "m1" } -> "blocked_needs_operator"
 export function resumeAction(state: State): Resume {
   throw new Error("not implemented");
 }
+
+// ---- try it ----
+// console.log(decodeState({ provider: null, providerJobId: null, providerJobModel: null })); // { _tag: 'NoIntent' }
+// console.log(decodeState({ provider: "fal", providerJobId: null, providerJobModel: "m1" })); // { _tag: 'Armed', model: 'm1' }
+// console.log(decodeState({ provider: "fal", providerJobId: "r9", providerJobModel: "m1" })); // { _tag: 'Submitted', model: 'm1', requestId: 'r9' }
+// console.log(decodeState({ provider: "fal", providerJobId: "r9", providerJobModel: null })); // throws CorruptJobRow
+// console.log(resumeAction({ _tag: "Armed", model: "m1" }));                                  // blocked_needs_operator
+// console.log(resumeAction({ _tag: "NoIntent" }));                                            // submit_fresh

@@ -8,7 +8,6 @@ use std::time::Duration;
 use tokio::task::JoinSet;
 use tokio_util::sync::CancellationToken;
 
-// Cancelled: token fired first. TimedOut: limit passed first.
 enum Stopped {
     Cancelled,
     TimedOut,
@@ -18,8 +17,6 @@ enum Stopped {
 // drive work: finishes first -> Ok(value); token cancelled first -> Err(Cancelled);
 // limit passes first -> Err(TimedOut). losers are dropped.
 // cancel and completion ready together -> cancel wins (biased select, order branches on purpose).
-// ex: work 10ms, limit 100ms -> Ok(value);  work sleeps 1s, limit 50ms -> Err(TimedOut)
-//     already-cancelled token -> Err(Cancelled), even if work is ready immediately
 async fn run_with_deadline<F, T>(cancel: &CancellationToken, limit: Duration, work: F) -> Result<T, Stopped>
 where
     F: std::future::Future<Output = T>,
@@ -31,7 +28,22 @@ where
 // spawn one task per delay (sleep delay, return delay) in a JoinSet. collect the first n in finish
 // order, then abort the rest so nothing is running on return. n > len -> all, in finish order.
 // n == 0 -> [] and abort everything.
-// ex: [300, 100, 200, 50], 2 -> [50, 100];  [30, 10], 5 -> [10, 30];  [10], 0 -> []
 async fn first_n_done(delays_ms: Vec<u64>, n: usize) -> Vec<u64> {
     todo!()
+}
+
+// ---- try it ----
+#[tokio::main]
+async fn main() {
+    let token = CancellationToken::new();
+    // let r = run_with_deadline(&token, Duration::from_millis(100), async { tokio::time::sleep(Duration::from_millis(10)).await; 42 }).await;
+    // println!("{}", matches!(r, Ok(42)));                  // true
+    // let r = run_with_deadline(&token, Duration::from_millis(50), async { tokio::time::sleep(Duration::from_secs(1)).await; 42 }).await;
+    // println!("{}", matches!(r, Err(Stopped::TimedOut)));  // true
+    // token.cancel();
+    // let r = run_with_deadline(&token, Duration::from_millis(50), async { 42 }).await;
+    // println!("{}", matches!(r, Err(Stopped::Cancelled))); // true
+    // println!("{:?}", first_n_done(vec![300, 100, 200, 50], 2).await); // [50, 100]
+    // println!("{:?}", first_n_done(vec![30, 10], 5).await);            // [10, 30]
+    // println!("{:?}", first_n_done(vec![10], 0).await);                // []
 }

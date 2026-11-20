@@ -1,6 +1,5 @@
 # 1. classify_price
 # None -> "missing", < 0 -> "invalid", == 0 -> "free", > 0 -> "paid". check None first.
-# ex: None -> "missing", -1.5 -> "invalid", 0 -> "free", 9.99 -> "paid"
 # flat if chain, one early return per case.
 def classify_price(price: float | None) -> str:
     # None -> "missing"
@@ -19,7 +18,6 @@ def classify_price(price: float | None) -> str:
 # 2. clamp
 # return value limited to [low, high]; bounds inclusive, inside -> unchanged.
 # low > high -> ValueError("low cannot exceed high"), checked first even if value is in range.
-# ex: (5, 0, 3) -> 3, (-2, 0, 3) -> 0, (2, 0, 3) -> 2, (2, 3, 1) -> ValueError
 def clamp(value: float, low: float, high: float) -> float:
     # 1. Check whether the range is invalid.
     if low > high:
@@ -32,3 +30,11 @@ def clamp(value: float, low: float, high: float) -> float:
       value = high
     # 4. Otherwise, return the original value.
     return value
+
+
+# ---- try it ----
+if __name__ == "__main__":
+    # print(classify_price(None), classify_price(-1.5), classify_price(0), classify_price(9.99))  # missing invalid free paid
+    # print(clamp(5, 0, 3), clamp(-2, 0, 3), clamp(2, 0, 3))        # 3 0 2
+    # clamp(2, 3, 1)                                                # raises ValueError
+    pass

@@ -5,8 +5,6 @@
 // return a new Set; never mutate visible. checks:
 // clicked not in all -> unchanged copy. clicked is the only visible key -> unchanged copy.
 // clicked visible among several -> {clicked} (isolate). clicked hidden -> copy plus clicked.
-// ex: ({a, b, c}, [a, b, c], b) -> {b},  ({b}, [a, b, c], a) -> {a, b}
-//     ({b}, b) -> {b},  ({b}, z) -> {b}
 export function onLegendClick(visible: ReadonlySet<string>, all: readonly string[], clicked: string): Set<string> {
   throw new Error("not implemented");
 }
@@ -16,9 +14,6 @@ export function onLegendClick(visible: ReadonlySet<string>, all: readonly string
 // every non-empty filter, filter names sorted and each filter's values sorted. separators are your
 // choice, but different scopes/selections must give different strings. value order must not matter;
 // an empty list equals an absent filter. don't mutate the lists.
-// ex: ("tab", { region: ["b", "a"] }) === ("tab", { region: ["a", "b"] })
-//     ("tab", { region: ["a"], year: [] }) === ("tab", { region: ["a"] })
-//     ("tab", { region: [], year: undefined }) -> null
 export function filterKey(scope: string, filters: Record<string, readonly string[] | undefined>): string | null {
   throw new Error("not implemented");
 }
@@ -26,8 +21,18 @@ export function filterKey(scope: string, filters: Record<string, readonly string
 // 3. visibleSeries
 // return a new array of series whose key is in visible, original order. empty visible -> [].
 // don't mutate input.
-// ex: keys [a, b, c], visible {c, a} -> [a, c]
 // O(n) with Set membership, not a nested search.
 export function visibleSeries<T extends { key: string }>(series: readonly T[], visible: ReadonlySet<string>): T[] {
   throw new Error("not implemented");
 }
+
+// ---- try it ----
+const keys = ["a", "b", "c"];
+// console.log(onLegendClick(new Set(keys), keys, "b"));                     // Set(1) { 'b' }
+// console.log(onLegendClick(new Set(["b"]), keys, "a"));                    // Set(2) { 'b', 'a' }
+// console.log(onLegendClick(new Set(["b"]), keys, "b"));                    // Set(1) { 'b' }
+// console.log(onLegendClick(new Set(["b"]), keys, "z"));                    // Set(1) { 'b' }
+// console.log(filterKey("tab", { region: ["b", "a"] }) === filterKey("tab", { region: ["a", "b"] }));          // true
+// console.log(filterKey("tab", { region: ["a"], year: [] }) === filterKey("tab", { region: ["a"] }));          // true
+// console.log(filterKey("tab", { region: [], year: undefined }));          // null
+// console.log(visibleSeries([{ key: "a" }, { key: "b" }, { key: "c" }], new Set(["c", "a"])));                 // [ { key: 'a' }, { key: 'c' } ]

@@ -15,13 +15,11 @@ class TokenBucket:
     # refill: tokens += elapsed * refill_per_sec, capped at capacity.
     # if tokens >= cost: take them, True. else take nothing, False. never negative.
     # cost > capacity never succeeds.
-    # ex: capacity 5, refill 1/s, clock fixed at 0 -> 5x True, 6th False
     def allow(self, cost: float = 1.0) -> bool:
         pass
 
     # seconds until cost tokens are available; 0 if available now. refill first, take nothing.
     # cost > capacity -> float('inf').
-    # ex: bucket above emptied at t=0 -> retry_after() -> 1.0; at t=0.5 -> 0.5
     def retry_after(self, cost: float = 1.0) -> float:
         pass
 
@@ -35,12 +33,21 @@ class SlidingWindowLog:
 
     # drop timestamps <= now - window. if fewer than limit remain: record now, True.
     # else False and record nothing (rejections don't count).
-    # ex: limit 2, window 10: t=0,1,2,10 -> True, True, False, True (0 has left the window at 10)
     def allow(self) -> bool:
         pass
 
 
+# ---- try it ----
 if __name__ == '__main__':
-    # fake clock: capacity 5, refill 1/s -> 5 allowed at t=0, none at t=0.5, exactly 1 at t=1.0.
-    # show a fixed window counter lets 2 * limit through around a boundary; sliding log: limit.
+    # t = [0.0]
+    # tb = TokenBucket(5, 1, lambda: t[0])
+    # print([tb.allow() for _ in range(6)])         # [True, True, True, True, True, False]
+    # print(tb.retry_after())                       # 1.0
+    # t[0] = 0.5
+    # print(tb.retry_after())                       # 0.5
+    # t2 = [0.0]
+    # sw = SlidingWindowLog(2, 10, lambda: t2[0])
+    # out = []
+    # for t2[0] in (0, 1, 2, 10): out.append(sw.allow())
+    # print(out)                                    # [True, True, False, True]
     pass

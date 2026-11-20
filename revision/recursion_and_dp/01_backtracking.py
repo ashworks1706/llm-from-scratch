@@ -4,7 +4,6 @@
 # 1. subsets
 # all 2^n subsets of distinct nums (incl. [] and full), any order. [] -> [[]].
 # with repeats: sort first, skip a value equal to the previous sibling at the same depth.
-# ex: [1, 2] -> [[], [1], [2], [1, 2]]
 # include or skip nums[i] at each index; copy the path when recording.
 def subsets(nums: list[int]) -> list[list[int]]:
     pass
@@ -13,7 +12,6 @@ def subsets(nums: list[int]) -> list[list[int]]:
 # 2. combination_sum
 # all combos of distinct positive candidates summing to target; reuse allowed.
 # same multiset counts once ([2, 3] == [3, 2]), any order. none -> [], target 0 -> [[]].
-# ex: [2, 3, 6, 7], 7 -> [[2, 2, 3], [7]],  [2], 1 -> []
 # pass a start index to avoid reorderings; prune when remaining goes negative.
 def combination_sum(candidates: list[int], target: int) -> list[list[int]]:
     pass
@@ -21,13 +19,16 @@ def combination_sum(candidates: list[int], target: int) -> list[list[int]]:
 
 # 3. n_queens_count
 # number of ways to place n non-attacking queens (rows, cols, diagonals), one per row.
-# ex: 1 -> 1, 2 -> 0, 3 -> 0, 4 -> 2, 8 -> 92
 # sets of used cols, r - c and r + c for O(1) safety checks.
 def n_queens_count(n: int) -> int:
     pass
 
 
+# ---- try it ----
 if __name__ == '__main__':
-    # len(subsets(list(range(10)))) == 1024, n_queens_count(8) == 92.
-    # combination_sum([2, 3, 6, 7], 7) returns exactly two combos.
+    # print(subsets([1, 2]))                        # [[], [1], [2], [1, 2]] (any order)
+    # print(combination_sum([2, 3, 6, 7], 7))       # [[2, 2, 3], [7]]
+    # print(combination_sum([2], 1))                # []
+    # print(n_queens_count(1), n_queens_count(2), n_queens_count(3))  # 1 0 0
+    # print(n_queens_count(4), n_queens_count(8))   # 2 92
     pass

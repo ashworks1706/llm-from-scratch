@@ -8,7 +8,6 @@ type Shape =
 
 // 1. assertNever
 // always throw a TypeError whose message includes JSON.stringify(value). never returns.
-// ex: assertNever({ kind: "hex" } as never) -> throws TypeError containing {"kind":"hex"}
 export function assertNever(value: never): never {
   throw new Error("not implemented");
 }
@@ -17,8 +16,6 @@ export function assertNever(value: never): never {
 // circle: Math.PI * radius * radius, rect: width * height, triangle: base * height / 2.
 // switch on shape.kind, one case per variant, default only calls assertNever (new variant breaks
 // compilation).
-// ex: { kind: "rect", width: 2, height: 3 } -> 6,  { kind: "triangle", base: 4, height: 3 } -> 6,
-//     { kind: "circle", radius: 1 } -> Math.PI
 export function area(shape: Shape): number {
   throw new Error("not implemented");
 }
@@ -34,11 +31,16 @@ type PaymentEvent = { type: "settle"; at: number } | { type: "fail"; reason: str
 // pending + settle -> settled, same id, settledAt = event.at.
 // pending + fail -> failed, same id, event reason.  failed + retry -> pending, same id.
 // any other pair: return the same payment object (not a copy). never mutate the input.
-// ex: ({ status: "pending", id: "p1" }, { type: "settle", at: 10 })
-//       -> { status: "settled", id: "p1", settledAt: 10 }
-//     ({ status: "failed", id: "p1", reason: "card" }, { type: "retry" })
-//       -> { status: "pending", id: "p1" }
-//     (settled payment, retry) -> that same object
 export function nextPayment(payment: Payment, event: PaymentEvent): Payment {
   throw new Error("not implemented");
 }
+
+// ---- try it ----
+// try { assertNever({ kind: "hex" } as never); } catch (e) { console.log(e instanceof TypeError, (e as Error).message); } // true ...{"kind":"hex"}
+// console.log(area({ kind: "rect", width: 2, height: 3 }));      // 6
+// console.log(area({ kind: "triangle", base: 4, height: 3 }));   // 6
+// console.log(area({ kind: "circle", radius: 1 }));              // 3.141592653589793
+// console.log(nextPayment({ status: "pending", id: "p1" }, { type: "settle", at: 10 }));                      // { status: 'settled', id: 'p1', settledAt: 10 }
+// console.log(nextPayment({ status: "failed", id: "p1", reason: "card" }, { type: "retry" }));                // { status: 'pending', id: 'p1' }
+// const settled = { status: "settled" as const, id: "p1", settledAt: 10 };
+// console.log(nextPayment(settled, { type: "retry" }) === settled);                                            // true

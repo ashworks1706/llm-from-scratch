@@ -1,0 +1,113 @@
+[package]
+name = "revision"
+version = "0.1.0"
+edition = "2021"
+publish = false
+autobins = false
+autotests = false
+autoexamples = false
+
+# every .rs lesson is its own binary. run one with ./run <file>,
+# or cargo run --bin <file stem>.
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+tokio-util = "0.7"
+
+[lints.rust]
+dead_code = "allow"
+unused_variables = "allow"
+unused_mut = "allow"
+unused_imports = "allow"
+
+[[bin]]
+name = "01_agent_loop_stop_conditions"
+path = "agents/01_agent_loop_stop_conditions.rs"
+
+[[bin]]
+name = "02_tool_registry_dyn_dispatch"
+path = "agents/02_tool_registry_dyn_dispatch.rs"
+
+[[bin]]
+name = "03_prompt_budget_packing"
+path = "agents/03_prompt_budget_packing.rs"
+
+[[bin]]
+name = "03_policy_gate"
+path = "auth_and_policy/03_policy_gate.rs"
+
+[[bin]]
+name = "04_single_use_confirmation"
+path = "auth_and_policy/04_single_use_confirmation.rs"
+
+[[bin]]
+name = "03_threads_mutex_and_channels"
+path = "concurrency/03_threads_mutex_and_channels.rs"
+
+[[bin]]
+name = "04_send_sync_and_rwlock"
+path = "concurrency/04_send_sync_and_rwlock.rs"
+
+[[bin]]
+name = "09_tokio_async_and_backpressure"
+path = "concurrency/09_tokio_async_and_backpressure.rs"
+
+[[bin]]
+name = "10_select_cancellation_and_channels"
+path = "concurrency/10_select_cancellation_and_channels.rs"
+
+[[bin]]
+name = "09_collections_strings_and_iterators"
+path = "language_basics/09_collections_strings_and_iterators.rs"
+
+[[bin]]
+name = "07_kv_block_allocator"
+path = "ml_inference/07_kv_block_allocator.rs"
+
+[[bin]]
+name = "08_latency_percentiles_and_benchmarks"
+path = "ml_inference/08_latency_percentiles_and_benchmarks.rs"
+
+[[bin]]
+name = "01_ownership_moves_and_borrowing"
+path = "ownership_and_mutation/01_ownership_moves_and_borrowing.rs"
+
+[[bin]]
+name = "02_lifetimes_in_structs"
+path = "ownership_and_mutation/02_lifetimes_in_structs.rs"
+
+[[bin]]
+name = "02_retry_backoff_and_deadline"
+path = "retries_limits_and_caching/02_retry_backoff_and_deadline.rs"
+
+[[bin]]
+name = "02_distance_over_a_slab"
+path = "search_and_retrieval/02_distance_over_a_slab.rs"
+
+[[bin]]
+name = "03_exact_scan_top_k"
+path = "search_and_retrieval/03_exact_scan_top_k.rs"
+
+[[bin]]
+name = "04_ivf_partitions_and_probing"
+path = "search_and_retrieval/04_ivf_partitions_and_probing.rs"
+
+[[bin]]
+name = "07_wal_replay_and_checkpoint"
+path = "transactions_and_idempotency/07_wal_replay_and_checkpoint.rs"
+
+[[bin]]
+name = "04_structs_enums_and_state"
+path = "types_and_errors/04_structs_enums_and_state.rs"
+
+[[bin]]
+name = "05_option_result_and_errors"
+path = "types_and_errors/05_option_result_and_errors.rs"
+
+[[bin]]
+name = "06_error_enums_and_context"
+path = "types_and_errors/06_error_enums_and_context.rs"
+
+[[bin]]
+name = "07_traits_generics_and_lifetimes"
+path = "types_and_errors/07_traits_generics_and_lifetimes.rs"

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# run one or more revision lessons, picked by file extension.
+# usage: ./run concurrency/02_races_and_check_then_act.py [more files...]
+set -u
+here="$(cd "$(dirname "$0")" && pwd)"
+[ $# -eq 0 ] && { echo "usage: ./run <lesson file> [more files...]"; exit 2; }
+status=0
+for f in "$@"; do
+  path="$(realpath "$f")"
+  stem="$(basename "$path")"; stem="${stem%.*}"
+  echo "== $f"
+  case "$path" in
+    *.py) python3 -B "$path" || status=1 ;;
+    *.rs) cargo run -q --manifest-path "$here/Cargo.toml" --bin "$stem" || status=1 ;;
+    *.ts) node "$path" || status=1 ;;
+    *.cu) out="${TMPDIR:-/tmp}/revision_$stem"
+          nvcc -O2 -ccbin "${NVCC_CCBIN:-/usr/bin/g++-15}" -o "$out" "$path" && "$out" || status=1 ;;
+    *) echo "don't know how to run $f"; status=1 ;;
+  esac
+done
+exit $status

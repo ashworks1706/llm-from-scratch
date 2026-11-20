@@ -15,7 +15,6 @@ class SGDMomentum:
 
     # 1b. step
     # update in place (never rebind p or v). skip params with grad None; their v is unchanged.
-    # ex: p=1.0, lr=0.1, mu=0.9, grad 1.0 twice -> step 1: v=1.0, p=0.9; step 2: v=1.9, p=0.71
     @torch.no_grad()
     def step(self):
         pass
@@ -36,14 +35,18 @@ class AdamW:
 
     # 2b. step
     # increment t once per call, then update m, v, p in place. skip params with grad None.
-    # ex: p=1.0, lr=0.1, betas (0.9, 0.999), wd=0.01, grad 0.5, first step ->
-    #     m=0.05, v=0.00025, m_hat=0.5, v_hat=0.25; decay p=0.999; then p -= ~0.1 -> p ~0.899
     @torch.no_grad()
     def step(self):
         pass
 
 
+# ---- try it ----
 if __name__ == '__main__':
-    # tiny regression; two copies of the same init params. 20 steps hand optimizer vs torch.optim
-    # (SGD same momentum, then AdamW same settings), same data. assert allclose(atol=1e-6) for each.
+    # p = torch.tensor([1.0], requires_grad=True)
+    # opt = SGDMomentum([p], lr=0.1, momentum=0.9)
+    # p.grad = torch.tensor([1.0]); opt.step(); print(p.item())   # 0.9
+    # p.grad = torch.tensor([1.0]); opt.step(); print(p.item())   # 0.71
+    # q = torch.tensor([1.0], requires_grad=True)
+    # adam = AdamW([q], lr=0.1, betas=(0.9, 0.999), weight_decay=0.01)
+    # q.grad = torch.tensor([0.5]); adam.step(); print(q.item())  # ~0.899
     pass

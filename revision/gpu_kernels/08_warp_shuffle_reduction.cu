@@ -17,7 +17,23 @@ __device__ float warp_reduce_sum(float v) {
 // warp_reduce_sum each warp; lane 0 stores it in shared[threadIdx.x / 32]. __syncthreads().
 // warp 0 loads one value per lane (0 for lanes >= warp count), warp_reduce_sum, thread 0 writes
 // partial[blockIdx.x]. all threads reach every shuffle and __syncthreads(). sum(partial) = total.
-// ex: 1 block of 64, n = 100, all 1.0: threads 0-35 add 2 (t, t + 64), 36-63 add 1
-//     -> partial [100]
 __global__ void block_sum_shfl(const float* input, float* partial, int n) {
+}
+
+// ---- try it ----
+#include <cstdio>
+#include <cuda_runtime.h>
+
+int main() {
+    int n = 100;
+    float *input, *partial;
+    cudaMallocManaged(&input, n * sizeof(float));
+    cudaMallocManaged(&partial, sizeof(float));
+    for (int i = 0; i < n; i++) input[i] = 1.0f;
+    partial[0] = 0;
+    block_sum_shfl<<<1, 64>>>(input, partial, n);
+    cudaDeviceSynchronize();
+    printf("%g\n", partial[0]);  // expected: 100
+    cudaFree(input); cudaFree(partial);
+    return 0;
 }

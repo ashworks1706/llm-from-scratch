@@ -14,8 +14,6 @@ export type Infer<S> = S extends Schema<infer T> ? T : never;
 // parse every element, don't stop at the first failure: collect issues from all failing elements,
 // each prefixed with [index] (nested reads [2].price). no failures -> ok true with parsed values in
 // order. [] is valid -> [].
-// ex (number schema): [1, 2, 3] -> { ok: true, value: [1, 2, 3] }
-//     [1, "x", 3, "y"] -> ok false, two issues, one starting [1] and one starting [3]
 export function array<T>(item: Schema<T>): Schema<T[]> {
   throw new Error("not implemented");
 }
@@ -28,9 +26,19 @@ export function array<T>(item: Schema<T>): Schema<T[]> {
 // (items + [2].price -> items[2].price); an issue with no path becomes just the key name.
 // drop undeclared keys. success -> a new object with only declared keys. don't mutate input;
 // no type assertion outside this function.
-// ex: shape { a: num }, { a: 1, extra: true } -> { ok: true, value: { a: 1 } }
-//     null -> ok false,  [1] -> ok false
-//     shape { a: num, b: num }, { a: 1 } -> ok false with an issue mentioning b
 export function object<S extends Record<string, Schema<unknown>>>(shape: S): Schema<{ [K in keyof S]: Infer<S[K]> }> {
   throw new Error("not implemented");
 }
+
+// ---- try it ----
+const num: Schema<number> = {
+  parse: (x) => (typeof x === "number" ? { ok: true, value: x } : { ok: false, issues: ["expected number"] }),
+};
+// console.log(array(num).parse([1, 2, 3]));            // { ok: true, value: [ 1, 2, 3 ] }
+// console.log(array(num).parse([1, "x", 3, "y"]));     // { ok: false, issues: [ '[1] ...', '[3] ...' ] }
+// console.log(array(num).parse("nope"));               // { ok: false, issues: [ one issue ] }
+// console.log(object({ a: num }).parse({ a: 1, extra: true }));          // { ok: true, value: { a: 1 } }
+// console.log(object({ a: num, b: num }).parse({ a: 1 }));               // { ok: false, issues: [ ...mentions b ] }
+// console.log(object({ items: array(object({ price: num })) }).parse({ items: [{ price: 1 }, { price: "x" }] })); // issue starts items[1].price
+// console.log(object({ a: num }).parse(null));                           // { ok: false, ... }
+// console.log(object({ a: num }).parse([1]));                            // { ok: false, ... }

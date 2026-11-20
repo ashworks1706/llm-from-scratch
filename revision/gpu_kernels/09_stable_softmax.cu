@@ -11,8 +11,6 @@
 // each row sums to 1. block reductions need __syncthreads() that every thread reaches.
 // all -inf row would give NaN: define it to output all zeros, and state that rule in a comment in
 // the kernel. -inf entries in a row with finite entries give 0 naturally.
-// ex: [1, 2, 3] -> m 3, d ~1.5032 -> ~[0.0900, 0.2447, 0.6652]. [0, 0] -> [0.5, 0.5].
-//     [-inf, -inf] -> [0, 0]
 __global__ void softmax_3pass(const float* input, float* output, int rows, int cols) {
 }
 
@@ -26,4 +24,28 @@ __global__ void softmax_3pass(const float* input, float* output, int rows, int c
 // second pass writes output = exp(x - m) / d: input read twice, not three times.
 // ex: [1, 2, 3] in one thread: (1, 1) -> (2, 1.3679) -> (3, 1.5032), same output as 3pass.
 __global__ void softmax_online(const float* input, float* output, int rows, int cols) {
+}
+
+// ---- try it ----
+#include <cstdio>
+#include <cmath>
+#include <cuda_runtime.h>
+
+int main() {
+    int rows = 3, cols = 3;
+    float *input, *o1, *o2;
+    cudaMallocManaged(&input, rows * cols * sizeof(float));
+    cudaMallocManaged(&o1, rows * cols * sizeof(float));
+    cudaMallocManaged(&o2, rows * cols * sizeof(float));
+    float v[] = {1, 2, 3,  0, 0, 0,  -INFINITY, -INFINITY, -INFINITY};
+    for (int i = 0; i < 9; i++) { input[i] = v[i]; o1[i] = -1; o2[i] = -1; }
+    softmax_3pass<<<rows, 128>>>(input, o1, rows, cols);
+    softmax_online<<<rows, 128>>>(input, o2, rows, cols);
+    cudaDeviceSynchronize();
+    for (int i = 0; i < 9; i++) printf("%.4f ", o1[i]);
+    printf("\n");  // expected: 0.0900 0.2447 0.6652 0.3333 0.3333 0.3333 0.0000 0.0000 0.0000
+    for (int i = 0; i < 9; i++) printf("%.4f ", o2[i]);
+    printf("\n");  // expected: same as above
+    cudaFree(input); cudaFree(o1); cudaFree(o2);
+    return 0;
 }

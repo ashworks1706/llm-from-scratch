@@ -9,9 +9,6 @@ type Eligibility = { reason: "eligible"; cost: number } | { reason: "not_failed"
 // balance starts at 0. new key -> add delta, remember key, return { applied: true, balance: new }.
 // seen key -> change nothing (even if delta differs), return { applied: false, balance: current }.
 // delta may be negative, zero or fractional.
-// ex: apply("spend:j1", -5) -> { applied: true, balance: -5 }
-//     apply("spend:j1", -5) again -> { applied: false, balance: -5 }
-//     apply("refund:j1", 5) -> { applied: true, balance: 0 }
 // O(1) per call with the class's Map.
 export class Ledger {
   private applied = new Map<string, number>();
@@ -26,10 +23,15 @@ export class Ledger {
 // check in order, first match wins: status not failed -> not_failed; refundTransactionId set ->
 // already_refunded; spendCost null -> not_charged; else { reason: "eligible", cost: spendCost }.
 // spendCost set but no deductTransactionId (still charging) counts as charged.
-// ex (status, spendCost, deductTransactionId, refundTransactionId):
-//     (completed, 5, "t1", null) -> { reason: "not_failed" }
-//     (failed, 5, "t1", null) -> { reason: "eligible", cost: 5 }
-//     (failed, null, null, null) -> { reason: "not_charged" }
 export function refundEligibility(row: Row): Eligibility {
   throw new Error("not implemented");
 }
+
+// ---- try it ----
+const ledger = new Ledger();
+// console.log(ledger.apply("spend:j1", -5));   // { applied: true, balance: -5 }
+// console.log(ledger.apply("spend:j1", -5));   // { applied: false, balance: -5 }
+// console.log(ledger.apply("refund:j1", 5));   // { applied: true, balance: 0 }
+// console.log(refundEligibility({ status: "completed", spendCost: 5, deductTransactionId: "t1", refundTransactionId: null })); // { reason: 'not_failed' }
+// console.log(refundEligibility({ status: "failed", spendCost: 5, deductTransactionId: "t1", refundTransactionId: null }));    // { reason: 'eligible', cost: 5 }
+// console.log(refundEligibility({ status: "failed", spendCost: null, deductTransactionId: null, refundTransactionId: null })); // { reason: 'not_charged' }

@@ -4,17 +4,14 @@
 use std::collections::HashMap;
 use std::time::{Duration, Instant};
 
-// payload_hash: hash of the args. expires: after this it can't be claimed.
 struct Held { user: String, action: String, payload_hash: String, expires: Instant }
 
-// pending actions keyed by token.
 #[derive(Default)]
 struct Store { held: HashMap<u128, Held> }
 
 impl Store {
     // 1. hold
     // store under token, expires = now + ttl. existing token -> overwrite.
-    // ex: hold(7, "ann", "send_email", "h1", 60s, t0) -> expires at t0 + 60s
     fn hold(&mut self, token: u128, user: &str, action: &str, payload_hash: &str, ttl: Duration, now: Instant) {
         todo!()
     }
@@ -24,12 +21,22 @@ impl Store {
     // None for: unknown token, wrong user, expired, repeat claim.
     // expired when now >= expires; a touched expired entry is removed.
     // wrong user must NOT remove the entry (owner can still claim). O(1) per call.
-    // ex: after hold(7, "ann", "send_email", "h1", 60s, t0):
-    //     claim(7, "bob", t0) -> None;  claim(7, "ann", t0+10s) -> Some("send_email")
-    //     same claim again -> None
-    //     claim(7, "ann", t0+60s) -> None (expired)
-    //     re-hold token 7 with action "b" -> claim gives Some("b")
     fn claim(&mut self, token: u128, user: &str, now: Instant) -> Option<String> {
         todo!()
     }
+}
+
+// ---- try it ----
+fn main() {
+    let t0 = Instant::now();
+    let mut store = Store::default();
+    // store.hold(7, "ann", "send_email", "h1", Duration::from_secs(60), t0);
+    // println!("{:?}", store.claim(7, "bob", t0));                           // None
+    // println!("{:?}", store.claim(7, "ann", t0 + Duration::from_secs(10))); // Some("send_email")
+    // println!("{:?}", store.claim(7, "ann", t0 + Duration::from_secs(10))); // None (already claimed)
+    // store.hold(8, "ann", "send_email", "h1", Duration::from_secs(60), t0);
+    // println!("{:?}", store.claim(8, "ann", t0 + Duration::from_secs(60))); // None (expired)
+    // store.hold(7, "ann", "a", "h1", Duration::from_secs(60), t0);
+    // store.hold(7, "ann", "b", "h2", Duration::from_secs(60), t0);
+    // println!("{:?}", store.claim(7, "ann", t0));                           // Some("b")
 }

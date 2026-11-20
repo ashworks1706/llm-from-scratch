@@ -29,17 +29,17 @@ class Value:
 
 # ---- try it ----
 if __name__ == '__main__':
-    # print(Value(3.0).data, Value(3.0).grad)       # 3.0 0.0
+    # assert abs(Value(3.0).data - 3.0) < 1e-6 and abs(Value(3.0).grad - 0.0) < 1e-6
     # a, b = Value(2.0), Value(3.0)
     # c = a * b
     # c.backward()
-    # print(c.data, c.grad, a.grad, b.grad)         # 6.0 1.0 3.0 2.0
+    # assert abs(c.data - 6.0) < 1e-6 and abs(c.grad - 1.0) < 1e-6 and abs(a.grad - 3.0) < 1e-6 and abs(b.grad - 2.0) < 1e-6
     # x = Value(3.0)
     # y = x * x
     # y.backward()
-    # print(y.data, x.grad)                         # 9.0 6.0
+    # assert abs(y.data - 9.0) < 1e-6 and abs(x.grad - 6.0) < 1e-6
     # a, b = Value(2.0), Value(3.0)
     # c = (a * a) * b
     # c.backward()
-    # print(c.data, a.grad, b.grad)                 # 12.0 12.0 4.0
+    # assert abs(c.data - 12.0) < 1e-6 and abs(a.grad - 12.0) < 1e-6 and abs(b.grad - 4.0) < 1e-6
     pass

@@ -23,7 +23,7 @@ def partition_by_episode(starts: np.ndarray, episode_of: np.ndarray, k: int, see
 
 # ---- try it ----
 if __name__ == '__main__':
-    # print(episode_of_row(np.array([0, 0, 1, 0, 1, 0])))                    # [0 0 0 1 1 2]
+    # assert list(episode_of_row(np.array([0, 0, 1, 0, 1, 0]))) == [0, 0, 0, 1, 1, 2]
     # ep = np.repeat([0, 1, 2], 4)
     # print(partition_by_episode(np.arange(12), ep, 3, seed=0))              # 3 arrays of length 4, one whole episode each
     pass

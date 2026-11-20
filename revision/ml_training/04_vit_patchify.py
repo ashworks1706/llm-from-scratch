@@ -28,10 +28,10 @@ def interpolate_pos_embed(pos: torch.Tensor, old_grid: int, new_grid: int) -> to
 
 # ---- try it ----
 if __name__ == '__main__':
-    # print(num_patches(224, 224, 16), num_patches(32, 48, 16))     # 196 6
+    # assert (num_patches(224, 224, 16), num_patches(32, 48, 16)) == (196, 6)
     # num_patches(30, 32, 16)                       # raises ValueError
     # x = torch.arange(16.).reshape(1, 1, 4, 4)
     # print(patchify(x, 2))                         # (1, 4, 4): [0,1,4,5], [2,3,6,7], [8,9,12,13], [10,11,14,15]
-    # print(patchify(torch.randn(2, 3, 224, 224), 16).shape)  # torch.Size([2, 196, 768])
-    # print(interpolate_pos_embed(torch.randn(196, 768), 14, 16).shape)  # torch.Size([256, 768])
+    # assert patchify(torch.randn(2, 3, 224, 224), 16).shape == (2, 196, 768)
+    # assert interpolate_pos_embed(torch.randn(196, 768), 14, 16).shape == (256, 768)
     pass

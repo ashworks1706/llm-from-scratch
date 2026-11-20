@@ -36,11 +36,11 @@ if __name__ == '__main__':
     # q = make_queue()
     # q.execute("insert into jobs(name) values ('a')"); q.execute("insert into jobs(name) values ('b')")
     # assert q.execute("select status, attempts from jobs where id = 1").fetchone() == ('todo', 0)
-    # print(claim(q), claim(q), claim(q))           # 1 2 None
+    # assert (claim(q), claim(q), claim(q)) == (1, 2, None)
     # assert q.execute("select status, attempts from jobs where id = 1").fetchone() == ('doing', 1)
-    # print(finish(q, 1, False, 3))                 # todo
+    # assert finish(q, 1, False, 3) == 'todo'
     # q.execute("update jobs set attempts = 3 where id = 1")
-    # print(finish(q, 1, False, 3))                 # failed
-    # print(finish(q, 2, True, 3))                  # succeeded
-    # print(backoff(1), backoff(2), backoff(3), backoff(6))   # 2.0 4.0 8.0 60.0
+    # assert finish(q, 1, False, 3) == 'failed'
+    # assert finish(q, 2, True, 3) == 'succeeded'
+    # assert abs(backoff(1) - 2.0) < 1e-6 and abs(backoff(2) - 4.0) < 1e-6 and abs(backoff(3) - 8.0) < 1e-6 and abs(backoff(6) - 60.0) < 1e-6
     pass

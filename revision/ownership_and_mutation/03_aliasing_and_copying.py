@@ -29,11 +29,11 @@ def make_adders(count: int) -> list[Callable[[int], int]]:
 
 # ---- try it ----
 if __name__ == '__main__':
-    # print(append_item(1), append_item(2))         # [1] [2]
+    # assert (append_item(1), append_item(2)) == ([1], [2])
     # existing = [1, 2]
-    # print(append_item(3, existing) is existing, existing)   # True [1, 2, 3]
+    # assert append_item(3, existing) is existing and existing == [1, 2, 3]
     # cfg = {"a": [1, 2]}
     # snapshot(cfg)["a"].append(3)
     # assert cfg == {'a': [1, 2]}
-    # print(make_adders(3)[2](10), make_adders(3)[0](10))     # 12 10
+    # assert (make_adders(3)[2](10), make_adders(3)[0](10)) == (12, 10)
     pass

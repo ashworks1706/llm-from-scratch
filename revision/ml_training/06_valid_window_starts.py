@@ -21,6 +21,6 @@ def valid_starts(terminal: np.ndarray, span: int) -> np.ndarray:
 
 # ---- try it ----
 if __name__ == '__main__':
-    # print(prefix_terminals(np.array([0, 0, 1, 0, 1])))                     # [0 0 0 1 1 2]
-    # print(valid_starts(np.array([0, 0, 0, 1, 0, 0, 0, 0, 1, 0]), 3))       # [0 4 5]
+    # assert list(prefix_terminals(np.array([0, 0, 1, 0, 1]))) == [0, 0, 0, 1, 1, 2]
+    # assert list(valid_starts(np.array([0, 0, 0, 1, 0, 0, 0, 0, 1, 0]), 3)) == [0, 4, 5]
     pass

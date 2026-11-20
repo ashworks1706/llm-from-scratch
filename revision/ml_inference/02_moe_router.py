@@ -23,8 +23,8 @@ def load_balance_loss(logits: torch.Tensor, indices: torch.Tensor, n_experts: in
 # ---- try it ----
 if __name__ == '__main__':
     # w, idx = route_top_k(torch.tensor([[2., 0., 1., -1.]]), 2)
-    # assert idx, w == [[0, 2]], [[0.7311, 0.2689]]
-    # assert route_top_k(torch.tensor([[2., 0., 1., -1.]]), 1)[0] == [[1.0]]
+    # assert idx.tolist() == [[0, 2]] and torch.allclose(w, torch.tensor([[0.7311, 0.2689]]), atol=1e-4)
+    # assert route_top_k(torch.tensor([[2., 0., 1., -1.]]), 1)[0].tolist() == [[1.0]]
     # assert abs(load_balance_loss(torch.zeros(4, 2), torch.tensor([[0], [0], [1], [1]]), 2) - 1.0) < 1e-6
     # assert abs(load_balance_loss(torch.tensor([[50., 0.]] * 4), torch.zeros(4, 1, dtype=torch.long), 2) - 2.0) < 1e-3
     pass

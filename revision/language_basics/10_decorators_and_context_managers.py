@@ -38,7 +38,7 @@ if __name__ == "__main__":
     #     state["n"] += 1
     #     if state["n"] < 3: raise ValueError("no")
     #     return "ok"
-    # print(flaky(), state["n"])                    # ok 3
+    # assert (flaky(), state["n"]) == ('ok', 3)
     # state["n"] = 0
     # @retry(2, (ValueError,))
     # def always_fails():

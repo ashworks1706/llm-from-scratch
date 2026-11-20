@@ -68,7 +68,7 @@ if __name__ == "__main__":
     # assert maximum_window_sum([-3, -1, -2], 2) == -3
     # assert maximum_window_sum([1, 2], 5) is None
     # assert maximum_window_sum([1, 2], 0) is None
-    # print(longest_distinct_substring("abcabcbb")) # 3
+    # assert longest_distinct_substring("abcabcbb") == 3
     # assert longest_distinct_substring("bbbb") == 1
     # assert longest_distinct_substring("pwwkew") == 3
     pass

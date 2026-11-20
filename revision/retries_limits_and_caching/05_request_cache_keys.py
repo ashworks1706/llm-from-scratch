@@ -35,12 +35,12 @@ class PrefixCache:
 
 # ---- try it ----
 if __name__ == "__main__":
-    # print(build_key("v1", "GET", "/items", [("b", "2"), ("a", "1"), ("a", "0")]))  # v1:GET:/items:a=0&a=1&b=2
-    # print(build_key("v1", "GET", "/items", []))                                    # v1:GET:/items:
+    # assert build_key("v1", "GET", "/items", [("b", "2"), ("a", "1"), ("a", "0")]) == "v1:GET:/items:a=0&a=1&b=2"
+    # assert build_key("v1", "GET", "/items", []) == "v1:GET:/items:"
     # print(build_key("v1", "GET", "/items", [("a", "1")], max_len=5))               # v1:hashed:<16 hex chars>
     # pc = PrefixCache()
     # pc.set("k", 1, 10, now=0)
-    # print(pc.get("k", now=9), pc.get("k", now=10))   # 1 None
+    # assert (pc.get("k", now=9), pc.get("k", now=10)) == (1, None)
     # pc.set("v1:a", 1, None, now=0); pc.set("v1:b", 2, None, now=0); pc.set("v2:a", 3, None, now=0)
     # assert pc.invalidate_prefix("v1:") == 2
     pass

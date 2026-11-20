@@ -26,9 +26,9 @@ def n_queens_count(n: int) -> int:
 
 # ---- try it ----
 if __name__ == '__main__':
-    # print(subsets([1, 2]))                        # [[], [1], [2], [1, 2]] (any order)
+    # assert sorted(subsets([1, 2])) == [[], [1], [1, 2], [2]]  # any order
     # assert combination_sum([2, 3, 6, 7], 7) == [[2, 2, 3], [7]]
     # assert combination_sum([2], 1) == []
-    # print(n_queens_count(1), n_queens_count(2), n_queens_count(3))  # 1 0 0
-    # print(n_queens_count(4), n_queens_count(8))   # 2 92
+    # assert (n_queens_count(1), n_queens_count(2), n_queens_count(3)) == (1, 0, 0)
+    # assert (n_queens_count(4), n_queens_count(8)) == (2, 92)
     pass

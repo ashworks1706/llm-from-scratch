@@ -43,5 +43,5 @@ if __name__ == '__main__':
     # reg, lock, out = {}, threading.Lock(), []
     # ts = [threading.Thread(target=lambda: out.append(safe_get_or_create(reg, "a", factory, lock))) for _ in range(8)]
     # [t.start() for t in ts]; [t.join() for t in ts]
-    # print(len(calls), len({id(o) for o in out}))  # 1 1
+    # assert (len(calls), len({id(o) for o in out})) == (1, 1)
     pass

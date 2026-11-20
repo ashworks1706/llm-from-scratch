@@ -38,6 +38,6 @@ if __name__ == '__main__':
     # assert abs(price_items(db, [(1, 2), (1, 3)]) - 50.0) < 1e-6
     # price_items(db, [(1, 3), (1, 3)])             # raises StoreError (6 > 5)
     # price_items(db, [(99, 1)])                    # raises StoreError
-    # print(place_order(db, 7, [(1, 3)]))           # 30.0  (stock 5 -> 2, balance 100 -> 70)
+    # assert place_order(db, 7, [(1, 3)]) == 30.0  # stock 5 -> 2, balance 100 -> 70
     # place_order(db, 8, [(1, 1)])                  # raises StoreError: user 8 has no balance, nothing changes
     pass

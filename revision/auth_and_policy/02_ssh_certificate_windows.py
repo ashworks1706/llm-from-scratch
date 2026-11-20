@@ -33,10 +33,10 @@ def accepts(cert: Cert, pod_id: str, now: int) -> bool:
 
 # ---- try it ----
 if __name__ == '__main__':
-    # print(safe_username("Alice.Smith"))           # alice.smith
-    # print(safe_username("--..Bob!!"))             # bob
-    # print(safe_username("!!!"))                   # user
-    # print(safe_username("a" * 30))                # "a" * 22
+    # assert safe_username("Alice.Smith") == 'alice.smith'
+    # assert safe_username("--..Bob!!") == 'bob'
+    # assert safe_username("!!!") == 'user'
+    # assert safe_username("a" * 30) == "a" * 22
     # cert = Cert("k1", ("pod-a",), 1000, 2000, None)
     # assert accepts(cert, "pod-a", 999) is False
     # assert accepts(cert, "pod-a", 1000) is True

@@ -35,7 +35,7 @@ class InvertedIndex:
 
 # ---- try it ----
 if __name__ == '__main__':
-    # print(tokenize("Hello, World! 42"))           # ['hello', 'world', '42']
+    # assert tokenize("Hello, World! 42") == ["hello", "world", "42"]
     # idx = InvertedIndex()
     # idx.add("d1", "apple pie"); idx.add("d2", "apple tart"); idx.add("d3", "zebra pie")
     # print(idx.search("zebra apple", 3))           # d3 first, then d1, d2 (tied)

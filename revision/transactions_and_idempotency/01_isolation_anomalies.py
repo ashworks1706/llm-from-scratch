@@ -42,5 +42,5 @@ if __name__ == '__main__':
     # [t.start() for t in ts]; [t.join() for t in ts]
     # print(sqlite3.connect(path).execute("select n from counter").fetchone())   # (1,)  lost update
     # assert increment_optimistic(path, 3) is True
-    # print(insert_once(path, "e1"), insert_once(path, "e1"))                    # True False
+    # assert (insert_once(path, "e1"), insert_once(path, "e1")) == (True, False)
     pass

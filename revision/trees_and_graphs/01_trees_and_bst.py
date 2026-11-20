@@ -39,9 +39,9 @@ if __name__ == '__main__':
     T = TreeNode
     bad = T(5, T(1), T(6, T(3), None))
     good = T(2, T(1), T(3))
-    # print(is_valid_bst(bad), is_valid_bst(good))  # False True
+    # assert (is_valid_bst(bad), is_valid_bst(good)) == (False, True)
     # assert is_valid_bst(T(2, T(2), None)) is False
     # assert inorder_iterative(good) == [1, 2, 3]
     tree = T(3, T(5, T(6), T(2, T(7), T(4))), T(1, T(0), T(8)))
-    # print(lca_binary_tree(tree, 5, 1), lca_binary_tree(tree, 5, 4), lca_binary_tree(tree, 7, 4))  # 3 5 2
+    # assert (lca_binary_tree(tree, 5, 1), lca_binary_tree(tree, 5, 4), lca_binary_tree(tree, 7, 4)) == (3, 5, 2)
     pass

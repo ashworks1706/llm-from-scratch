@@ -23,8 +23,8 @@ def cheapest_k(asks: list[dict], k: int) -> list[dict]:
 
 # ---- try it ----
 if __name__ == "__main__":
-    # print(most_common_market(["BTC", "ETH", "BTC", "SOL", "ETH", "BTC"]))  # BTC
+    # assert most_common_market(["BTC", "ETH", "BTC", "SOL", "ETH", "BTC"]) == 'BTC'
     # assert most_common_market([]) is None
-    # asks = [{"id": "a", "price": 0.70}, {"id": "b", "price": 0.40}, {"id": "c", "price": 0.60}, {"id": "d", "price": 0.30}]
+    asks = [{"id": "a", "price": 0.70}, {"id": "b", "price": 0.40}, {"id": "c", "price": 0.60}, {"id": "d", "price": 0.30}]
     # assert cheapest_k(asks, 2) == [{'id': 'd', 'price': 0.3}, {'id': 'b', 'price': 0.4}]
     pass

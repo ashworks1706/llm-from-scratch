@@ -34,7 +34,7 @@ def clamp(value: float, low: float, high: float) -> float:
 
 # ---- try it ----
 if __name__ == "__main__":
-    # print(classify_price(None), classify_price(-1.5), classify_price(0), classify_price(9.99))  # missing invalid free paid
-    # print(clamp(5, 0, 3), clamp(-2, 0, 3), clamp(2, 0, 3))        # 3 0 2
+    # assert (classify_price(None), classify_price(-1.5), classify_price(0), classify_price(9.99)) == ('missing', 'invalid', 'free', 'paid')
+    # assert (clamp(5, 0, 3), clamp(-2, 0, 3), clamp(2, 0, 3)) == (3, 0, 2)
     # clamp(2, 3, 1)                                                # raises ValueError
     pass

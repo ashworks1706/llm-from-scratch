@@ -30,14 +30,14 @@ def with_temp_attr(obj, name: str, value, fn):
 # ---- try it ----
 if __name__ == '__main__':
     samples = np.array([[1., 2., 3.], [4., 0., 2.]])
-    # print(risk_value(samples, "mean"))            # [2. 2.]
-    # print(risk_value(samples, "worst"))           # [1. 0.]
+    # assert list(risk_value(samples, "mean")) == [2.0, 2.0]
+    # assert list(risk_value(samples, "worst")) == [1.0, 0.0]
     # _risk["name"] = "worst"
-    # print(risk_value(samples))                    # [1. 0.]
+    # assert list(risk_value(samples)) == [1.0, 0.0]
     # fold = np.array([[1., 2.], [3., 4.]])
     # print(standardize([fold], np.array([2., 3.]), np.array([1., 1.])))     # [[[-1. -1.] [1. 1.]]]
     # class Obj: flag = True
     # o = Obj()
-    # print(with_temp_attr(o, "flag", False, lambda: o.flag), o.flag)        # False True
+    # assert (with_temp_attr(o, "flag", False, lambda: o.flag), o.flag) == (False, True)
     # with_temp_attr(o, "flag", False, lambda: 1 / 0)         # raises ZeroDivisionError, o.flag is True again
     pass

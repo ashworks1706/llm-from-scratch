@@ -26,7 +26,7 @@ def max_subarray(nums: list[int]) -> int:
 
 # ---- try it ----
 if __name__ == '__main__':
-    # print(house_robber([2, 7, 9, 3, 1]), house_robber([2, 1, 1, 2]))      # 12 4
-    # print(coin_change([1, 3, 4], 6), coin_change([2], 3), coin_change([1], 0))  # 2 -1 0
-    # print(max_subarray([-2, 1, -3, 4, -1, 2, 1, -5, 4]), max_subarray([-3, -1, -2]))  # 6 -1
+    # assert (house_robber([2, 7, 9, 3, 1]), house_robber([2, 1, 1, 2])) == (12, 4)
+    # assert (coin_change([1, 3, 4], 6), coin_change([2], 3), coin_change([1], 0)) == (2, -1, 0)
+    # assert (max_subarray([-2, 1, -3, 4, -1, 2, 1, -5, 4]), max_subarray([-3, -1, -2])) == (6, -1)
     pass

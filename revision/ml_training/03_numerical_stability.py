@@ -26,6 +26,6 @@ if __name__ == '__main__':
     # assert abs(logsumexp(np.array([1000., 1000.])) - 1000.693147) < 1e-6
     # assert abs(logsumexp(np.array([-1000., -1000.])) - -999.306853) < 1e-6
     # assert abs(logsumexp(np.array([1., 2., 3.])) - 3.407606) < 1e-6
-    # print(logsumexp(np.array([-np.inf, -np.inf])))  # -inf
+    # assert logsumexp(np.array([-np.inf, -np.inf])) == -np.inf
     # assert abs(cross_entropy_from_logits(np.array([[2., 0., 0.], [0., 0., 0.]]), np.array([0, 1])) - 0.669079) < 1e-6
     pass

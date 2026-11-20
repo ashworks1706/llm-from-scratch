@@ -27,12 +27,14 @@ def ppo_clip_loss(logp_new: torch.Tensor, logp_old: torch.Tensor, adv: torch.Ten
 if __name__ == '__main__':
     # t = torch.tensor
     # adv, ret = compute_gae(t([1., 0., 2.]), t([0.5, 0.4, 0.3]), t([0., 0., 0.]), t(0.2), gamma=0.9, lam=0.5)
-    # print(adv, ret)                               # adv [1.1822, 0.716, 1.88], returns [1.6822, 1.116, 2.18]
+    # assert torch.allclose(adv, t([1.1822, 0.716, 1.88]), atol=1e-4) and torch.allclose(ret, t([1.6822, 1.116, 2.18]), atol=1e-4)
     # adv, _ = compute_gae(t([1., 0., 2.]), t([0.5, 0.4, 0.3]), t([0., 1., 0.]), t(0.2), gamma=0.9, lam=0.5)
-    # assert adv == [0.68, -0.4, 1.88]
+    # assert torch.allclose(adv, t([0.68, -0.4, 1.88]), atol=1e-4)
     # adv, _ = compute_gae(t([1., 0., 2.]), t([0.5, 0.4, 0.3]), t([0., 0., 0.]), t(0.2), gamma=0.9, lam=0.0)
-    # assert adv == [0.86, -0.13, 1.88]
+    # assert torch.allclose(adv, t([0.86, -0.13, 1.88]), atol=1e-4)
     # lp_new = torch.log(t([2.0, 1.0, 0.5])).requires_grad_()
-    # print(ppo_clip_loss(lp_new, torch.zeros(3), t([1., 1., -1.]), 0.2))  # loss -0.46667, clip_fraction 2/3
-    # print(ppo_clip_loss(torch.zeros(3), torch.zeros(3), t([1., 1., -1.]), 0.2))  # loss -mean(adv) = -0.3333, clip_fraction 0
+    # loss, frac = ppo_clip_loss(lp_new, torch.zeros(3), t([1., 1., -1.]), 0.2)
+    # assert abs(float(loss) + 0.46667) < 1e-4 and abs(float(frac) - 2 / 3) < 1e-6
+    # loss, frac = ppo_clip_loss(torch.zeros(3), torch.zeros(3), t([1., 1., -1.]), 0.2)
+    # assert abs(float(loss) + 1 / 3) < 1e-4 and float(frac) == 0.0
     pass

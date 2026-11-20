@@ -13,6 +13,7 @@ def two_sum(nums: list[int], target: int) -> tuple[int, int] | None:
         if diff in seen:
             return (seen[diff], n)
         seen[n] = i
+    return (0,0)
 
 
 # 2. longest_consecutive
@@ -32,8 +33,7 @@ def product_except_self(nums: list[int]) -> list[int]:
 
 # ---- try it ----
 if __name__ == '__main__':
-    print(two_sum([2, 7, 11, 15], 9))             # (0, 1)
-    # assert two_sum([3, 3], 6) == (0, 1)
+    assert two_sum([3, 3], 6) == (0, 1)
     # assert two_sum([1, 2], 10) is None
     # assert two_sum([3], 6) is None
     # assert longest_consecutive([100, 4, 200, 1, 3, 2]) == 4

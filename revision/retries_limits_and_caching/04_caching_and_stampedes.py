@@ -48,11 +48,11 @@ if __name__ == '__main__':
     # t[0] = 10; print(c.get("a"))                  # (False, None)
     # c2 = TTLCache(2, now=lambda: 0.0)
     # c2.set("a", 1, 10); c2.set("b", 2, 10); c2.get("a"); c2.set("c", 3, 10)
-    # print(c2.get("a"), c2.get("b"), c2.get("c"))  # (True, 1) (False, None) (True, 3)
+    # assert (c2.get("a"), c2.get("b"), c2.get("c")) == ((True, 1), (False, None), (True, 3))
     # sf, calls, out = SingleFlight(), [], []
     # def loader():
     #     calls.append(1); time.sleep(0.05); return "v"
     # ts = [threading.Thread(target=lambda: out.append(sf.do("k", loader))) for _ in range(50)]
     # [x.start() for x in ts]; [x.join() for x in ts]
-    # print(len(calls), set(out))                   # 1 {'v'}
+    # assert (len(calls), set(out)) == (1, {'v'})
     pass
